@@ -1,0 +1,32 @@
+name: Daily Site Rebuild
+
+on:
+  schedule:
+    - cron: '0 10 * * *'  # 4am CST (10am UTC)
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  rebuild-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Mirror live site
+        run: |
+          wget --mirror --convert-links --adjust-extension --page-requisites \
+            --no-parent --reject "robots.txt" \
+            -P site https://www.upperrdecky.com/ || true
+          # Move files to deploy directory
+          mv site/www.upperrdecky.com deploy
+
+      - name: Update copyright to 2026
+        run: |
+          find deploy -name '*.html' -exec sed -i 's/© 2025/© 2026/g' {} +
+          find deploy -name '*.html' -exec sed -i 's/\&copy; 2025/\&copy; 2026/g' {} +
+
+      - name: Deploy to Netlify
+        uses: nwtgck/actions-netlify@v3
+        with:
+          publish-dir: './deploy'
+          production-deploy: true
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
