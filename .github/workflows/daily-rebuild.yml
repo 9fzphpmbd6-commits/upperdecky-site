@@ -9,18 +9,44 @@ jobs:
   rebuild-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Mirror live site
+      - name: Download current site from Netlify API
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
         run: |
-          wget --mirror --convert-links --adjust-extension --page-requisites \
-            --no-parent --reject "robots.txt" \
-            -P site https://www.upperrdecky.com/ || true
-          # Move files to deploy directory
-          mv site/www.upperrdecky.com deploy
+          mkdir -p deploy
+          # Get the current production deploy ID
+          DEPLOY_ID=$(curl -s -H "Authorization: Bearer $NETLIFY_AUTH_TOKEN" \
+            "https://api.netlify.com/api/v1/sites/$NETLIFY_SITE_ID" | jq -r '.published_deploy.id')
+          echo "Current deploy ID: $DEPLOY_ID"
+          
+          # Get file listing from deploy
+          curl -s -H "Authorization: Bearer $NETLIFY_AUTH_TOKEN" \
+            "https://api.netlify.com/api/v1/deploys/$DEPLOY_ID/files" > files.json
+          
+          FILE_COUNT=$(jq length files.json)
+          echo "Total files: $FILE_COUNT"
+          
+          # Download each file
+          jq -r '.[].path' files.json | while read filepath; do
+            dir=$(dirname "deploy$filepath")
+            mkdir -p "$dir"
+            curl -s -H "Authorization: Bearer $NETLIFY_AUTH_TOKEN" \
+              -o "deploy$filepath" \
+              "https://api.netlify.com/api/v1/deploys/$DEPLOY_ID/files$filepath"
+          done
+          
+          echo "Downloaded files:"
+          find deploy -type f | head -50
 
       - name: Update copyright to 2026
         run: |
-          find deploy -name '*.html' -exec sed -i 's/© 2025/© 2026/g' {} +
-          find deploy -name '*.html' -exec sed -i 's/\&copy; 2025/\&copy; 2026/g' {} +
+          # Handle both UTF-8 copyright symbol and HTML entity
+          find deploy -name '*.html' -exec sed -i 's/© 2025/© 2026/g' {} + || true
+          find deploy -name '*.html' -exec sed -i 's/\&#169; 2025/\&#169; 2026/g' {} + || true
+          find deploy -name '*.html' -exec sed -i 's/\&copy; 2025/\&copy; 2026/g' {} + || true
+          find deploy -name '*.js' -exec sed -i 's/© 2025/© 2026/g' {} + || true
+          echo "Copyright update complete"
 
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v3
