@@ -41,10 +41,11 @@ jobs:
           echo "Downloaded files:"
           find deploy -type f | wc -l
 
-      - name: Update copyright to 2026
+      - name: Ensure copyright is current year
         run: |
-          find deploy -name '*.html' -exec sed -i 's/2025/2026/g' {} + || true
-          echo "Copyright update complete"
+          YEAR=$(date +%Y)
+          find deploy -name '*.html' -exec sed -i "s/UpperDecky .* 20[0-9][0-9]/UpperDecky \\\&copy; $YEAR/g" {} + || true
+          echo "Copyright set to $YEAR"
 
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v3
