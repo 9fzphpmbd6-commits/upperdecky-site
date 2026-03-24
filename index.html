@@ -1,0 +1,5246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!--
+   ______                            __
+  / ____/___  ____ ___  ____  __  __/ /____  _____
+ / /   / __ \/ __ `__ \/ __ \/ / / / __/ _ \/ ___/
+/ /___/ /_/ / / / / / / /_/ / /_/ / /_/  __/ /
+\____/\____/_/ /_/ /_/ .___/\__,_/\__/\___/_/
+                    /_/
+        Created with Perplexity Computer
+        https://www.perplexity.ai/computer
+-->
+<meta name="generator" content="Perplexity Computer">
+<meta name="author" content="Perplexity Computer">
+<meta property="og:see_also" content="https://www.perplexity.ai/computer">
+<link rel="author" href="https://www.perplexity.ai/computer">
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-C29JJV2RHF"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-C29JJV2RHF');
+</script>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UpperDecky — Free MLB Analytics</title>
+<meta name="description" content="Free MLB batter analytics. No paywalls. No subscriptions. No BS. Advanced Statcast data for every hitter.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://upperrdecky.com">
+<meta property="og:title" content="UpperDecky — Free MLB Analytics">
+<meta property="og:description" content="No paywalls. No subscriptions. No BS. Free advanced baseball analytics for every MLB hitter.">
+<meta property="og:image" content="https://upperrdecky.com/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="UpperDecky - Free MLB Analytics">
+<meta property="og:site_name" content="UpperDecky">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@upperdecky15">
+<meta name="twitter:title" content="UpperDecky — Free MLB Analytics">
+<meta name="twitter:description" content="No paywalls. No subscriptions. No BS. Free advanced baseball analytics for every MLB hitter.">
+<meta name="twitter:image" content="https://upperrdecky.com/og-image.jpg">
+<link rel="canonical" href="https://upperrdecky.com">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<style>
+/* ========== RESET & BASE ========== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  overflow-x: hidden;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  background: #0c1220;
+  color: #f1f5f9;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
+
+/* ========== VARIABLES ========== */
+:root {
+  --bg: #0c1220;
+  --surface: #141c2e;
+  --card: #1a2439;
+  --card-border: rgba(255,255,255,0.06);
+  --red: #ef4444;
+  --blue: #38bdf8;
+  --green: #22c55e;
+  --amber: #f59e0b;
+  --text: #f1f5f9;
+  --muted: #94a3b8;
+  --faint: #64748b;
+  --transition: 0.18s cubic-bezier(0.16,1,0.3,1);
+}
+
+/* ========== UTILITY ========== */
+.tabular { font-variant-numeric: tabular-nums; }
+.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+/* ========== ANIMATIONS ========== */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(1.6); }
+}
+@keyframes ticker-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ========== SECTION SPACING ========== */
+section { padding: 48px 0; }
+section + section { padding-top: 0; }
+.section-gap { margin-top: 56px; }
+
+/* ========== NAVBAR ========== */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(12,18,32,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--card-border);
+  padding: 0 24px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.navbar-inner {
+  max-width: 1200px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.navbar-logo {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color var(--transition);
+}
+.navbar-logo:hover { color: var(--red); }
+.navbar-logo span { color: var(--red); }
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.nav-link {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+  color: var(--muted);
+  text-decoration: none;
+  position: relative;
+}
+.nav-link:hover { background: rgba(255,255,255,0.06); color: var(--text); }
+.nav-link.active { color: var(--text); background: rgba(255,255,255,0.04); }
+.nav-dropdown {
+  position: relative;
+}
+.nav-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 4px;
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 6px 0;
+  min-width: 200px;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+  z-index: 200;
+}
+.nav-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+}
+.nav-dropdown-item:hover {
+  background: rgba(255,255,255,0.06);
+  color: var(--text);
+}
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--text);
+  font-size: 24px;
+  cursor: pointer;
+  padding: 4px;
+}
+.mobile-menu {
+  display: none;
+  position: fixed;
+  top: 56px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(12,18,32,0.98);
+  backdrop-filter: blur(12px);
+  z-index: 99;
+  padding: 24px;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+}
+.mobile-menu.open { display: flex; }
+.mobile-menu-link {
+  font-size: 16px;
+  font-weight: 600;
+  padding: 12px 16px;
+  border-radius: 8px;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+}
+.mobile-menu-link:hover { background: rgba(255,255,255,0.06); color: var(--text); }
+.mobile-divider {
+  height: 1px;
+  background: var(--card-border);
+  margin: 8px 0;
+}
+.mobile-section-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--faint);
+  padding: 8px 16px 4px;
+}
+
+/* ========== 1. HERO ========== */
+.hero {
+  position: relative;
+  overflow: visible;
+  padding: 32px 0 16px;
+  background: var(--bg);
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 60px,
+      rgba(239,68,68,0.03) 60px,
+      rgba(239,68,68,0.03) 61px
+    );
+  pointer-events: none;
+}
+.hero-content {
+  position: relative;
+  text-align: center;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}
+.hero-text-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.hero-mascot {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  filter: drop-shadow(0 0 20px rgba(239,68,68,0.35));
+  flex-shrink: 0;
+}
+.hero-crosshair { width: 44px; height: 44px; }
+.hero-title {
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  line-height: 1.1;
+}
+.hero-title span { color: var(--red); }
+.hero-tagline {
+  font-size: 13px;
+  color: var(--muted);
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+.hero-manifesto {
+  max-width: 600px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.hero-manifesto strong {
+  color: #f1f5f9;
+  font-weight: 600;
+}
+.hero-kpis {
+  display: flex;
+  gap: 24px;
+  margin-top: 2px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.hero-kpi {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.hero-kpi-value {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--blue);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.hero-kpi-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--muted);
+  font-weight: 500;
+}
+.hero-tip-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 10px 28px;
+  background: transparent;
+  border: 2px solid var(--red);
+  border-radius: 999px;
+  color: #f1f5f9;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.18s cubic-bezier(0.16,1,0.3,1);
+  text-decoration: none;
+}
+.hero-tip-btn:hover {
+  background: var(--red);
+  color: #fff;
+  transform: scale(1.04);
+}
+.hero-tip-subtext {
+  font-size: 12px;
+  color: var(--faint);
+  font-style: italic;
+  margin-top: -2px;
+}
+
+/* ========== 2. TICKER ========== */
+.ticker-bar {
+  background: var(--surface);
+  border-top: 1px solid rgba(239,68,68,0.3);
+  border-bottom: 1px solid rgba(239,68,68,0.3);
+  overflow: hidden;
+  position: relative;
+  height: 44px;
+  display: flex;
+  align-items: center;
+}
+.ticker-edge-dot {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px; height: 8px;
+  background: var(--red);
+  border-radius: 50%;
+  z-index: 2;
+}
+.ticker-edge-dot.left { left: 12px; }
+.ticker-edge-dot.right { right: 12px; }
+.ticker-track {
+  display: flex;
+  white-space: nowrap;
+  animation: ticker-scroll 40s linear infinite;
+}
+.ticker-track span {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  padding: 0 32px;
+  flex-shrink: 0;
+}
+.ticker-track .ticker-highlight { color: var(--text); font-weight: 600; }
+.ticker-track .ticker-red { color: var(--red); }
+
+/* ========== 3. LIVE GAMES ========== */
+.live-games { padding-top: 48px; }
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.section-title {
+  font-size: 22px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+.live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(239,68,68,0.15);
+  color: var(--red);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 4px 10px;
+  border-radius: 4px;
+}
+.pulse-dot {
+  width: 8px; height: 8px;
+  background: var(--red);
+  border-radius: 50%;
+  animation: pulse-dot 1.5s ease-in-out infinite;
+}
+.games-scroll-wrapper {
+  position: relative;
+}
+.games-scroll {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.1) transparent;
+}
+.games-scroll::-webkit-scrollbar { height: 4px; }
+.games-scroll::-webkit-scrollbar-track { background: transparent; }
+.games-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+.game-card {
+  flex-shrink: 0;
+  width: 220px;
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  overflow: hidden;
+  scroll-snap-align: start;
+  transition: transform var(--transition), border-color var(--transition);
+}
+.game-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255,255,255,0.12);
+}
+.game-card-bar { height: 3px; width: 100%; }
+.game-card-bar.live { background: var(--red); }
+.game-card-bar.final { background: var(--muted); }
+.game-card-bar.upcoming { background: var(--blue); opacity: 0.4; }
+.game-card-body { padding: 12px 14px 10px; }
+.game-team-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+}
+.game-team-logo {
+  width: 28px; height: 28px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+.game-team-abbr {
+  font-size: 14px;
+  font-weight: 700;
+  flex: 1;
+  letter-spacing: 0.5px;
+}
+.game-team-score {
+  font-size: 18px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  min-width: 24px;
+  text-align: right;
+}
+.game-team-score.winner { color: var(--text); }
+.game-team-score.loser { color: var(--muted); }
+.game-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--card-border);
+}
+.game-inning {
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.game-inning.live { color: var(--red); }
+.game-inning.final { color: var(--muted); }
+.game-inning.upcoming { color: var(--blue); }
+.game-venue {
+  font-size: 10px;
+  color: var(--muted);
+  text-align: right;
+  max-width: 110px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.game-weather {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 0 2px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  flex-wrap: wrap;
+}
+.game-weather.dome {
+  color: var(--blue);
+  font-weight: 600;
+  font-size: 11px;
+}
+.game-weather-detail {
+  font-size: 10px;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 120px;
+}
+.game-weather-roof {
+  font-size: 9px;
+  color: var(--amber);
+  font-weight: 600;
+}
+.scroll-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--text);
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  transition: background var(--transition), border-color var(--transition);
+}
+.scroll-btn:hover { background: var(--card); border-color: rgba(255,255,255,0.2); }
+.scroll-btn.left { left: -12px; }
+.scroll-btn.right { right: -12px; }
+.no-games-msg {
+  text-align: center;
+  padding: 32px;
+  color: var(--muted);
+  font-size: 14px;
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+}
+
+/* ========== 4. FIND YOUR TEAM ========== */
+.team-grid-section { }
+.section-subtitle {
+  font-size: 14px;
+  color: var(--muted);
+  margin-top: 4px;
+  margin-bottom: 24px;
+  font-weight: 400;
+}
+.divisions-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+.division-col {}
+.division-header {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--muted);
+  padding: 8px 0 8px 12px;
+  border-left: 3px solid var(--red);
+  margin-bottom: 12px;
+}
+.team-card-sm {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+}
+.team-card-sm:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255,255,255,0.15);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+}
+.team-card-sm img {
+  width: 42px; height: 42px;
+  object-fit: contain;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.05);
+  padding: 4px;
+}
+.team-card-info {}
+.team-card-name {
+  font-size: 13px;
+  font-weight: 700;
+}
+.team-card-meta {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* ========== 5. EXPLORE STATS ========== */
+.stats-grid-section {}
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+}
+.stat-card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 16px 14px;
+  cursor: pointer;
+  transition: transform var(--transition), border-color var(--transition);
+  text-align: center;
+}
+.stat-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255,255,255,0.15);
+}
+.stat-card.active {
+  border-left: 3px solid var(--red);
+  background: rgba(239,68,68,0.06);
+  border-color: rgba(239,68,68,0.2);
+}
+.stat-emoji { font-size: 24px; margin-bottom: 6px; }
+.stat-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--text);
+}
+.stat-desc {
+  font-size: 10px;
+  color: var(--faint);
+  margin-top: 2px;
+}
+
+/* ========== 7. SPOTLIGHT + LEADERBOARD ========== */
+.spotlight-section {}
+.spotlight-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+.spotlight-card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-left: 3px solid var(--red);
+  border-radius: 8px;
+  padding: 24px;
+}
+.spotlight-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.spotlight-headshot {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: rgba(255,255,255,0.05);
+  border: 2px solid var(--red);
+}
+.spotlight-name {
+  font-size: 20px;
+  font-weight: 800;
+}
+.spotlight-meta {
+  font-size: 13px;
+  color: var(--muted);
+}
+.spotlight-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.spotlight-stat {
+  text-align: center;
+  padding: 12px 8px;
+  background: rgba(255,255,255,0.02);
+  border-radius: 6px;
+  border: 1px solid var(--card-border);
+}
+.spotlight-stat-val {
+  font-size: 22px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--blue);
+}
+.spotlight-stat-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.leaderboard-card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 24px;
+}
+.leaderboard-title {
+  font-size: 18px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.leaderboard-title span { color: var(--amber); }
+.lb-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--card-border);
+  cursor: pointer;
+  transition: background var(--transition);
+}
+.lb-row:hover { background: rgba(255,255,255,0.02); }
+.lb-row:last-child { border-bottom: none; }
+.lb-rank {
+  width: 24px;
+  font-size: 13px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  color: var(--muted);
+}
+.lb-rank.first { color: var(--red); }
+.lb-headshot {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: rgba(255,255,255,0.05);
+}
+.lb-name {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 600;
+}
+.lb-team {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 500;
+  width: 32px;
+  text-align: center;
+}
+.lb-val {
+  font-size: 14px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--blue);
+  width: 50px;
+  text-align: right;
+}
+
+/* ========== 8. FOOTER ========== */
+.site-footer {
+  margin-top: 56px;
+  padding: 32px 0;
+  border-top: 2px solid var(--red);
+  background: var(--surface);
+}
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.footer-copy {
+  font-size: 13px;
+  color: var(--muted);
+}
+.footer-link {
+  font-size: 12px;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+.footer-link:hover { color: var(--text); }
+
+/* ========== LOADING ========== */
+.loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 0;
+  gap: 16px;
+}
+.spinner {
+  width: 40px; height: 40px;
+  border: 3px solid var(--card-border);
+  border-top-color: var(--red);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+.loading-text {
+  font-size: 14px;
+  color: var(--muted);
+}
+.error-msg {
+  text-align: center;
+  padding: 60px 24px;
+  color: var(--muted);
+}
+.error-msg h3 {
+  font-size: 20px;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+.retry-btn {
+  margin-top: 16px;
+  padding: 10px 24px;
+  background: var(--red);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: opacity var(--transition);
+}
+.retry-btn:hover { opacity: 0.85; }
+
+/* ========== PAGE LAYOUTS ========== */
+.page-header {
+  padding: 40px 0 24px;
+}
+.page-title {
+  font-size: 28px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+.page-subtitle {
+  font-size: 14px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 8px 0;
+  transition: color var(--transition);
+}
+.back-btn:hover { color: var(--text); }
+
+/* ========== DATA TABLE ========== */
+.data-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  background: var(--card);
+}
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.data-table th {
+  text-align: left;
+  padding: 12px 14px;
+  font-weight: 700;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--muted);
+  border-bottom: 2px solid var(--card-border);
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  transition: color var(--transition);
+}
+.data-table th:hover { color: var(--text); }
+.data-table th.sorted { color: var(--blue); }
+.data-table th .sort-arrow { margin-left: 4px; font-size: 10px; }
+.data-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--card-border);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.data-table tr { transition: background var(--transition); cursor: pointer; }
+.data-table tbody tr:hover { background: rgba(255,255,255,0.03); }
+.data-table tr:last-child td { border-bottom: none; }
+.player-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.player-cell img {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: rgba(255,255,255,0.05);
+}
+.player-cell-name {
+  font-weight: 600;
+}
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 20px 0;
+}
+.page-btn {
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--card-border);
+  background: var(--card);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.page-btn:hover { border-color: rgba(255,255,255,0.15); }
+.page-btn.active { background: var(--red); border-color: var(--red); }
+.page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ========== SEARCH & FILTER ========== */
+.filters-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.search-input, .filter-select {
+  padding: 10px 14px;
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color var(--transition);
+}
+.search-input { flex: 1; min-width: 200px; }
+.search-input::placeholder { color: var(--faint); }
+.search-input:focus, .filter-select:focus {
+  border-color: var(--blue);
+}
+.filter-select { min-width: 140px; }
+.filter-select option { background: var(--card); color: var(--text); }
+
+/* ========== PLAYER DETAIL ========== */
+.player-hero {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 24px 0 32px;
+}
+.player-hero-img {
+  width: 120px; height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: rgba(255,255,255,0.05);
+  border: 3px solid var(--red);
+}
+.player-hero-info h1 {
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+.player-hero-meta {
+  font-size: 14px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.stats-section-title {
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--muted);
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--card-border);
+}
+.stats-grid-detail {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 32px;
+}
+.stat-box {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+}
+.stat-box-val {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--blue);
+  font-variant-numeric: tabular-nums;
+}
+.stat-box-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.fun-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 32px;
+}
+.fun-stat-card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+}
+.fun-stat-emoji { font-size: 28px; margin-bottom: 4px; }
+.fun-stat-val {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.fun-stat-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.status-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+.status-badge.overdue { background: rgba(239,68,68,0.15); color: var(--red); }
+.status-badge.due { background: rgba(251,146,60,0.15); color: #fb923c; }
+.status-badge.on-pace, .status-badge.warming-up { background: rgba(245,158,11,0.15); color: var(--amber); }
+.status-badge.cold { background: rgba(56,189,248,0.15); color: var(--blue); }
+.grade-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 800;
+}
+.grade-a { background: rgba(34,197,94,0.15); color: var(--green); }
+.grade-b { background: rgba(56,189,248,0.15); color: var(--blue); }
+.grade-c { background: rgba(245,158,11,0.15); color: var(--amber); }
+.grade-d, .grade-f { background: rgba(239,68,68,0.15); color: var(--red); }
+
+/* ========== COMPARE PAGE ========== */
+.compare-container {
+  display: grid;
+  grid-template-columns: 1fr 80px 1fr;
+  gap: 0;
+  align-items: start;
+}
+.compare-player-select {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 20px;
+}
+.compare-vs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--red);
+  padding-top: 100px;
+}
+.compare-row {
+  display: grid;
+  grid-template-columns: 1fr 80px 1fr;
+  gap: 0;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--card-border);
+}
+.compare-bar-wrap {
+  height: 6px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+.compare-bar {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+.compare-stat-label {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--muted);
+}
+.compare-val {
+  font-size: 16px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.compare-left { text-align: right; padding-right: 16px; }
+.compare-right { text-align: left; padding-left: 16px; }
+.compare-headshot-area {
+  text-align: center;
+  margin-bottom: 16px;
+}
+.compare-headshot-area img {
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: rgba(255,255,255,0.05);
+  border: 2px solid var(--card-border);
+}
+.compare-headshot-area .name {
+  font-size: 15px;
+  font-weight: 700;
+  margin-top: 8px;
+}
+.compare-headshot-area .team-pos {
+  font-size: 12px;
+  color: var(--muted);
+}
+.compare-search {
+  position: relative;
+}
+.compare-search-results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--surface);
+  border: 1px solid var(--card-border);
+  border-radius: 0 0 8px 8px;
+  max-height: 240px;
+  overflow-y: auto;
+  z-index: 10;
+}
+.compare-search-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: background var(--transition);
+  font-size: 13px;
+}
+.compare-search-item:hover { background: rgba(255,255,255,0.06); }
+.compare-search-item img {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: rgba(255,255,255,0.05);
+}
+
+/* ========== LEADERBOARD PAGES ========== */
+.lb-page-header {
+  padding: 40px 0 8px;
+  text-align: center;
+}
+.lb-page-title {
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+.lb-page-subtitle {
+  font-size: 14px;
+  color: var(--muted);
+  margin-top: 8px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ========== SCATTER PAGE ========== */
+.scatter-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+.scatter-card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 20px;
+}
+.scatter-card h3 {
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+.scatter-canvas-wrap {
+  position: relative;
+  height: 400px;
+}
+.scatter-canvas-wrap canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 900px) {
+  .hero-title { font-size: 30px; }
+  .divisions-grid { grid-template-columns: 1fr; gap: 24px; }
+  .stats-grid { grid-template-columns: repeat(3, 1fr); }
+  .spotlight-grid { grid-template-columns: 1fr; }
+  .scroll-btn { display: none; }
+  .scatter-container { grid-template-columns: 1fr; }
+  .compare-container { grid-template-columns: 1fr; gap: 16px; }
+  .compare-vs { padding-top: 0; padding-bottom: 8px; }
+  .compare-row { grid-template-columns: 1fr 60px 1fr; }
+  .stats-grid-detail { grid-template-columns: repeat(2, 1fr); }
+  .fun-stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .navbar-links { display: none; }
+  .hamburger { display: block; }
+}
+@media (max-width: 600px) {
+  .hero-content { flex-direction: column; gap: 6px; }
+  .hero-mascot { width: 48px; height: 48px; }
+  .hero-title { font-size: 24px; letter-spacing: 2px; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .section-title { font-size: 18px; }
+  .container { padding: 0 16px; }
+  section { padding: 32px 0; }
+  .section-gap { margin-top: 40px; }
+  .player-hero { flex-direction: column; text-align: center; }
+  .player-hero-img { width: 96px; height: 96px; }
+  .stats-grid-detail { grid-template-columns: repeat(2, 1fr); }
+  .fun-stats-grid { grid-template-columns: 1fr; }
+}
+@media (min-width: 901px) {
+  .hamburger { display: none; }
+  .mobile-menu { display: none !important; }
+}
+
+/* ========== DUAL TICKERS ========== */
+.ticker-wrapper {
+  border-top: 2px solid rgba(239,68,68,0.5);
+  border-bottom: 2px solid rgba(239,68,68,0.5);
+  background: linear-gradient(90deg, rgba(239,68,68,0.12) 0%, rgba(12,18,32,0.95) 30%, rgba(12,18,32,0.95) 70%, rgba(239,68,68,0.12) 100%);
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 10px 0;
+}
+.ticker-wrapper + .ticker-wrapper { border-top: none; }
+.ticker-wrapper.hot-cold {
+  border-top: 2px solid transparent;
+  border-bottom: 2px solid transparent;
+  border-image: linear-gradient(90deg, rgba(239,68,68,0.6), rgba(56,189,248,0.6)) 1;
+  background: linear-gradient(90deg, rgba(239,68,68,0.1) 0%, rgba(12,18,32,0.95) 40%, rgba(12,18,32,0.95) 60%, rgba(56,189,248,0.1) 100%);
+}
+.ticker-wrapper .ticker-track span {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  padding: 0 48px 0 0;
+}
+.ticker-blue { color: var(--blue); }
+
+/* ========== PRESS BOX (AI EXPERTS) ========== */
+.press-box-section { padding-top: 48px; }
+.experts-row {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.card-container {
+  perspective: 800px;
+  width: 200px;
+  height: 300px;
+  flex-shrink: 0;
+}
+.card-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.card-container:hover .card-inner {
+  transform: rotateY(180deg);
+}
+.card-front, .card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.card-front {
+  border: 3px solid #f5f0e0;
+  background: var(--surface);
+}
+.card-front::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border: 1px solid var(--red);
+  border-radius: 4px;
+  pointer-events: none;
+}
+.card-front img {
+  width: 100%;
+  height: 210px;
+  object-fit: cover;
+  object-position: top;
+}
+.card-front-info {
+  padding: 8px 10px;
+  background: linear-gradient(135deg, var(--red), #b91c2c);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 56px;
+}
+.card-front-name {
+  font-size: 13px;
+  font-weight: 800;
+  color: #fff;
+  text-transform: uppercase;
+  line-height: 1.2;
+}
+.card-front-title {
+  font-size: 9px;
+  color: rgba(255,255,255,0.8);
+  font-weight: 500;
+  margin-top: 1px;
+}
+.card-front-record {
+  font-size: 10px;
+  color: #fff;
+  text-align: right;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.card-back {
+  transform: rotateY(180deg);
+  border: 3px solid #f5f0e0;
+  background: var(--surface);
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.card-back::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border: 1px solid var(--red);
+  border-radius: 4px;
+  pointer-events: none;
+}
+.card-back-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--red);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  text-align: center;
+}
+.card-back-pick {
+  font-size: 12px;
+  color: var(--text);
+  margin-bottom: 8px;
+  padding: 6px 8px;
+  background: rgba(56,189,248,0.05);
+  border-radius: 4px;
+  border-left: 2px solid var(--blue);
+}
+.card-back-confidence {
+  text-align: center;
+  font-size: 18px;
+  margin-top: 8px;
+}
+
+/* ========== THE DUGOUT ========== */
+.dugout-section {
+  text-align: center;
+}
+.dugout-social {
+  margin: 20px 0 32px;
+}
+.x-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+  color: #000;
+  padding: 12px 32px;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 16px;
+  transition: all 0.2s;
+  text-decoration: none;
+  font-family: inherit;
+  border: none;
+  cursor: pointer;
+}
+.x-btn:hover {
+  background: #e2e8f0;
+}
+.x-btn svg {
+  width: 20px;
+  height: 20px;
+}
+.featured-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+}
+.creators-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+  text-align: left;
+}
+.creator-card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 18px;
+}
+.creator-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.creator-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 18px;
+  color: #fff;
+  flex-shrink: 0;
+}
+.creator-name {
+  font-weight: 700;
+  color: #fff;
+  font-size: 15px;
+}
+.creator-handle {
+  font-size: 13px;
+  color: var(--blue);
+}
+.creator-desc {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+.follow-btn {
+  display: inline-block;
+  padding: 6px 16px;
+  border: 1px solid var(--blue);
+  color: var(--blue);
+  border-radius: 50px;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+.follow-btn:hover {
+  background: var(--blue);
+  color: var(--bg);
+}
+
+
+/* ========== RADAR GUN COUNTDOWN ========== */
+.radar-group {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 2;
+}
+.radar-side-label {
+  font-family: var(--font-heading);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  writing-mode: vertical-lr;
+  transform: rotate(180deg);
+  line-height: 1.2;
+  text-align: center;
+  white-space: nowrap;
+  color: #00dcff;
+  text-shadow: 0 0 8px rgba(0,220,255,0.4);
+}
+.radar-gun {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.radar-body {
+  width: 140px;
+  background: radial-gradient(ellipse at 50% 30%, #2a2a2a 0%, #111 60%, #0a0a0a 100%);
+  border: 2px solid #444;
+  border-radius: 14px 14px 10px 10px;
+  padding: 8px 10px 10px;
+  box-shadow:
+    0 0 30px rgba(0,220,255,0.10),
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    0 4px 12px rgba(0,0,0,0.6);
+}
+.radar-top-label {
+  font-family: var(--font-heading);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #00dcff;
+  text-align: center;
+  margin-bottom: 4px;
+  text-shadow: 0 0 8px rgba(0,220,255,0.6);
+}
+.radar-screen {
+  background: #0a0a0a;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 6px 6px 5px;
+  margin-bottom: 5px;
+  position: relative;
+  overflow: hidden;
+}
+.radar-screen::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(180deg, rgba(0,220,255,0.03) 0%, transparent 50%, rgba(0,220,255,0.02) 100%);
+  pointer-events: none;
+}
+.radar-days-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 4px;
+  margin-bottom: 1px;
+}
+.radar-big-num {
+  font-family: var(--font-heading);
+  font-size: 46px;
+  font-weight: 900;
+  color: #00dcff;
+  line-height: 1;
+  text-shadow: 0 0 20px rgba(0,220,255,0.7), 0 0 40px rgba(0,220,255,0.3);
+  letter-spacing: -1px;
+}
+.radar-days-label {
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 700;
+  color: #44e8ff;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-shadow: 0 0 10px rgba(0,220,255,0.5);
+}
+.radar-hms {
+  display: flex;
+  justify-content: center;
+  gap: 2px;
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 700;
+  color: #00dcff;
+  text-shadow: 0 0 10px rgba(0,220,255,0.5);
+  letter-spacing: 1px;
+}
+.radar-hms-sep {
+  color: #00dcff;
+  opacity: 0.5;
+  animation: blink-sep 1s step-end infinite;
+}
+@keyframes blink-sep {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 0.15; }
+}
+.radar-bottom-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 4px;
+}
+.radar-event-label {
+  font-family: var(--font-heading);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #888;
+}
+.radar-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 6px rgba(34,197,94,0.8);
+  animation: radar-pulse 1.5s ease-in-out infinite;
+}
+@keyframes radar-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+.radar-handle {
+  width: 32px; height: 14px;
+  background: linear-gradient(180deg, #333 0%, #1a1a1a 100%);
+  border: 1px solid #444; border-top: none;
+  border-radius: 0 0 6px 6px;
+}
+.radar-handle::before {
+  content: '';
+  display: block;
+  margin: 3px auto 0;
+  width: 14px; height: 3px;
+  background: #555; border-radius: 2px;
+}
+/* Post-Opening Day state */
+.radar-live .radar-big-num {
+  font-size: 22px;
+  color: #22c55e;
+  text-shadow: 0 0 20px rgba(34,197,94,0.7), 0 0 40px rgba(34,197,94,0.3);
+  letter-spacing: 2px;
+}
+.radar-live .radar-top-label {
+  color: #22c55e;
+  text-shadow: 0 0 8px rgba(34,197,94,0.6);
+}
+@media (max-width: 900px) {
+  .radar-group {
+    position: static;
+    transform: none;
+    justify-content: center;
+    margin-bottom: 8px;
+  }
+  .radar-side-label { display: none; }
+  .radar-body { width: 120px; padding: 6px 8px 8px; }
+  .radar-big-num { font-size: 36px; }
+  .radar-hms { font-size: 13px; }
+}
+@media (max-width: 600px) {
+  .radar-body { width: 110px; }
+  .radar-big-num { font-size: 30px; }
+  .radar-hms { font-size: 12px; }
+  .radar-days-label { font-size: 11px; }
+}
+
+/* ========== LLHR TRACKER + GIVEAWAY ========== */
+.llhr-banner {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #1a1a2e 100%);
+  border: 2px solid #d4a843;
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin: 24px auto;
+  max-width: 900px;
+  position: relative;
+  overflow: hidden;
+}
+.llhr-banner::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 20px,
+    rgba(212,168,67,0.03) 20px,
+    rgba(212,168,67,0.03) 40px
+  );
+  pointer-events: none;
+}
+.llhr-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.llhr-title {
+  font-family: var(--font-heading);
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #d4a843;
+  text-transform: uppercase;
+}
+.llhr-count-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 16px;
+}
+.llhr-count-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(212,168,67,0.1);
+  border: 1px solid rgba(212,168,67,0.3);
+  border-radius: 8px;
+  padding: 10px 20px;
+  min-width: 80px;
+}
+.llhr-count-num {
+  font-family: var(--font-heading);
+  font-size: 36px;
+  font-weight: 900;
+  color: #d4a843;
+  line-height: 1;
+}
+.llhr-count-label {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+.llhr-last {
+  font-size: 13px;
+  color: var(--muted);
+  text-align: center;
+  margin-bottom: 16px;
+}
+.llhr-last strong {
+  color: var(--text);
+}
+.llhr-giveaway {
+  background: rgba(239,68,68,0.08);
+  border: 1px solid rgba(239,68,68,0.25);
+  border-radius: 8px;
+  padding: 14px 18px;
+  text-align: center;
+}
+.llhr-giveaway-title {
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 700;
+  color: #ef4444;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.llhr-giveaway-prize {
+  font-size: 14px;
+  color: var(--text);
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+.llhr-giveaway-prize .gold {
+  color: #d4a843;
+  font-weight: 700;
+}
+.llhr-giveaway-steps {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.llhr-step {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(212,168,67,0.1);
+  border: 1px solid rgba(212,168,67,0.25);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+.llhr-step .step-num {
+  background: #d4a843;
+  color: #111;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+.llhr-follow-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  padding: 8px 20px;
+  background: #d4a843;
+  color: #111;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-decoration: none;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.llhr-follow-btn:hover {
+  background: #e8c25c;
+}
+.llhr-expand-btn {
+  display: block;
+  margin: 12px auto 0;
+  background: none;
+  border: 1px solid rgba(212,168,67,0.3);
+  border-radius: 6px;
+  color: #d4a843;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 16px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: background 0.2s;
+}
+.llhr-expand-btn:hover {
+  background: rgba(212,168,67,0.1);
+}
+.llhr-event-list {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.llhr-event {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 13px;
+}
+.llhr-event-num {
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: 900;
+  color: #d4a843;
+  min-width: 28px;
+  text-align: center;
+}
+.llhr-event-info {
+  flex: 1;
+}
+.llhr-event-player {
+  font-weight: 700;
+  color: var(--text);
+}
+.llhr-event-team {
+  color: var(--muted);
+  font-size: 12px;
+}
+.llhr-event-speed {
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--green);
+  white-space: nowrap;
+}
+@media (max-width: 600px) {
+  .llhr-banner { padding: 16px; margin: 16px; }
+  .llhr-title { font-size: 17px; }
+  .llhr-count-num { font-size: 28px; }
+  .llhr-count-row { gap: 12px; }
+  .llhr-count-box { padding: 8px 14px; min-width: 60px; }
+  .llhr-giveaway-steps { flex-direction: column; gap: 6px; }
+  .llhr-event { flex-direction: column; align-items: flex-start; gap: 4px; }
+}
+
+/* ========== FOOTER TIP LINKS ========== */
+.footer-tip-links {
+  margin: 8px 0;
+}
+.footer-tip-links a {
+  margin: 0 8px;
+  color: var(--muted);
+  font-size: 12px;
+  text-decoration: none;
+  transition: color var(--transition);
+}
+.footer-tip-links a:hover { color: var(--text); }
+
+/* ========== TIP MODAL ========== */
+.tip-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.2s ease;
+}
+@keyframes fadeIn { from {opacity:0} to {opacity:1} }
+.tip-modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px 28px;
+  max-width: 340px;
+  width: 90%;
+  text-align: center;
+  position: relative;
+  animation: slideUp 0.25s ease;
+}
+@keyframes slideUp { from {transform:translateY(20px);opacity:0} to {transform:translateY(0);opacity:1} }
+.tip-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 20px;
+  cursor: pointer;
+  line-height: 1;
+}
+.tip-modal-close:hover { color: var(--text); }
+.tip-modal h3 {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  margin: 0 0 4px;
+  color: var(--text);
+}
+.tip-modal .tip-subtitle {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0 0 20px;
+  font-style: italic;
+}
+.tip-qr {
+  width: 220px;
+  height: auto;
+  border-radius: 12px;
+  background: #fff;
+  padding: 8px;
+  margin: 0 auto 16px;
+  display: block;
+}
+.tip-venmo-link {
+  display: inline-block;
+  background: #008CFF;
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+  padding: 10px 28px;
+  border-radius: 24px;
+  text-decoration: none;
+  letter-spacing: 0.5px;
+  transition: background 0.15s;
+}
+.tip-venmo-link:hover { background: #006fcc; }
+.tip-modal .tip-or {
+  font-size: 11px;
+  color: var(--muted);
+  margin: 12px 0 0;
+}
+
+/* ========== NAVBAR MASCOT ========== */
+.navbar-mascot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+@media (max-width: 900px) {
+  .experts-row { justify-content: flex-start; flex-wrap: nowrap; }
+  .creators-grid { grid-template-columns: 1fr; }
+}
+
+/* ========== HIT OR SPIT — PROMO BANNER ========== */
+.hos-banner {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #141c2e 0%, #1a2439 50%, #141c2e 100%);
+  border-top: 2px solid rgba(212,168,67,0.4);
+  border-bottom: 2px solid rgba(212,168,67,0.4);
+  cursor: pointer;
+  transition: background 0.25s ease;
+}
+.hos-banner:hover { background: linear-gradient(135deg, #182240 0%, #1f2e4a 50%, #182240 100%); }
+.hos-banner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(-45deg, transparent, transparent 20px, rgba(212,168,67,0.02) 20px, rgba(212,168,67,0.02) 21px);
+  pointer-events: none;
+}
+.hos-banner-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  position: relative;
+}
+.hos-banner-card-preview {
+  flex-shrink: 0;
+  width: 80px;
+  height: 110px;
+  border-radius: 8px;
+  background: #e8ddd0;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  overflow: hidden;
+  transform: rotate(-4deg);
+  transition: transform 0.25s ease;
+  display: flex;
+  flex-direction: column;
+}
+.hos-banner:hover .hos-banner-card-preview { transform: rotate(-2deg) scale(1.05); }
+.hos-banner-card-topbar {
+  background: linear-gradient(90deg, #c8102e, #e63946);
+  height: 14px;
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
+}
+.hos-banner-card-topbar span {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 7px;
+  color: white;
+  letter-spacing: 1px;
+}
+.hos-banner-card-photo {
+  flex: 1;
+  background: radial-gradient(ellipse at 50% 55%, #182d4a 0%, #0e1a30 100%);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  overflow: hidden;
+}
+.hos-banner-card-photo img {
+  width: 65px;
+  height: auto;
+  -webkit-mask-image: radial-gradient(ellipse 70% 80% at 50% 50%, black 30%, transparent 75%);
+  mask-image: radial-gradient(ellipse 70% 80% at 50% 50%, black 30%, transparent 75%);
+}
+.hos-banner-card-name {
+  background: linear-gradient(90deg, #c8102e, #e63946);
+  padding: 3px 6px;
+  text-align: center;
+}
+.hos-banner-card-name span {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 8px;
+  color: white;
+  letter-spacing: 1px;
+}
+.hos-banner-text {
+  flex: 1;
+  min-width: 0;
+}
+.hos-banner-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(212,168,67,0.15);
+  color: #d4a843;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  margin-bottom: 6px;
+}
+.hos-banner-badge .pulse-dot { background: #d4a843; }
+.hos-banner-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #f1f5f9;
+  line-height: 1.2;
+}
+.hos-banner-title em { font-style: normal; color: #ef4444; }
+.hos-banner-sub {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.hos-banner-cta {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  background: linear-gradient(135deg, #d4a843, #c49a38);
+  color: #1a1a2e;
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  font-family: 'Inter', sans-serif;
+  white-space: nowrap;
+}
+.hos-banner:hover .hos-banner-cta {
+  transform: scale(1.05);
+  box-shadow: 0 4px 16px rgba(212,168,67,0.3);
+}
+@media (max-width: 600px) {
+  .hos-banner-inner { padding: 16px; gap: 14px; }
+  .hos-banner-card-preview { width: 60px; height: 85px; }
+  .hos-banner-title { font-size: 17px; }
+  .hos-banner-cta { padding: 8px 16px; font-size: 11px; }
+  .hos-banner-sub { font-size: 11px; }
+}
+
+/* ========== DATA FRESHNESS BADGE ========== */
+.data-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 6px;
+  font-size: 11px;
+  color: var(--faint);
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+.data-badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #22c55e;
+  flex-shrink: 0;
+}
+
+/* ========== NAV TIP BUTTON ========== */
+.nav-tip-btn {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  background: transparent;
+  color: var(--red);
+  border: 1px solid rgba(239,68,68,0.3);
+  transition: all var(--transition);
+  white-space: nowrap;
+  margin-left: 4px;
+}
+.nav-tip-btn:hover {
+  background: rgba(239,68,68,0.15);
+  border-color: rgba(239,68,68,0.5);
+  color: #ff6b6b;
+}
+
+/* ========== HIT OR SPIT — NAV LINK ========== */
+.nav-link-hos {
+  font-size: 13px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  background: rgba(212,168,67,0.12);
+  color: #d4a843;
+  border: 1px solid rgba(212,168,67,0.25);
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+.nav-link-hos:hover {
+  background: rgba(212,168,67,0.2);
+  border-color: rgba(212,168,67,0.5);
+  color: #e8c260;
+}
+
+/* ========== HIT OR SPIT — FULL SCREEN OVERLAY ========== */
+.hos-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: #0c1220;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.hos-overlay-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: rgba(12,18,32,0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--card-border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.hos-overlay-logo {
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.hos-overlay-logo span { color: var(--red); }
+.hos-close-btn {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--card-border);
+  color: var(--muted);
+  font-size: 18px;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+}
+.hos-close-btn:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+
+.hos-game-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 16px 32px;
+  gap: 16px;
+  min-height: 0;
+}
+.hos-question {
+  font-family: 'Oswald', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-align: center;
+  line-height: 1.2;
+}
+.hos-question em { font-style: normal; color: #d4a843; }
+.hos-counter {
+  font-size: 13px;
+  color: var(--faint);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ========== THE BASEBALL CARD ========== */
+.hos-card-wrapper {
+  width: 310px;
+  max-width: 90vw;
+  perspective: 800px;
+}
+.hos-card {
+  width: 100%;
+  border-radius: 14px;
+  overflow: hidden;
+  position: relative;
+  background: #e8ddd0;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.4);
+  transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
+  touch-action: pan-y;
+  user-select: none;
+}
+.hos-card.swipe-right {
+  transform: translateX(120%) rotate(14deg);
+  opacity: 0;
+  transition: transform 0.4s ease, opacity 0.4s ease;
+}
+.hos-card.swipe-left {
+  transform: translateX(-120%) rotate(-14deg);
+  opacity: 0;
+  transition: transform 0.4s ease, opacity 0.4s ease;
+}
+.hos-card.entering {
+  transform: scale(0.92) translateY(20px);
+  opacity: 0;
+  transition: none;
+}
+.hos-card.entered {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+  transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), opacity 0.35s ease;
+}
+.hos-card-border {
+  margin: 7px;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+  padding: 5px;
+}
+/* Gold corners */
+.hos-card-border::before, .hos-card-border::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: #d4a843;
+  z-index: 0;
+}
+.hos-card-border::before { top: 0; left: 0; border-radius: 10px 0 10px 0; }
+.hos-card-border::after { top: 0; right: 0; border-radius: 0 10px 0 10px; }
+.hos-corner-bl, .hos-corner-br {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: #d4a843;
+  z-index: 0;
+}
+.hos-corner-bl { bottom: 0; left: 0; border-radius: 0 10px 0 10px; }
+.hos-corner-br { bottom: 0; right: 0; border-radius: 10px 0 10px 0; }
+.hos-card-inner {
+  border-radius: 6px;
+  overflow: hidden;
+  background: #1a1a2e;
+  position: relative;
+}
+.hos-card-topbar {
+  padding: 7px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  z-index: 3;
+}
+.hos-card-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 18px;
+  color: #fff;
+  letter-spacing: 2px;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+  line-height: 1;
+}
+.hos-card-logo span { color: #d4a843; }
+.hos-card-year {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 13px;
+  color: rgba(255,255,255,0.7);
+  letter-spacing: 1px;
+}
+.hos-card-photo {
+  position: relative;
+  height: 220px;
+  background: radial-gradient(ellipse at 50% 55%, #182d4a 0%, #0e1a30 40%, #0a1020 100%);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  overflow: hidden;
+}
+.hos-card-photo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(-45deg, transparent, transparent 10px, rgba(255,255,255,0.01) 10px, rgba(255,255,255,0.01) 11px);
+  pointer-events: none;
+}
+.hos-card-photo img.hos-player-img {
+  position: relative;
+  width: 260px;
+  height: auto;
+  max-height: 270px;
+  object-fit: contain;
+  object-position: bottom center;
+  filter: drop-shadow(0 6px 20px rgba(0,0,0,0.6));
+  z-index: 2;
+  -webkit-mask-image: radial-gradient(ellipse 68% 75% at 50% 48%, black 35%, transparent 75%);
+  mask-image: radial-gradient(ellipse 68% 75% at 50% 48%, black 35%, transparent 75%);
+}
+.hos-card-watermark {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 130px; height: 130px;
+  opacity: 0.05;
+  z-index: 0;
+  filter: grayscale(100%) brightness(2);
+}
+.hos-card-pos {
+  position: absolute;
+  top: 8px; left: 8px;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 5px;
+  padding: 2px 7px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #94a3b8;
+  z-index: 3;
+}
+.hos-card-jersey {
+  position: absolute;
+  top: 6px; right: 8px;
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: #d4a843;
+  color: #1a1a2e;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+  z-index: 3;
+  line-height: 1;
+  border: 2px solid rgba(255,255,255,0.12);
+}
+.hos-card-name-banner {
+  padding: 8px 12px 6px;
+  text-align: center;
+  position: relative;
+  z-index: 3;
+  border-top: 3px solid #d4a843;
+}
+.hos-card-player-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 26px;
+  color: #fff;
+  letter-spacing: 2px;
+  text-shadow: 1px 2px 3px rgba(0,0,0,0.5);
+  line-height: 1;
+}
+.hos-card-team-info {
+  font-size: 10px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.7);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+.hos-card-stats {
+  background: #1a1a2e;
+  padding: 8px 10px;
+  display: flex;
+  gap: 2px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+.hos-card-stat {
+  flex: 1;
+  text-align: center;
+  padding: 5px 2px;
+  border-radius: 4px;
+  background: rgba(255,255,255,0.03);
+}
+.hos-card-stat-val {
+  font-size: 15px;
+  font-weight: 800;
+  color: #d4a843;
+  font-variant-numeric: tabular-nums;
+}
+.hos-card-stat-label {
+  font-size: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #64748b;
+}
+.hos-card-footer {
+  background: #0e1420;
+  padding: 4px;
+  text-align: center;
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #334155;
+}
+
+/* Swipe stamps on card */
+.hos-stamp {
+  position: absolute;
+  top: 40%;
+  transform: translateY(-50%) rotate(-12deg);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 52px;
+  letter-spacing: 6px;
+  padding: 4px 16px;
+  border-radius: 10px;
+  border: 5px solid;
+  opacity: 0;
+  z-index: 20;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+.hos-stamp.stamp-hit { right: 12px; color: #22c55e; border-color: #22c55e; }
+.hos-stamp.stamp-spit { left: 12px; color: #ef4444; border-color: #ef4444; transform: translateY(-50%) rotate(12deg); }
+.hos-card.dragging-right .stamp-hit { opacity: 0.85; }
+.hos-card.dragging-left .stamp-spit { opacity: 0.85; }
+
+/* Swipe buttons */
+.hos-swipe-btns {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+.hos-swipe-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 2px solid;
+  background: transparent;
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.18s ease;
+  font-family: 'Inter', sans-serif;
+}
+.hos-swipe-btn.btn-spit { border-color: #ef4444; color: #ef4444; }
+.hos-swipe-btn.btn-spit:hover { background: #ef4444; color: #fff; transform: scale(1.1); }
+.hos-swipe-btn.btn-hit { border-color: #22c55e; color: #22c55e; }
+.hos-swipe-btn.btn-hit:hover { background: #22c55e; color: #fff; transform: scale(1.1); }
+.hos-swipe-labels {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 310px;
+  padding: 0 8px;
+}
+.hos-swipe-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.hos-swipe-label.lbl-spit { color: #ef4444; }
+.hos-swipe-label.lbl-hit { color: #22c55e; }
+
+/* Consensus reveal */
+.hos-consensus {
+  width: 100%;
+  max-width: 310px;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.hos-consensus.visible { opacity: 1; }
+.hos-consensus-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--faint);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+  text-align: center;
+}
+.hos-consensus-bar {
+  height: 32px;
+  border-radius: 6px;
+  overflow: hidden;
+  display: flex;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.hos-consensus-hit {
+  background: linear-gradient(90deg, #16a34a, #22c55e);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 800;
+  color: white;
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.hos-consensus-spit {
+  background: linear-gradient(90deg, #ef4444, #dc2626);
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 800;
+  color: white;
+}
+.hos-consensus-total {
+  text-align: center;
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--faint);
+}
+
+/* Summary screen */
+.hos-summary {
+  text-align: center;
+  padding: 32px 24px;
+}
+.hos-summary-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+.hos-summary-sub {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 24px;
+}
+.hos-summary-stats {
+  display: flex;
+  gap: 32px;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+.hos-summary-stat {
+  text-align: center;
+}
+.hos-summary-stat-val {
+  font-size: 36px;
+  font-weight: 800;
+  line-height: 1;
+}
+.hos-summary-stat-val.hits-val { color: #22c55e; }
+.hos-summary-stat-val.spits-val { color: #ef4444; }
+.hos-summary-stat-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 4px;
+}
+.hos-play-again {
+  padding: 12px 32px;
+  background: linear-gradient(135deg, #d4a843, #c49a38);
+  color: #1a1a2e;
+  font-size: 14px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: transform 0.18s ease;
+}
+.hos-play-again:hover { transform: scale(1.05); }
+
+/* Vintage Scoreboard — flanks the card on desktop */
+.hos-play-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  width: 100%;
+  max-width: 680px;
+}
+.hos-scoreboard-panel {
+  width: 100px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.hos-scoreboard-panel .sb-label {
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.hos-scoreboard-panel .sb-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 56px;
+  line-height: 1;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0a0e18;
+  border: 2px solid rgba(255,255,255,0.06);
+  border-radius: 6px;
+  box-shadow: inset 0 2px 10px rgba(0,0,0,0.6), 0 1px 0 rgba(255,255,255,0.03);
+  position: relative;
+  overflow: hidden;
+}
+.hos-scoreboard-panel .sb-num::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 3px,
+    rgba(255,255,255,0.015) 3px,
+    rgba(255,255,255,0.015) 4px
+  );
+  pointer-events: none;
+}
+.hos-scoreboard-panel.sb-hit .sb-num { color: #22c55e; }
+.hos-scoreboard-panel.sb-spit .sb-num { color: #ef4444; }
+.hos-scoreboard-panel .sb-emoji {
+  font-size: 20px;
+  line-height: 1;
+}
+
+/* Mobile scoreboard — compact inline bar */
+.hos-scoreboard-mobile {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 6px 16px;
+  background: rgba(10,14,24,0.6);
+  border: 1px solid rgba(255,255,255,0.04);
+  border-radius: 8px;
+}
+.hos-scoreboard-mobile .sb-m-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 24px;
+  letter-spacing: 1px;
+}
+.hos-scoreboard-mobile .sb-m-item.sb-m-hit { color: #22c55e; }
+.hos-scoreboard-mobile .sb-m-item.sb-m-spit { color: #ef4444; }
+.hos-scoreboard-mobile .sb-m-label {
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: var(--faint);
+  text-transform: uppercase;
+}
+.hos-scoreboard-mobile .sb-m-divider {
+  width: 1px;
+  height: 24px;
+  background: rgba(255,255,255,0.08);
+}
+
+/* Spit emoji burst */
+@keyframes spit-burst {
+  0% { opacity: 1; transform: translate(0, 0) scale(1); }
+  100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.4); }
+}
+.spit-burst-container {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 1100;
+}
+.spit-burst-emoji {
+  position: absolute;
+  font-size: 32px;
+  animation: spit-burst 0.7s ease-out forwards;
+}
+
+/* Hit flash */
+@keyframes hit-flash {
+  0% { opacity: 0; transform: scale(0.5); }
+  30% { opacity: 1; transform: scale(1.2); }
+  100% { opacity: 0; transform: scale(2); }
+}
+.hit-flash-emoji {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%) scale(0.5);
+  font-size: 80px;
+  pointer-events: none;
+  z-index: 1100;
+  animation: hit-flash 0.6s ease-out forwards;
+}
+
+@media (max-width: 600px) {
+  .hos-question { font-size: 20px; }
+  .hos-card-wrapper { width: 280px; }
+  .hos-card-photo { height: 190px; }
+  .hos-card-photo img.hos-player-img { width: 220px; max-height: 230px; }
+  .hos-card-player-name { font-size: 22px; }
+  .hos-swipe-btn { width: 48px; height: 48px; font-size: 20px; }
+  .hos-swipe-labels { max-width: 280px; }
+  .hos-consensus { max-width: 280px; }
+  .hos-scoreboard-panel { display: none; }
+  .hos-scoreboard-mobile { display: flex; }
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+// ===========================
+// UpperDecky — React SPA
+// ===========================
+const h = React.createElement;
+const { useState, useEffect, useRef, useCallback, useMemo, Fragment } = React;
+
+// --- Constants ---
+const API = './api';
+const MLB_SCHEDULE = 'https://statsapi.mlb.com/api/v1/schedule?sportId=1&hydrate=linescore,team';
+const LOGO_CDN = 'https://a.espncdn.com/i/teamlogos/mlb/500/scoreboard/';
+const LOGO_MAP = {NYY:'nyy',BOS:'bos',TOR:'tor',TB:'tb',BAL:'bal',CLE:'cle',MIN:'min',DET:'det',CWS:'chw',KC:'kc',HOU:'hou',TEX:'tex',SEA:'sea',LAA:'laa',OAK:'oak',ATL:'atl',PHI:'phi',NYM:'nym',MIA:'mia',WSH:'wsh',MIL:'mil',CHC:'chc',STL:'stl',PIT:'pit',CIN:'cin',LAD:'lad',SD:'sd',ARI:'ari',SF:'sf',COL:'col'};
+const DIVISIONS = {
+  'AL East': ['NYY','BOS','TOR','TB','BAL'],
+  'AL Central': ['CLE','MIN','DET','CWS','KC'],
+  'AL West': ['HOU','TEX','SEA','LAA','OAK'],
+  'NL East': ['ATL','PHI','NYM','MIA','WSH'],
+  'NL Central': ['MIL','CHC','STL','PIT','CIN'],
+  'NL West': ['LAD','SD','ARI','SF','COL'],
+};
+const TEAM_NAMES = {NYY:'Yankees',BOS:'Red Sox',TOR:'Blue Jays',TB:'Rays',BAL:'Orioles',CLE:'Guardians',MIN:'Twins',DET:'Tigers',CWS:'White Sox',KC:'Royals',HOU:'Astros',TEX:'Rangers',SEA:'Mariners',LAA:'Angels',OAK:'Athletics',ATL:'Braves',PHI:'Phillies',NYM:'Mets',MIA:'Marlins',WSH:'Nationals',MIL:'Brewers',CHC:'Cubs',STL:'Cardinals',PIT:'Pirates',CIN:'Reds',LAD:'Dodgers',SD:'Padres',ARI:'D-backs',SF:'Giants',COL:'Rockies'};
+const PER_PAGE = 25;
+
+// Team primary colors for baseball card borders
+const TEAM_COLORS = {
+  NYY:'#003087', BOS:'#bd3039', TOR:'#134a8e', TB:'#092c5c', BAL:'#df4601',
+  CLE:'#00385d', MIN:'#002b5c', DET:'#0c2340', CWS:'#27251f', KC:'#004687',
+  HOU:'#002d62', TEX:'#003278', SEA:'#0c2c56', LAA:'#ba0021', OAK:'#003831',
+  ATL:'#ce1141', PHI:'#e81828', NYM:'#002d72', MIA:'#00a3e0', WSH:'#ab0003',
+  MIL:'#12284b', CHC:'#0e3386', STL:'#c41e3a', PIT:'#27251f', CIN:'#c6011f',
+  LAD:'#005a9c', SD:'#2f241d', ARI:'#a71930', SF:'#27251f', COL:'#333366'
+};
+
+function getTeamLogo(abbr) {
+  var slug = LOGO_MAP[abbr] || (abbr ? abbr.toLowerCase() : 'mlb');
+  return LOGO_CDN + slug + '.png';
+}
+
+function getHash() {
+  return window.location.hash.slice(1) || '/';
+}
+function navigate(path) {
+  window.location.hash = '#' + path;
+}
+function fmtBa(v) {
+  if (v == null) return '—';
+  return v < 1 ? (''+v.toFixed(3)).replace(/^0/,'') : v.toFixed(3);
+}
+function fmtPct(v) {
+  if (v == null) return '—';
+  return v.toFixed(1) + '%';
+}
+function fmtNum(v, dec) {
+  if (v == null) return '—';
+  if (dec != null) return v.toFixed(dec);
+  return typeof v === 'number' ? (Number.isInteger(v) ? ''+v : v.toFixed(1)) : ''+v;
+}
+
+// --- Data Cache ---
+var dataCache = {};
+async function fetchJSON(url, cacheKey) {
+  if (cacheKey && dataCache[cacheKey]) return dataCache[cacheKey];
+  var resp = await fetch(url);
+  if (!resp.ok) throw new Error('HTTP ' + resp.status);
+  var data = await resp.json();
+  if (cacheKey) dataCache[cacheKey] = data;
+  return data;
+}
+
+// ===========================
+// COMPONENTS
+// ===========================
+
+// --- Loading ---
+function Loading() {
+  return h('div', {className:'loading-spinner'},
+    h('div', {className:'spinner'}),
+    h('p', {className:'loading-text'}, 'Loading data...')
+  );
+}
+
+// --- Error ---
+function ErrorMsg(props) {
+  return h('div', {className:'error-msg'},
+    h('h3', null, 'Oops. Data struck out.'),
+    h('p', null, 'Something went wrong loading the data.'),
+    props.onRetry && h('button', {className:'retry-btn', onClick: props.onRetry}, 'Try Again')
+  );
+}
+
+// --- Navbar ---
+function Navbar(props) {
+  var _s = useState(false), mobileOpen = _s[0], setMobileOpen = _s[1];
+  var _d = useState(false), statsOpen = _d[0], setStatsOpen = _d[1];
+  var _t = useState(false), tipOpen = _t[0], setTipOpen = _t[1];
+  var hash = useHashRoute();
+  var dropRef = useRef(null);
+
+  useEffect(function() {
+    function close(e) {
+      if (dropRef.current && !dropRef.current.contains(e.target)) setStatsOpen(false);
+    }
+    document.addEventListener('click', close);
+    return function() { document.removeEventListener('click', close); };
+  }, []);
+
+  useEffect(function() { setMobileOpen(false); }, [hash]);
+
+  var funStats = [
+    {emoji:'🛢️', label:'Barrel Drought', path:'/leaderboard/due-for'},
+    {emoji:'🍔', label:'Thicc Boy Index', path:'/leaderboard/thicc-boy'},
+    {emoji:'👀', label:'Plate Discipline', path:'/leaderboard/plate-discipline'},
+    {emoji:'🤕', label:'HBP Pain Index', path:'/leaderboard/hbp'},
+    {emoji:'🌕', label:'Full Moon Effect', path:'/leaderboard/full-moon'},
+    {emoji:'📏', label:'Size vs Power', path:'/scatter'},
+  ];
+
+  return h(Fragment, null,
+    h('nav', {className:'navbar'},
+      h('div', {className:'navbar-inner'},
+        h('div', {className:'navbar-logo', onClick: function(){navigate('/')}, style:{display:'flex',alignItems:'center'}},
+          h('img', {className:'navbar-mascot', src:'mascot-upperdecky.png', alt:'UpperDecky mascot'}),
+          'UPPER', h('span', null, 'DECKY')
+        ),
+        h('div', {className:'navbar-links'},
+          h('a', {className:'nav-link' + (hash==='/' ? ' active' : ''), onClick: function(){navigate('/')}}, 'Home'),
+          h('a', {className:'nav-link' + (hash.startsWith('/players') ? ' active' : ''), onClick: function(){navigate('/players')}}, 'Players'),
+          h('a', {className:'nav-link' + (hash==='/compare' ? ' active' : ''), onClick: function(){navigate('/compare')}}, 'Compare'),
+          h('a', {className:'nav-link-hos', onClick: function(){if(props.onPlayHoS) props.onPlayHoS();}}, '\u26BE Hit or Spit'),
+          h('div', {className:'nav-dropdown', ref: dropRef},
+            h('a', {className:'nav-link' + (statsOpen ? ' active' : ''), onClick: function(e){e.stopPropagation();setStatsOpen(!statsOpen);}}, 'Stats ▾'),
+            statsOpen && h('div', {className:'nav-dropdown-menu'},
+              funStats.map(function(s) {
+                return h('div', {key:s.path, className:'nav-dropdown-item', onClick: function(){navigate(s.path);setStatsOpen(false);}},
+                  h('span', null, s.emoji), h('span', null, s.label)
+                );
+              })
+            )
+          ),
+          h('a', {className:'nav-tip-btn', onClick: function(){setTipOpen(true);}}, '\uD83D\uDCB2 Tip')
+        ),
+        h('button', {className:'hamburger', onClick: function(){setMobileOpen(!mobileOpen)}, 'aria-label':'Menu'},
+          mobileOpen ? '✕' : '☰'
+        )
+      )
+    ),
+    h('div', {className:'mobile-menu' + (mobileOpen ? ' open' : '')},
+      h('div', {className:'mobile-menu-link', onClick: function(){navigate('/')}}, 'Home'),
+      h('div', {className:'mobile-menu-link', onClick: function(){navigate('/players')}}, 'Players'),
+      h('div', {className:'mobile-menu-link', onClick: function(){navigate('/compare')}}, 'Compare'),
+      h('div', {className:'mobile-divider'}),
+      h('div', {className:'mobile-menu-link', style:{color:'#d4a843', fontWeight:700}, onClick: function(){if(props.onPlayHoS) props.onPlayHoS();}}, '\u26BE Hit or Spit'),
+      h('div', {className:'mobile-divider'}),
+      h('div', {className:'mobile-section-label'}, 'Fun Stats'),
+      funStats.map(function(s) {
+        return h('div', {key:s.path, className:'mobile-menu-link', onClick: function(){navigate(s.path)}},
+          s.emoji + ' ' + s.label
+        );
+      }),
+      h('div', {className:'mobile-divider'}),
+      h('div', {className:'mobile-menu-link', style:{color:'var(--red)', fontWeight:700}, onClick: function(){setTipOpen(true);}}, '\uD83D\uDCB2 Throw Us a Tip')
+    ),
+    h(TipModal, {open: tipOpen, onClose: function(){setTipOpen(false);}})
+  );
+}
+
+// --- useHashRoute ---
+function useHashRoute() {
+  var _s = useState(getHash()), route = _s[0], setRoute = _s[1];
+  useEffect(function() {
+    function onHash() { setRoute(getHash()); window.scrollTo(0,0); }
+    window.addEventListener('hashchange', onHash);
+    return function() { window.removeEventListener('hashchange', onHash); };
+  }, []);
+  return route;
+}
+
+// --- Footer ---
+function Footer() {
+  return h('footer', {className:'site-footer'},
+    h('div', {className:'container', style:{textAlign:'center'}},
+      h('p', {className:'footer-copy'}, 'UpperDecky \u00A9 2025 \u2014 Upper deck dingers. Upper lip pinches. Free data.'),
+      h('div', {className:'footer-tip-links'},
+        h('a', {href:'https://venmo.com/u/upperdecky15', target:'_blank', rel:'noopener noreferrer'}, '\uD83D\uDCB2 Venmo')
+      ),
+      h('a', {className:'footer-link', href:'https://www.perplexity.ai/computer', target:'_blank', rel:'noopener noreferrer', style:{display:'block', marginTop:8, fontSize:11}}, 'Created with Perplexity Computer')
+    )
+  );
+}
+
+// ===========================
+// DATA FRESHNESS BADGE
+// ===========================
+function formatUpdatedDate(isoStr) {
+  if (!isoStr) return '';
+  var d = new Date(isoStr);
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return months[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+}
+
+function DataBadge(props) {
+  var dash = props.dashboard;
+  if (!dash) return null;
+  var dateStr = formatUpdatedDate(dash.last_updated);
+  var label = dash.season + ' End-of-Season' + (dateStr ? ' \u00B7 Updated ' + dateStr : '');
+  return h('div', {className:'data-badge', style: props.style || {}},
+    h('span', {className:'data-badge-dot'}),
+    label
+  );
+}
+
+// ===========================
+// HERO
+// ===========================
+function TipModal(props) {
+  if (!props.open) return null;
+  return h('div', {className:'tip-overlay', onClick: function(e){ if(e.target.className==='tip-overlay') props.onClose(); }},
+    h('div', {className:'tip-modal'},
+      h('button', {className:'tip-modal-close', onClick: props.onClose}, '\u2715'),
+      h('h3', null, '\uD83D\uDCB2 THROW US A TIP'),
+      h('p', {className:'tip-subtitle'}, 'Scan with your Venmo app'),
+      h('img', {className:'tip-qr', src:'venmo-qr.png', alt:'Venmo QR code for @upperdecky15'}),
+      h('a', {className:'tip-venmo-link', href:'https://venmo.com/u/upperdecky15', target:'_blank', rel:'noopener noreferrer'}, 'Open in Venmo'),
+      h('p', {className:'tip-or'}, 'Venmo: @upperdecky15')
+    )
+  );
+}
+
+// ===========================
+// RADAR GUN COUNTDOWN
+// ===========================
+var OPENING_DAY = new Date('2026-03-26T18:00:00Z'); // ~1pm ET first pitch
+
+function RadarCountdown() {
+  var _cd = useState(null), cd = _cd[0], setCd = _cd[1];
+
+  useEffect(function() {
+    function calc() {
+      var now = new Date();
+      var diff = OPENING_DAY.getTime() - now.getTime();
+      if (diff <= 0) return setCd({done: true});
+      var days = Math.floor(diff / 86400000);
+      var hrs = Math.floor((diff % 86400000) / 3600000);
+      var mins = Math.floor((diff % 3600000) / 60000);
+      var secs = Math.floor((diff % 60000) / 1000);
+      setCd({done: false, days: days, hrs: hrs, mins: mins, secs: secs});
+    }
+    calc();
+    var id = setInterval(calc, 1000);
+    return function() { clearInterval(id); };
+  }, []);
+
+  if (!cd) return null;
+
+  function pad(n) { return n < 10 ? '0' + n : String(n); }
+
+  var isLive = cd.done;
+
+  return h('div', {className:'radar-group'},
+    h('div', {className:'radar-side-label'}, 'Opening Day Countdown'),
+    h('div', {className:'radar-gun'},
+      h('div', {className:'radar-body' + (isLive ? ' radar-live' : '')},
+        h('div', {className:'radar-top-label'}, isLive ? 'Season Live' : 'Opening Day'),
+        h('div', {className:'radar-screen'},
+          isLive
+            ? h('div', {className:'radar-days-row'},
+                h('span', {className:'radar-big-num'}, 'PLAY BALL')
+              )
+            : h(Fragment, null,
+                h('div', {className:'radar-days-row'},
+                  h('span', {className:'radar-big-num'}, String(cd.days)),
+                  h('span', {className:'radar-days-label'}, 'Days')
+                ),
+                h('div', {className:'radar-hms'},
+                  h('span', null, pad(cd.hrs)),
+                  h('span', {className:'radar-hms-sep'}, ':'),
+                  h('span', null, pad(cd.mins)),
+                  h('span', {className:'radar-hms-sep'}, ':'),
+                  h('span', null, pad(cd.secs))
+                )
+              )
+        ),
+        h('div', {className:'radar-bottom-row'},
+          h('span', {className:'radar-event-label'}, 'Mar 26'),
+          h('span', {className:'radar-dot'}),
+          h('span', {className:'radar-event-label'}, isLive ? 'LIVE' : 'SOON')
+        )
+      ),
+      h('div', {className:'radar-handle'})
+    )
+  );
+}
+
+function HeroSection(props) {
+  var dash = props.dashboard;
+  var _tip = useState(false), tipOpen = _tip[0], setTipOpen = _tip[1];
+  return h('header', {className:'hero'},
+    h('div', {className:'container hero-content'},
+      h(RadarCountdown),
+      h('img', {className:'hero-mascot', src:'mascot-upperdecky.png', alt:'UpperDecky mascot'}),
+      h('div', {className:'hero-text-block'},
+        h('h1', {className:'hero-title'}, 'UPPER', h('span', null, 'DECKY')),
+        h('p', {className:'hero-tagline'}, 'No paywalls. No subscriptions. No BS.'),
+        h(DataBadge, {dashboard: dash, style:{marginTop:2}}),
+        h('div', {className:'hero-kpis'},
+          h('div', {className:'hero-kpi'},
+            h('span', {className:'hero-kpi-value'}, dash ? dash.total_batters : '...'),
+            h('span', {className:'hero-kpi-label'}, 'Players')
+          ),
+          h('div', {className:'hero-kpi'},
+            h('span', {className:'hero-kpi-value'}, dash ? dash.total_teams : '...'),
+            h('span', {className:'hero-kpi-label'}, 'Teams')
+          ),
+          h('div', {className:'hero-kpi'},
+            h('span', {className:'hero-kpi-value'}, dash ? dash.season : '...'),
+            h('span', {className:'hero-kpi-label'}, 'Season')
+          ),
+          h('div', {className:'hero-kpi'},
+            h('span', {className:'hero-kpi-value'}, '$0'),
+            h('span', {className:'hero-kpi-label'}, 'Forever')
+          )
+        )
+      )
+    ),
+    h(TipModal, {open: tipOpen, onClose: function(){setTipOpen(false);}})
+  );
+}
+
+// ===========================
+// TICKER
+// ===========================
+function DualTickers(props) {
+  var batters = props.batters;
+
+  var hrLeaders = useMemo(function() {
+    if (!batters || !batters.length) return '';
+    var byHR = batters.slice().sort(function(a,b){return (b.home_runs||0)-(a.home_runs||0);});
+    var items = [];
+    for (var i=0; i<10 && i<byHR.length; i++) {
+      var p = byHR[i];
+      items.push(p.full_name.split(' ').pop().toUpperCase() + ' ' + (p.home_runs||0));
+    }
+    return '\uD83C\uDFE0 HR LEADERS: ' + items.join(' \u2022 ');
+  }, [batters]);
+
+  var hotCold = useMemo(function() {
+    if (!batters || !batters.length) return {hot:'', cold:''};
+    var byBA = batters.slice().filter(function(b){return b.ba != null;}).sort(function(a,b){return (b.ba||0)-(a.ba||0);});
+    var hotItems = [];
+    for (var i=0; i<5 && i<byBA.length; i++) {
+      var p = byBA[i];
+      hotItems.push(p.full_name.split(' ').pop().toUpperCase() + ' ' + fmtBa(p.ba) + ' L14');
+    }
+    var coldItems = [];
+    for (var i=byBA.length-1; i>=0 && coldItems.length<5; i--) {
+      var p = byBA[i];
+      if (p.ba != null && p.ba > 0) {
+        coldItems.push(p.full_name.split(' ').pop().toUpperCase() + ' ' + fmtBa(p.ba) + ' L14');
+      }
+    }
+    return {
+      hot: '\uD83D\uDD25 HOT: ' + hotItems.join(' \u2022 '),
+      cold: '\uD83E\uDDCA COLD: ' + coldItems.join(' \u2022 ')
+    };
+  }, [batters]);
+
+  if (!hrLeaders) return null;
+
+  return h(Fragment, null,
+    h('div', {className:'ticker-wrapper'},
+      h('div', {className:'ticker-track'},
+        h('span', {className:'ticker-red'}, hrLeaders),
+        h('span', {className:'ticker-red'}, hrLeaders),
+        h('span', {className:'ticker-red'}, hrLeaders)
+      )
+    ),
+    h('div', {className:'ticker-wrapper hot-cold'},
+      h('div', {className:'ticker-track', style:{animationDuration:'35s'}},
+        h('span', null,
+          h('span', {className:'ticker-red'}, hotCold.hot),
+          '   ',
+          h('span', {className:'ticker-blue'}, hotCold.cold)
+        ),
+        h('span', null,
+          h('span', {className:'ticker-red'}, hotCold.hot),
+          '   ',
+          h('span', {className:'ticker-blue'}, hotCold.cold)
+        ),
+        h('span', null,
+          h('span', {className:'ticker-red'}, hotCold.hot),
+          '   ',
+          h('span', {className:'ticker-blue'}, hotCold.cold)
+        )
+      )
+    )
+  );
+}
+
+
+// ===========================
+// THE PRESS BOX — AI EXPERTS
+// ===========================
+function PressBox() {
+  var analysts = [
+    {name:'Sarah Jenkins', role:'The Analyst', title:'Data Scientist', record:'42-28', pct:'.600', img:'expert-female-1.png',
+     picks:['NYY -1.5 vs BOS (+110)','Over 8.5 runs \u2014 LAD/SF','Ohtani HR +320'], conf:'\uD83D\uDD25\uD83D\uDD25\uD83D\uDD25 87% conf'},
+    {name:'"Ace" Martinez', role:'The Pitching Guru', title:'Former Pitcher', record:'38-32', pct:'.543', img:'expert-male-1.png',
+     picks:['ATL ML vs NYM (-135)','Under 7.5 runs \u2014 HOU/SEA','deGrom 9+ K\'s +180'], conf:'\uD83E\uDDCA\uD83E\uDDCA 72% conf'},
+    {name:'"Pop" Sullivan', role:'The Old School Scout', title:'40 Yrs in Baseball', record:'45-25', pct:'.643', img:'expert-male-2.png',
+     picks:['CLE -1.5 vs CWS (-140)','Over 9 runs \u2014 COL/ARI','Judge HR +280'], conf:'\uD83D\uDCAA\uD83D\uDCAA\uD83D\uDCAA 91% conf'},
+    {name:'Liam Chen', role:'The Algorithm', title:'Machine Learning', record:'50-20', pct:'.714', img:'expert-male-3.png',
+     picks:['LAD -2.5 vs MIA (+145)','Under 6.5 runs \u2014 TB/MIN','Soto 2+ hits +160'], conf:'\uD83E\uDD16\uD83E\uDD16\uD83E\uDD16 94% conf'},
+    {name:'"The Mouth"', role:'The Hot Take Machine', title:'Sports Radio Energy', record:'31-39', pct:'.443', img:'expert-female-2.png',
+     picks:['PIT ML vs PHI (+210)','Over 11 runs \u2014 COL/CIN','Schwarber 2 HR +1400'], conf:'\uD83E\uDD2A\uD83E\uDD2A\uD83E\uDD2A YOLO'}
+  ];
+
+  return h('section', {className:'press-box-section section-gap'},
+    h('div', {className:'container'},
+      h('div', {className:'section-header'},
+        h('h2', {className:'section-title'}, 'THE PRESS BOX \uD83C\uDFAF')
+      ),
+      h('p', {className:'section-subtitle'}, '5 AI analysts. 3 picks each. Every game day. Track their records. Blame them, not us.'),
+      h('div', {className:'experts-row'},
+        analysts.map(function(a) {
+          return h('div', {className:'card-container', key:a.name},
+            h('div', {className:'card-inner'},
+              h('div', {className:'card-front'},
+                h('img', {src:a.img, alt:a.name}),
+                h('div', {className:'card-front-info'},
+                  h('div', null,
+                    h('div', {className:'card-front-name'}, a.role),
+                    h('div', {className:'card-front-title'}, a.title)
+                  ),
+                  h('div', {className:'card-front-record'}, 'Season', h('br'), a.record, h('br'), '(' + a.pct + ')')
+                )
+              ),
+              h('div', {className:'card-back'},
+                h('div', {className:'card-back-title'}, "Today's Picks"),
+                a.picks.map(function(pick, idx) {
+                  return h('div', {className:'card-back-pick', key:idx}, pick);
+                }),
+                h('div', {className:'card-back-confidence'}, a.conf)
+              )
+            )
+          );
+        })
+      )
+    )
+  );
+}
+
+// ===========================
+// LIVE GAMES
+// ===========================
+/* MLB Ballpark info: coordinates + roof type for weather */
+var BALLPARKS = {
+  'Yankee Stadium':       {lat:40.829,lon:-73.926,roof:'open'},
+  'Fenway Park':          {lat:42.346,lon:-71.098,roof:'open'},
+  'Rogers Centre':        {lat:43.641,lon:-79.389,roof:'retractable'},
+  'Tropicana Field':      {lat:27.768,lon:-82.653,roof:'dome'},
+  'Oriole Park at Camden Yards': {lat:39.284,lon:-76.622,roof:'open'},
+  'Progressive Field':    {lat:41.496,lon:-81.685,roof:'open'},
+  'Target Field':         {lat:44.982,lon:-93.278,roof:'open'},
+  'Comerica Park':        {lat:42.339,lon:-83.049,roof:'open'},
+  'Guaranteed Rate Field':{lat:41.830,lon:-87.634,roof:'open'},
+  'Rate Field':           {lat:41.830,lon:-87.634,roof:'open'},
+  'Kauffman Stadium':     {lat:39.051,lon:-94.481,roof:'open'},
+  'Minute Maid Park':     {lat:29.757,lon:-95.355,roof:'retractable'},
+  'Globe Life Field':     {lat:32.747,lon:-97.084,roof:'retractable'},
+  'T-Mobile Park':        {lat:47.591,lon:-122.332,roof:'retractable'},
+  'Angel Stadium':        {lat:33.800,lon:-117.883,roof:'open'},
+  'Oakland Coliseum':     {lat:37.751,lon:-122.201,roof:'open'},
+  'Oakland-Alameda County Coliseum': {lat:37.751,lon:-122.201,roof:'open'},
+  'Sutter Health Park':   {lat:38.580,lon:-121.509,roof:'open'},
+  'Truist Park':          {lat:33.891,lon:-84.468,roof:'open'},
+  'Citizens Bank Park':   {lat:39.906,lon:-75.167,roof:'open'},
+  'Citi Field':           {lat:40.757,lon:-73.846,roof:'open'},
+  'loanDepot park':       {lat:25.778,lon:-80.220,roof:'retractable'},
+  'Nationals Park':       {lat:38.873,lon:-77.007,roof:'open'},
+  'American Family Field':{lat:43.028,lon:-87.971,roof:'retractable'},
+  'Wrigley Field':        {lat:41.948,lon:-87.656,roof:'open'},
+  'Busch Stadium':        {lat:38.623,lon:-90.193,roof:'open'},
+  'PNC Park':             {lat:40.447,lon:-80.006,roof:'open'},
+  'Great American Ball Park': {lat:39.097,lon:-84.508,roof:'open'},
+  'Dodger Stadium':       {lat:34.074,lon:-118.240,roof:'open'},
+  'Petco Park':           {lat:32.707,lon:-117.157,roof:'open'},
+  'Chase Field':          {lat:33.446,lon:-112.067,roof:'retractable'},
+  'Oracle Park':          {lat:37.779,lon:-122.389,roof:'open'},
+  'Coors Field':          {lat:39.756,lon:-104.994,roof:'open'},
+};
+
+var weatherCache = {};
+function fetchWeather(venueName) {
+  if (weatherCache[venueName]) return Promise.resolve(weatherCache[venueName]);
+  var park = null;
+  for (var k in BALLPARKS) {
+    if (venueName && venueName.indexOf(k) >= 0 || k.indexOf(venueName) >= 0) { park = BALLPARKS[k]; break; }
+  }
+  if (!park) {
+    // Try partial match
+    var vnLow = (venueName||'').toLowerCase();
+    for (var k2 in BALLPARKS) {
+      if (vnLow.indexOf(k2.toLowerCase().split(' ')[0]) >= 0) { park = BALLPARKS[k2]; break; }
+    }
+  }
+  if (!park) return Promise.resolve(null);
+  if (park.roof === 'dome') {
+    var result = {dome: true, roof: 'dome'};
+    weatherCache[venueName] = result;
+    return Promise.resolve(result);
+  }
+  return fetch('/.netlify/functions/weather?lat=' + park.lat + '&lon=' + park.lon)
+    .then(function(r){ return r.json(); })
+    .then(function(w){
+      w.roof = park.roof;
+      w.dome = false;
+      weatherCache[venueName] = w;
+      return w;
+    })
+    .catch(function(){
+      return null;
+    });
+}
+
+function LiveGames() {
+  var _s = useState(null), games = _s[0], setGames = _s[1];
+  var _l = useState(true), loading = _l[0], setLoading = _l[1];
+  var _e = useState(false), error = _e[0], setError = _e[1];
+  var _w = useState({}), weather = _w[0], setWeather = _w[1];
+  var scrollRef = useRef(null);
+
+  var loadGames = useCallback(function() {
+    setLoading(true);
+    setError(false);
+    var today = new Date();
+    var dateStr = today.getFullYear() + '-' + String(today.getMonth()+1).padStart(2,'0') + '-' + String(today.getDate()).padStart(2,'0');
+    fetch(MLB_SCHEDULE + '&date=' + dateStr)
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        var dateGames = (data.dates && data.dates[0] && data.dates[0].games) || [];
+        setGames(dateGames);
+        setLoading(false);
+        // Fetch weather for each venue
+        dateGames.forEach(function(g) {
+          var vn = g.venue && g.venue.name;
+          if (vn && !weather[vn]) {
+            fetchWeather(vn).then(function(w) {
+              if (w) setWeather(function(prev) { var next = Object.assign({}, prev); next[vn] = w; return next; });
+            });
+          }
+        });
+      })
+      .catch(function(){
+        setGames([]);
+        setLoading(false);
+      });
+  }, []);
+
+  useEffect(function() {
+    loadGames();
+    var iv = setInterval(loadGames, 60000);
+    return function(){ clearInterval(iv); };
+  }, [loadGames]);
+
+  function getAbbrFromName(name) {
+    var map = {'Yankees':'NYY','Red Sox':'BOS','Blue Jays':'TOR','Rays':'TB','Orioles':'BAL','Guardians':'CLE','Twins':'MIN','Tigers':'DET','White Sox':'CWS','Royals':'KC','Astros':'HOU','Rangers':'TEX','Mariners':'SEA','Angels':'LAA','Athletics':'OAK','Braves':'ATL','Phillies':'PHI','Mets':'NYM','Marlins':'MIA','Nationals':'WSH','Brewers':'MIL','Cubs':'CHC','Cardinals':'STL','Pirates':'PIT','Reds':'CIN','Dodgers':'LAD','Padres':'SD','Diamondbacks':'ARI','D-backs':'ARI','Giants':'SF','Rockies':'COL'};
+    for (var k in map) { if (name && name.indexOf(k) >= 0) return map[k]; }
+    return '';
+  }
+
+  function renderGameCard(game, i) {
+    var away = game.teams && game.teams.away;
+    var home = game.teams && game.teams.home;
+    if (!away || !home) return null;
+    var awayAbbr = getAbbrFromName(away.team && away.team.name);
+    var homeAbbr = getAbbrFromName(home.team && home.team.name);
+    var awayScore = away.score;
+    var homeScore = home.score;
+    var statusCode = game.status && game.status.statusCode;
+    var isLive = statusCode === 'I' || statusCode === 'PW' || statusCode === 'MA' || statusCode === 'MF';
+    var isFinal = statusCode === 'F' || statusCode === 'FT' || statusCode === 'FO' || statusCode === 'FR' || statusCode === 'O';
+    var inning = game.linescore && game.linescore.currentInning;
+    var halfInning = game.linescore && game.linescore.inningHalf;
+    var statusText = '';
+    var statusClass = 'upcoming';
+    var barClass = 'upcoming';
+    if (isLive) {
+      statusText = (halfInning === 'Top' ? 'Top ' : halfInning === 'Bottom' ? 'Bot ' : '') + (inning ? ordinal(inning) : '');
+      statusClass = 'live';
+      barClass = 'live';
+    } else if (isFinal) {
+      statusText = 'Final';
+      statusClass = 'final';
+      barClass = 'final';
+    } else {
+      var gt = game.gameDate ? new Date(game.gameDate) : null;
+      if (gt) {
+        statusText = gt.toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit', timeZoneName:'short'});
+      } else {
+        statusText = game.status && game.status.detailedState || 'Scheduled';
+      }
+    }
+    var awayWin = awayScore != null && homeScore != null && awayScore > homeScore;
+    var homeWin = awayScore != null && homeScore != null && homeScore > awayScore;
+    var venue = game.venue && game.venue.name || '';
+    var w = weather[venue];
+    var weatherEl = null;
+    if (w) {
+      if (w.dome) {
+        weatherEl = h('div', {className:'game-weather dome'}, '\uD83C\uDFDF\uFE0F Dome');
+      } else if (w.temperature) {
+        var wIcon = '\u2600\uFE0F';
+        var fc = (w.shortForecast||'').toLowerCase();
+        if (fc.indexOf('rain') >= 0 || fc.indexOf('shower') >= 0) wIcon = '\uD83C\uDF27\uFE0F';
+        else if (fc.indexOf('cloud') >= 0 || fc.indexOf('overcast') >= 0) wIcon = '\u2601\uFE0F';
+        else if (fc.indexOf('partly') >= 0) wIcon = '\u26C5';
+        else if (fc.indexOf('snow') >= 0) wIcon = '\u2744\uFE0F';
+        else if (fc.indexOf('thunder') >= 0 || fc.indexOf('storm') >= 0) wIcon = '\u26A1';
+        else if (fc.indexOf('fog') >= 0) wIcon = '\uD83C\uDF2B\uFE0F';
+        var windText = w.windSpeed ? ' \uD83D\uDCA8 ' + w.windSpeed : '';
+        weatherEl = h('div', {className:'game-weather'},
+          h('span', null, wIcon + ' ' + w.temperature + '\u00B0' + (w.unit||'F')),
+          h('span', {className:'game-weather-detail'}, (w.shortForecast||'').split(' ').slice(0,3).join(' ') + windText),
+          w.roof === 'retractable' ? h('span', {className:'game-weather-roof'}, '\uD83C\uDFDF\uFE0F Retractable') : null
+        );
+      }
+    }
+
+    return h('div', {className:'game-card', key:i},
+      h('div', {className:'game-card-bar ' + barClass}),
+      h('div', {className:'game-card-body'},
+        h('div', {className:'game-team-row'},
+          h('img', {className:'game-team-logo', src: getTeamLogo(awayAbbr), alt: awayAbbr, loading:'lazy'}),
+          h('span', {className:'game-team-abbr'}, awayAbbr),
+          h('span', {className:'game-team-score' + (isFinal || isLive ? (awayWin ? ' winner' : ' loser') : ''), style: !isLive && !isFinal ? {color:'var(--muted)'} : undefined},
+            awayScore != null ? awayScore : '\u2013'
+          )
+        ),
+        h('div', {className:'game-team-row'},
+          h('img', {className:'game-team-logo', src: getTeamLogo(homeAbbr), alt: homeAbbr, loading:'lazy'}),
+          h('span', {className:'game-team-abbr'}, homeAbbr),
+          h('span', {className:'game-team-score' + (isFinal || isLive ? (homeWin ? ' winner' : ' loser') : ''), style: !isLive && !isFinal ? {color:'var(--muted)'} : undefined},
+            homeScore != null ? homeScore : '\u2013'
+          )
+        ),
+        h('div', {className:'game-status'},
+          h('span', {className:'game-inning ' + statusClass},
+            isLive && h('span', {className:'pulse-dot', style:{width:6,height:6}}),
+            ' ' + statusText
+          ),
+          h('span', {className:'game-venue'}, venue)
+        ),
+        weatherEl
+      )
+    );
+  }
+
+  function ordinal(n) {
+    var s = ['th','st','nd','rd'];
+    var v = n % 100;
+    return n + (s[(v-20)%10]||s[v]||s[0]);
+  }
+
+  return h('section', {className:'live-games section-gap'},
+    h('div', {className:'container'},
+      h('div', {className:'section-header'},
+        h('h2', {className:'section-title'}, 'LIVE GAMES'),
+        h('div', {className:'live-badge'}, h('span', {className:'pulse-dot'}), ' LIVE')
+      ),
+      loading ? h(Loading) :
+      (!games || games.length === 0) ?
+        h('div', {className:'no-games-msg'}, 'No games scheduled today. Go touch grass.') :
+        h('div', {className:'games-scroll-wrapper'},
+          h('button', {className:'scroll-btn left', onClick: function(){scrollRef.current && scrollRef.current.scrollBy({left:-240,behavior:'smooth'})}, 'aria-label':'Scroll left'}, '\u2039'),
+          h('div', {className:'games-scroll', ref: scrollRef},
+            games.map(renderGameCard)
+          ),
+          h('button', {className:'scroll-btn right', onClick: function(){scrollRef.current && scrollRef.current.scrollBy({left:240,behavior:'smooth'})}, 'aria-label':'Scroll right'}, '\u203A')
+        )
+    )
+  );
+}
+
+// ===========================
+// FIND YOUR TEAM
+// ===========================
+function FindYourTeam(props) {
+  var teams = props.teams;
+  var batters = props.batters;
+  var teamCounts = useMemo(function() {
+    if (!batters) return {};
+    var c = {};
+    batters.forEach(function(b){ c[b.team] = (c[b.team]||0)+1; });
+    return c;
+  }, [batters]);
+
+  var divEntries = Object.entries(DIVISIONS);
+  return h('section', {className:'team-grid-section section-gap', id:'teams'},
+    h('div', {className:'container'},
+      h('div', {className:'section-header'},
+        h('h2', {className:'section-title'}, 'FIND YOUR TEAM')
+      ),
+      h('p', {className:'section-subtitle'}, 'Select a team to explore their roster'),
+      h('div', {className:'divisions-grid'},
+        divEntries.map(function(entry) {
+          var divName = entry[0], teamAbbrs = entry[1];
+          return h('div', {className:'division-col', key: divName},
+            h('div', {className:'division-header'}, divName),
+            teamAbbrs.map(function(abbr) {
+              return h('div', {className:'team-card-sm', key: abbr, onClick: function(){navigate('/team/'+abbr)}},
+                h('img', {src: getTeamLogo(abbr), alt: TEAM_NAMES[abbr], loading:'lazy'}),
+                h('div', {className:'team-card-info'},
+                  h('div', {className:'team-card-name'}, TEAM_NAMES[abbr]),
+                  h('div', {className:'team-card-meta'}, (teamCounts[abbr]||0) + ' players')
+                )
+              );
+            })
+          );
+        })
+      )
+    )
+  );
+}
+
+// ===========================
+// EXPLORE STATS
+// ===========================
+function ExploreStats() {
+  var standardStats = [
+    {emoji:'\u26BE', label:'AVG', sort:'ba', desc:'Batting Average'},
+    {emoji:'\uD83C\uDFAF', label:'OBP', sort:'obp', desc:'On-Base Percentage'},
+    {emoji:'\uD83D\uDCAA', label:'SLG', sort:'slg', desc:'Slugging Percentage'},
+    {emoji:'\uD83D\uDCCA', label:'OPS', sort:'ops', desc:'On-Base Plus Slugging'},
+    {emoji:'\uD83D\uDCA3', label:'HR', sort:'home_runs', desc:'Home Runs'},
+    {emoji:'\uD83D\uDE80', label:'EV', sort:'avg_launch_speed', desc:'Exit Velocity'},
+    {emoji:'\uD83D\uDD25', label:'HH%', sort:'hard_hit_rate', desc:'Hard Hit Rate'},
+    {emoji:'\uD83D\uDEE2\uFE0F', label:'BRL%', sort:'barrel_rate', desc:'Barrel Rate'},
+    {emoji:'\uD83D\uDCC8', label:'xwOBA', sort:'xwoba', desc:'Expected Weighted On-Base Average'},
+    {emoji:'\uD83C\uDFAF', label:'SS%', sort:'sweet_spot_rate', desc:'Sweet Spot Rate'},
+  ];
+  var funStats = [
+    {emoji:'\uD83D\uDEE2\uFE0F', label:'Barrel Drought', path:'/leaderboard/due-for', desc:'Barreling up but no HR'},
+    {emoji:'\uD83C\uDF54', label:'Thicc Boy', path:'/leaderboard/thicc-boy', desc:'Power per pound'},
+    {emoji:'\uD83D\uDC40', label:'Plate Eyes', path:'/leaderboard/plate-discipline', desc:'Best plate discipline'},
+    {emoji:'\uD83E\uDD15', label:'HBP Pain', path:'/leaderboard/hbp', desc:'Most hit batters'},
+    {emoji:'\uD83C\uDF15', label:'Full Moon', path:'/leaderboard/full-moon', desc:'Lunar batting avg'},
+    {emoji:'\uD83D\uDCCF', label:'Height/Weight', path:'/scatter', desc:'Size vs power'},
+    {emoji:'\uD83D\uDD04', label:'Compare', path:'/compare', desc:'Side by side'},
+  ];
+  return h('section', {className:'stats-grid-section section-gap', id:'stats'},
+    h('div', {className:'container'},
+      h('div', {className:'section-header'},
+        h('h2', {className:'section-title'}, 'EXPLORE STATS')
+      ),
+      h('div', {className:'stats-grid'},
+        standardStats.map(function(s) {
+          return h('div', {className:'stat-card', key: s.label, onClick: function(){navigate('/players?sort='+s.sort);}},
+            h('div', {className:'stat-emoji'}, s.emoji),
+            h('div', {className:'stat-label'}, s.label),
+            h('div', {className:'stat-desc'}, s.desc)
+          );
+        }),
+        funStats.map(function(s) {
+          return h('div', {className:'stat-card active', key: s.label, onClick: function(){navigate(s.path);}},
+            h('div', {className:'stat-emoji'}, s.emoji),
+            h('div', {className:'stat-label'}, s.label),
+            h('div', {className:'stat-desc'}, s.desc)
+          );
+        })
+      )
+    )
+  );
+}
+
+
+// ===========================
+// THE DUGOUT — FEATURED CREATORS
+// ===========================
+function DugoutSection() {
+  var creators = [
+    {name:'Nick Pollack', handle:'@PitcherList', url:'https://x.com/PitcherList', desc:'Pitcher List Founder, 5x FSWA Winner', color:'#ef4444', letter:'N'},
+    {name:'Codify', handle:'@CodifyBaseball', url:'https://x.com/CodifyBaseball', desc:'Trusted by 300+ MLB pitchers. Heat maps & pitch design.', color:'#38bdf8', letter:'C'},
+    {name:'Sarah Langs', handle:'@SlangsOnSports', url:'https://x.com/SlangsOnSports', desc:'MLB Official. Stats queen. Previously ESPN.', color:'#22c55e', letter:'S'},
+    {name:'Jomboy Media', handle:'@JomboyMedia', url:'https://x.com/JomboyMedia', desc:'Baseball breakdowns. 447K strong.', color:'#94a3b8', letter:'J'}
+  ];
+
+  return h('section', {className:'dugout-section section-gap'},
+    h('div', {className:'container'},
+      h('div', {className:'section-header', style:{justifyContent:'center'}},
+        h('h2', {className:'section-title'}, 'THE DUGOUT')
+      ),
+      h('p', {className:'section-subtitle', style:{textAlign:'center'}}, 'Follow us. Roast us. Whatever.'),
+      h('div', {className:'dugout-social', style:{textAlign:'center'}},
+        h('a', {className:'x-btn', href:'https://x.com/UpperDecky15', target:'_blank', rel:'noopener noreferrer'},
+          h('svg', {viewBox:'0 0 24 24', fill:'currentColor', width:20, height:20},
+            h('path', {d:'M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z'})
+          ),
+          ' Follow on X'
+        )
+      ),
+      h('div', {className:'featured-title', style:{textAlign:'center'}}, 'FEATURED CREATORS'),
+      h('div', {className:'creators-grid'},
+        creators.map(function(c) {
+          return h('div', {className:'creator-card', key:c.handle},
+            h('div', {className:'creator-header'},
+              h('div', {className:'creator-avatar', style:{background:c.color}}, c.letter),
+              h('div', null,
+                h('div', {className:'creator-name'}, c.name),
+                h('a', {className:'creator-handle', href:c.url, target:'_blank', rel:'noopener noreferrer'}, c.handle)
+              )
+            ),
+            h('p', {className:'creator-desc'}, c.desc),
+            h('a', {className:'follow-btn', href:c.url, target:'_blank', rel:'noopener noreferrer'}, 'Follow on X')
+          );
+        })
+      )
+    )
+  );
+}
+
+// ===========================
+// SPOTLIGHT + TOP 10
+// ===========================
+function SpotlightSection(props) {
+  var batters = props.batters;
+  var spotlight = useMemo(function() {
+    if (!batters || !batters.length) return null;
+    return batters.slice().sort(function(a,b){return (b.ops||0)-(a.ops||0);})[0];
+  }, [batters]);
+  var top10 = useMemo(function() {
+    if (!batters || !batters.length) return [];
+    return batters.slice().sort(function(a,b){return (b.avg_launch_speed||0)-(a.avg_launch_speed||0);}).slice(0,10);
+  }, [batters]);
+
+  if (!spotlight) return null;
+  return h('section', {className:'spotlight-section section-gap', id:'spotlight'},
+    h('div', {className:'container'},
+      h('div', {className:'section-header'},
+        h('h2', {className:'section-title'}, 'PLAYER SPOTLIGHT')
+      ),
+      h('div', {className:'spotlight-grid'},
+        h('div', {className:'spotlight-card', style:{cursor:'pointer'}, onClick: function(){navigate('/player/'+spotlight.batter_id);}},
+          h('div', {className:'spotlight-header'},
+            h('img', {className:'spotlight-headshot', src: spotlight.headshot_url, alt: spotlight.full_name, loading:'lazy'}),
+            h('div', null,
+              h('div', {className:'spotlight-name'}, spotlight.full_name),
+              h('div', {className:'spotlight-meta'}, spotlight.team + ' \u00B7 ' + spotlight.position)
+            )
+          ),
+          h('div', {className:'spotlight-stats'},
+            h('div', {className:'spotlight-stat'}, h('div', {className:'spotlight-stat-val'}, fmtBa(spotlight.ba)), h('div', {className:'spotlight-stat-label'}, 'AVG')),
+            h('div', {className:'spotlight-stat'}, h('div', {className:'spotlight-stat-val'}, spotlight.home_runs), h('div', {className:'spotlight-stat-label'}, 'HR')),
+            h('div', {className:'spotlight-stat'}, h('div', {className:'spotlight-stat-val'}, fmtNum(spotlight.avg_launch_speed,1)), h('div', {className:'spotlight-stat-label'}, 'EV mph')),
+            h('div', {className:'spotlight-stat'}, h('div', {className:'spotlight-stat-val'}, fmtBa(spotlight.ops)), h('div', {className:'spotlight-stat-label'}, 'OPS')),
+            h('div', {className:'spotlight-stat'}, h('div', {className:'spotlight-stat-val'}, fmtPct(spotlight.barrel_rate)), h('div', {className:'spotlight-stat-label'}, 'BRL%')),
+            h('div', {className:'spotlight-stat'}, h('div', {className:'spotlight-stat-val'}, fmtBa(spotlight.xwoba)), h('div', {className:'spotlight-stat-label'}, 'xwOBA'))
+          )
+        ),
+        h('div', {className:'leaderboard-card'},
+          h('div', {className:'leaderboard-title'}, h('span', null, '\uD83C\uDFC6'), ' TOP 10 \u2014 Exit Velocity'),
+          top10.map(function(p, i) {
+            return h('div', {className:'lb-row', key: p.batter_id, onClick: function(){navigate('/player/'+p.batter_id);}},
+              h('span', {className:'lb-rank' + (i===0?' first':'')}, i+1),
+              h('img', {className:'lb-headshot', src: p.headshot_url, alt: p.full_name, loading:'lazy'}),
+              h('span', {className:'lb-name'}, p.full_name),
+              h('span', {className:'lb-team'}, p.team),
+              h('span', {className:'lb-val'}, fmtNum(p.avg_launch_speed,1))
+            );
+          })
+        )
+      )
+    )
+  );
+}
+
+// ===========================
+// LLHR TRACKER + GIVEAWAY
+// ===========================
+function LLHRTracker(props) {
+  var data = props.data;
+  if (!data) return null;
+  var _exp = useState(false), expanded = _exp[0], setExpanded = _exp[1];
+  var events = data.events || [];
+  var total = data.total || events.length;
+  var season = data.season || 2025;
+  var lastEvent = events.length > 0 ? events[events.length - 1] : null;
+
+  function fmtDate(dateStr) {
+    var parts = dateStr.split('-');
+    var d = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return months[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+  }
+
+  return h('div', {className:'container'},
+    h('div', {className:'llhr-banner'},
+      // Header
+      h('div', {className:'llhr-header'},
+        h('span', {style:{fontSize:28}}, '\uD83C\uDFDF\uFE0F'),
+        h('span', {className:'llhr-title'}, 'Little League Home Run Tracker')
+      ),
+      // Count boxes
+      h('div', {className:'llhr-count-row'},
+        h('div', {className:'llhr-count-box'},
+          h('div', {className:'llhr-count-num'}, String(total)),
+          h('div', {className:'llhr-count-label'}, 'LLHRs')
+        ),
+        h('div', {className:'llhr-count-box'},
+          h('div', {className:'llhr-count-num'}, String(season)),
+          h('div', {className:'llhr-count-label'}, 'Season')
+        ),
+        events.length > 0 && h('div', {className:'llhr-count-box'},
+          h('div', {className:'llhr-count-num'}, lastEvent.home_to_home_secs.toFixed(1) + 's'),
+          h('div', {className:'llhr-count-label'}, 'Last Time')
+        )
+      ),
+      // Last LLHR
+      lastEvent && h('div', {className:'llhr-last'},
+        'Latest: ',
+        h('strong', null, lastEvent.player),
+        ' (' + lastEvent.team + ') \u2014 ',
+        fmtDate(lastEvent.date),
+        ' vs ' + lastEvent.opponent
+      ),
+      // Giveaway box
+      data.giveaway_active && h('div', {className:'llhr-giveaway'},
+        h('div', {className:'llhr-giveaway-title'}, '\uD83C\uDF81 LLHR Giveaway \u2014 Every. Single. One.'),
+        h('div', {className:'llhr-giveaway-prize'},
+          'Every time an inside-the-park HR happens this season, we\'re giving away a ',
+          h('span', {className:'gold'}, 'box of baseball cards'),
+          ' + a ',
+          h('span', {className:'gold'}, '$50 Amazon gift card'),
+          '.'
+        ),
+        h('div', {className:'llhr-giveaway-steps'},
+          h('span', {className:'llhr-step'},
+            h('span', {className:'step-num'}, '1'),
+            'Follow @UpperDecky15 on X'
+          ),
+          h('span', {className:'llhr-step'},
+            h('span', {className:'step-num'}, '2'),
+            'DM us: LLHR'
+          ),
+          h('span', {className:'llhr-step'},
+            h('span', {className:'step-num'}, '3'),
+            'Win free stuff'
+          )
+        ),
+        h('a', {
+          className: 'llhr-follow-btn',
+          href: 'https://x.com/UpperDecky15',
+          target: '_blank',
+          rel: 'noopener noreferrer'
+        },
+          h('svg', {viewBox:'0 0 24 24', fill:'currentColor', width:16, height:16},
+            h('path', {d:'M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z'})
+          ),
+          'Follow & Enter'
+        )
+      ),
+      // Expandable event list
+      events.length > 0 && h('button', {
+        className: 'llhr-expand-btn',
+        onClick: function() { setExpanded(!expanded); }
+      }, expanded ? '\u25B2 Hide ' + season + ' LLHRs' : '\u25BC View All ' + total + ' LLHRs from ' + season),
+      expanded && h('div', {className:'llhr-event-list'},
+        events.map(function(ev, i) {
+          return h('div', {className:'llhr-event', key:i},
+            h('div', {className:'llhr-event-num'}, '#' + (i + 1)),
+            h('div', {className:'llhr-event-info'},
+              h('div', {className:'llhr-event-player'}, ev.player + ' \u2014 ' + ev.team),
+              h('div', {className:'llhr-event-team'}, fmtDate(ev.date) + ' vs ' + ev.opponent)
+            ),
+            h('div', {className:'llhr-event-speed'}, ev.home_to_home_secs.toFixed(1) + 's \uD83C\uDFC3')
+          );
+        })
+      )
+    )
+  );
+}
+
+// ===========================
+// HOMEPAGE
+// ===========================
+function HomePage(props) {
+  return h(Fragment, null,
+    h(HeroSection, {dashboard: props.dashboard}),
+    h(DualTickers, {batters: props.batters}),
+    h(HitOrSpitBanner, {batters: props.batters, onPlay: props.onPlayHoS}),
+    h(LLHRTracker, {data: props.llhr}),
+    h(ExploreStats),
+    h(PressBox),
+    h(LiveGames),
+    h(FindYourTeam, {teams: props.teams, batters: props.batters}),
+    h(DugoutSection),
+    h(SpotlightSection, {batters: props.batters})
+  );
+}
+
+// ===========================
+// PLAYERS PAGE
+// ===========================
+function PlayersPage(props) {
+  var batters = props.batters;
+  var teams = props.teams;
+  var hashFull = window.location.hash;
+  var sortParam = '';
+  if (hashFull.indexOf('?sort=') >= 0) {
+    sortParam = hashFull.split('?sort=')[1];
+  }
+  var _search = useState(''), search = _search[0], setSearch = _search[1];
+  var _team = useState(''), teamFilter = _team[0], setTeamFilter = _team[1];
+  var _sort = useState(sortParam || 'ops'), sortKey = _sort[0], setSortKey = _sort[1];
+  var _dir = useState('desc'), sortDir = _dir[0], setSortDir = _dir[1];
+  var _page = useState(1), page = _page[0], setPage = _page[1];
+
+  var filtered = useMemo(function() {
+    if (!batters) return [];
+    var data = batters.slice();
+    if (search) {
+      var q = search.toLowerCase();
+      data = data.filter(function(b){ return b.full_name.toLowerCase().indexOf(q)>=0; });
+    }
+    if (teamFilter) {
+      data = data.filter(function(b){ return b.team === teamFilter; });
+    }
+    data.sort(function(a,b) {
+      var av = a[sortKey], bv = b[sortKey];
+      if (av == null) av = -Infinity;
+      if (bv == null) bv = -Infinity;
+      return sortDir === 'desc' ? bv - av : av - bv;
+    });
+    return data;
+  }, [batters, search, teamFilter, sortKey, sortDir]);
+
+  var totalPages = Math.ceil(filtered.length / PER_PAGE);
+  var pageData = filtered.slice((page-1)*PER_PAGE, page*PER_PAGE);
+
+  function handleSort(key) {
+    if (sortKey === key) {
+      setSortDir(sortDir === 'desc' ? 'asc' : 'desc');
+    } else {
+      setSortKey(key);
+      setSortDir('desc');
+    }
+    setPage(1);
+  }
+
+  var columns = [
+    {key:'rank', label:'#', nosort:true},
+    {key:'full_name', label:'Player', nosort:true},
+    {key:'team', label:'Team', nosort:true},
+    {key:'ba', label:'BA'},
+    {key:'home_runs', label:'HR'},
+    {key:'ops', label:'OPS'},
+    {key:'avg_launch_speed', label:'EV'},
+    {key:'barrel_rate', label:'BRL%'},
+    {key:'xwoba', label:'xwOBA'},
+  ];
+
+  var teamList = useMemo(function() {
+    if (!teams) return [];
+    return teams.slice().sort(function(a,b){ return a.abbreviation < b.abbreviation ? -1 : 1; });
+  }, [teams]);
+
+  if (!batters) return h(Loading);
+
+  function sortArrow(key) {
+    if (sortKey !== key) return '';
+    return sortDir === 'desc' ? ' \u25BC' : ' \u25B2';
+  }
+
+  return h('section', null,
+    h('div', {className:'container'},
+      h('div', {className:'page-header'},
+        h('h1', {className:'page-title'}, 'ALL PLAYERS'),
+        h('p', {className:'page-subtitle'}, filtered.length + ' batters'),
+        h(DataBadge, {dashboard: props.dashboard, style:{marginTop:4}})
+      ),
+      h('div', {className:'filters-row'},
+        h('input', {className:'search-input', placeholder:'Search by name...', value: search, onChange: function(e){setSearch(e.target.value);setPage(1);}}),
+        h('select', {className:'filter-select', value: teamFilter, onChange: function(e){setTeamFilter(e.target.value);setPage(1);}},
+          h('option', {value:''}, 'All Teams'),
+          teamList.map(function(t){ return h('option', {key:t.abbreviation, value:t.abbreviation}, t.abbreviation + ' - ' + t.name); })
+        )
+      ),
+      h('div', {className:'data-table-wrap'},
+        h('table', {className:'data-table'},
+          h('thead', null,
+            h('tr', null,
+              columns.map(function(col) {
+                return h('th', {
+                  key: col.key,
+                  className: sortKey===col.key ? 'sorted' : '',
+                  onClick: col.nosort ? undefined : function(){handleSort(col.key);},
+                  style: col.nosort ? {cursor:'default'} : undefined
+                }, col.label, !col.nosort && h('span', {className:'sort-arrow'}, sortArrow(col.key)));
+              })
+            )
+          ),
+          h('tbody', null,
+            pageData.map(function(b, i) {
+              var globalRank = (page-1)*PER_PAGE + i + 1;
+              return h('tr', {key: b.batter_id, onClick: function(){navigate('/player/'+b.batter_id);}},
+                h('td', null, globalRank),
+                h('td', null,
+                  h('div', {className:'player-cell'},
+                    h('img', {src: b.headshot_url, alt: b.full_name, loading:'lazy'}),
+                    h('span', {className:'player-cell-name'}, b.full_name)
+                  )
+                ),
+                h('td', null, b.team),
+                h('td', null, fmtBa(b.ba)),
+                h('td', null, b.home_runs),
+                h('td', null, fmtBa(b.ops)),
+                h('td', null, fmtNum(b.avg_launch_speed, 1)),
+                h('td', null, fmtPct(b.barrel_rate)),
+                h('td', null, fmtBa(b.xwoba))
+              );
+            })
+          )
+        )
+      ),
+      totalPages > 1 && h('div', {className:'pagination'},
+        h('button', {className:'page-btn', disabled: page<=1, onClick: function(){setPage(page-1);}}, '\u2039 Prev'),
+        Array.from({length: Math.min(totalPages, 7)}, function(_, i) {
+          var p;
+          if (totalPages <= 7) { p = i+1; }
+          else if (page <= 4) { p = i+1; }
+          else if (page >= totalPages - 3) { p = totalPages - 6 + i; }
+          else { p = page - 3 + i; }
+          return h('button', {key:p, className:'page-btn' + (p===page ? ' active' : ''), onClick: function(){setPage(p);}}, p);
+        }),
+        h('button', {className:'page-btn', disabled: page>=totalPages, onClick: function(){setPage(page+1);}}, 'Next \u203A')
+      )
+    )
+  );
+}
+
+
+// ===========================
+// PLAYER RADAR CHART
+// ===========================
+function PlayerRadarChart(props) {
+  var p = props.player;
+  var canvasRef = useRef(null);
+  var chartRef = useRef(null);
+
+  useEffect(function() {
+    if (!canvasRef.current || !p) return;
+    if (chartRef.current) chartRef.current.destroy();
+
+    // Normalize stats to 0-100 scale for radar
+    var power = Math.min(100, (p.barrel_rate || 0) * 5); // 20% barrel = 100
+    var contact = Math.min(100, (p.ba || 0) * 333);       // .300 BA = ~100
+    var eye = Math.min(100, Math.max(0, 100 - (p.chase_rate || 30) * 2.5)); // lower chase = higher
+    var hardHit = Math.min(100, (p.hard_hit_rate || 0) * 1.8); // 55% = ~100
+    var patience = Math.min(100, (p.obp || 0) * 250);     // .400 OBP = 100
+    var discipline = Math.min(100, (p.plate_discipline_score || 0));
+
+    chartRef.current = new Chart(canvasRef.current, {
+      type: 'radar',
+      data: {
+        labels: ['Power', 'Contact', 'Eye', 'Hard Hit', 'Patience', 'Discipline'],
+        datasets: [{
+          label: p.full_name,
+          data: [power, contact, eye, hardHit, patience, discipline],
+          backgroundColor: 'rgba(227, 38, 54, 0.2)',
+          borderColor: '#e32636',
+          borderWidth: 2,
+          pointBackgroundColor: '#e32636',
+          pointBorderColor: '#fff',
+          pointRadius: 4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function(ctx) {
+                return ctx.label + ': ' + ctx.raw.toFixed(0) + '/100';
+              }
+            }
+          }
+        },
+        scales: {
+          r: {
+            beginAtZero: true,
+            max: 100,
+            ticks: {
+              stepSize: 25,
+              color: '#8892b0',
+              backdropColor: 'transparent',
+              font: { size: 10 }
+            },
+            grid: { color: 'rgba(136,146,176,0.2)' },
+            angleLines: { color: 'rgba(136,146,176,0.2)' },
+            pointLabels: {
+              color: '#ccd6f6',
+              font: { size: 13, weight: 'bold', family: 'Inter, system-ui, sans-serif' }
+            }
+          }
+        }
+      }
+    });
+
+    return function() {
+      if (chartRef.current) { chartRef.current.destroy(); chartRef.current = null; }
+    };
+  }, [p]);
+
+  return h('div', {style: {maxWidth: 420, margin: '0 auto 24px', padding: '20px', background: 'rgba(10,25,47,0.6)', borderRadius: 12, border: '1px solid rgba(100,255,218,0.1)'}},
+    h('canvas', {ref: canvasRef})
+  );
+}
+
+// ===========================
+// PLAYER DETAIL
+// ===========================
+function PlayerDetailPage(props) {
+  var id = props.id;
+  var _s = useState(null), player = _s[0], setPlayer = _s[1];
+  var _l = useState(true), loading = _l[0], setLoading = _l[1];
+  var _e = useState(false), error = _e[0], setError = _e[1];
+
+  var loadPlayer = useCallback(function() {
+    setLoading(true);
+    setError(false);
+    fetchJSON(API + '/batters/' + id + '/summary.json', 'player_' + id)
+      .then(function(d){ setPlayer(d); setLoading(false); })
+      .catch(function(){ setError(true); setLoading(false); });
+  }, [id]);
+
+  useEffect(function(){ loadPlayer(); }, [loadPlayer]);
+
+  if (loading) return h('div', {className:'container'}, h(Loading));
+  if (error || !player) return h('div', {className:'container'}, h(ErrorMsg, {onRetry: loadPlayer}));
+
+  var p = player;
+  function statusBadgeClass(s) {
+    if (!s) return '';
+    if (s === 'OVERDUE') return 'overdue';
+    if (s === 'ON PACE') return 'on-pace';
+    return 'cold';
+  }
+  function gradeBadgeClass(g) {
+    if (!g) return '';
+    return 'grade-' + g.toLowerCase().charAt(0);
+  }
+
+  return h('section', null,
+    h('div', {className:'container'},
+      h('div', {className:'back-btn', onClick: function(){history.back();}}, '\u2190 Back'),
+      h('div', {className:'player-hero'},
+        h('img', {className:'player-hero-img', src: p.headshot_url, alt: p.full_name}),
+        h('div', {className:'player-hero-info'},
+          h('h1', null, p.full_name),
+          h('p', {className:'player-hero-meta'},
+            [p.team, p.position, p.bats ? 'Bats: '+p.bats : '', p.height_display, p.weight_lbs ? p.weight_lbs+' lbs' : ''].filter(Boolean).join(' \u00B7 ')
+          ),
+          h(DataBadge, {dashboard: props.dashboard, style:{marginTop:6}})
+        )
+      ),
+      h('div', {className:'stats-section-title'}, 'STANDARD STATS'),
+      h('div', {className:'stats-grid-detail'},
+        [{v:fmtBa(p.ba),l:'BA'},{v:fmtBa(p.obp),l:'OBP'},{v:fmtBa(p.slg),l:'SLG'},{v:fmtBa(p.ops),l:'OPS'},
+         {v:p.home_runs,l:'HR'},{v:p.rbi,l:'RBI'},{v:p.walks,l:'BB'},{v:p.strikeouts,l:'SO'}].map(function(s) {
+          return h('div', {className:'stat-box', key:s.l},
+            h('div', {className:'stat-box-val'}, s.v != null ? s.v : '\u2014'),
+            h('div', {className:'stat-box-label'}, s.l)
+          );
+        })
+      ),
+      h('div', {className:'stats-section-title'}, 'ADVANCED / STATCAST'),
+      h('div', {className:'stats-grid-detail'},
+        [{v:fmtNum(p.avg_launch_speed,1),l:'EV mph'},{v:fmtPct(p.hard_hit_rate),l:'HH%'},{v:fmtPct(p.barrel_rate),l:'BRL%'},{v:fmtBa(p.xba),l:'xBA'},
+         {v:fmtBa(p.xslg),l:'xSLG'},{v:fmtBa(p.xwoba),l:'xwOBA'},{v:fmtPct(p.sweet_spot_rate),l:'SS%'},{v:fmtNum(p.avg_launch_angle,1)+'\u00B0',l:'Launch Angle'}].map(function(s) {
+          return h('div', {className:'stat-box', key:s.l},
+            h('div', {className:'stat-box-val'}, s.v || '\u2014'),
+            h('div', {className:'stat-box-label'}, s.l)
+          );
+        })
+      ),
+      h('div', {className:'stats-section-title'}, 'PLAYER RADAR'),
+      h(PlayerRadarChart, {player: p}),
+      h('div', {className:'stats-section-title'}, 'FUN STATS \uD83C\uDF89'),
+      h('div', {className:'fun-stats-grid'},
+        h('div', {className:'fun-stat-card'},
+          h('div', {className:'fun-stat-emoji'}, '\uD83D\uDD25'),
+          p.due_for_status && h('span', {className:'status-badge ' + statusBadgeClass(p.due_for_status)}, p.due_for_status),
+          h('div', {className:'fun-stat-val', style:{marginTop:4}}, p.due_for_ratio != null ? p.due_for_ratio.toFixed(2) + 'x' : '\u2014'),
+          h('div', {className:'fun-stat-label'}, 'Barrel Drought')
+        ),
+        h('div', {className:'fun-stat-card'},
+          h('div', {className:'fun-stat-emoji'}, '\uD83C\uDF54'),
+          h('div', {className:'fun-stat-val'}, p.thicc_boy_index != null ? p.thicc_boy_index.toFixed(1) : '\u2014'),
+          h('div', {className:'fun-stat-label'}, 'Thicc Boy Index')
+        ),
+        h('div', {className:'fun-stat-card'},
+          h('div', {className:'fun-stat-emoji'}, '\uD83D\uDC40'),
+          h('div', {className:'fun-stat-val'}, p.plate_discipline_score != null ? p.plate_discipline_score.toFixed(1) : '\u2014'),
+          p.plate_discipline_grade && h('span', {className:'grade-badge ' + gradeBadgeClass(p.plate_discipline_grade), style:{marginLeft:6}}, p.plate_discipline_grade),
+          h('div', {className:'fun-stat-label'}, 'Plate Discipline')
+        ),
+        h('div', {className:'fun-stat-card'},
+          h('div', {className:'fun-stat-emoji'}, '\uD83E\uDD15'),
+          h('div', {className:'fun-stat-val'}, p.career_hbp != null ? p.career_hbp : '\u2014'),
+          h('div', {className:'fun-stat-label'}, 'Career HBP')
+        ),
+        h('div', {className:'fun-stat-card'},
+          h('div', {className:'fun-stat-emoji'}, '\u26BE'),
+          h('div', {className:'fun-stat-val'}, p.abs_since_last_hbp != null ? p.abs_since_last_hbp : '\u2014'),
+          h('div', {className:'fun-stat-label'}, 'ABs Since Last HBP')
+        ),
+        h('div', {className:'fun-stat-card'},
+          h('div', {className:'fun-stat-emoji'}, '\uD83C\uDFCB\uFE0F'),
+          h('div', {className:'fun-stat-val'}, p.weight_lbs || '\u2014'),
+          h('div', {className:'fun-stat-label'}, 'Weight (lbs)')
+        )
+      )
+    )
+  );
+}
+
+// ===========================
+// TEAM PAGE
+// ===========================
+function TeamPage(props) {
+  var abbrev = props.abbrev;
+  var batters = props.batters;
+  var _sort = useState('ops'), sortKey = _sort[0], setSortKey = _sort[1];
+  var _dir = useState('desc'), sortDir = _dir[0], setSortDir = _dir[1];
+
+  var roster = useMemo(function() {
+    if (!batters) return [];
+    return batters.filter(function(b){ return b.team === abbrev; }).sort(function(a,b) {
+      var av = a[sortKey], bv = b[sortKey];
+      if (av == null) av = -Infinity;
+      if (bv == null) bv = -Infinity;
+      return sortDir === 'desc' ? bv - av : av - bv;
+    });
+  }, [batters, abbrev, sortKey, sortDir]);
+
+  function handleSort(key) {
+    if (sortKey === key) {
+      setSortDir(sortDir === 'desc' ? 'asc' : 'desc');
+    } else {
+      setSortKey(key);
+      setSortDir('desc');
+    }
+  }
+
+  if (!batters) return h('div', {className:'container'}, h(Loading));
+
+  var columns = [
+    {key:'rank', label:'#', nosort:true},
+    {key:'full_name', label:'Player', nosort:true},
+    {key:'position', label:'POS', nosort:true},
+    {key:'ba', label:'BA'},
+    {key:'home_runs', label:'HR'},
+    {key:'ops', label:'OPS'},
+    {key:'avg_launch_speed', label:'EV'},
+    {key:'barrel_rate', label:'BRL%'},
+    {key:'xwoba', label:'xwOBA'},
+  ];
+
+  function sortArrow(key) {
+    if (sortKey !== key) return '';
+    return sortDir === 'desc' ? ' \u25BC' : ' \u25B2';
+  }
+
+  return h('section', null,
+    h('div', {className:'container'},
+      h('div', {className:'back-btn', onClick: function(){navigate('/');}}, '\u2190 Back'),
+      h('div', {style:{display:'flex', alignItems:'center', gap:20, padding:'24px 0'}},
+        h('img', {src: getTeamLogo(abbrev), alt: TEAM_NAMES[abbrev], style:{width:80, height:80, objectFit:'contain'}}),
+        h('div', null,
+          h('h1', {className:'page-title'}, TEAM_NAMES[abbrev] || abbrev),
+          h('p', {className:'page-subtitle'}, roster.length + ' players')
+        )
+      ),
+      h('div', {className:'data-table-wrap'},
+        h('table', {className:'data-table'},
+          h('thead', null,
+            h('tr', null,
+              columns.map(function(col) {
+                return h('th', {
+                  key: col.key,
+                  className: sortKey===col.key ? 'sorted' : '',
+                  onClick: col.nosort ? undefined : function(){handleSort(col.key);},
+                  style: col.nosort ? {cursor:'default'} : undefined
+                }, col.label, !col.nosort && h('span', {className:'sort-arrow'}, sortArrow(col.key)));
+              })
+            )
+          ),
+          h('tbody', null,
+            roster.map(function(b, i) {
+              return h('tr', {key: b.batter_id, onClick: function(){navigate('/player/'+b.batter_id);}},
+                h('td', null, i+1),
+                h('td', null,
+                  h('div', {className:'player-cell'},
+                    h('img', {src: b.headshot_url, alt: b.full_name, loading:'lazy'}),
+                    h('span', {className:'player-cell-name'}, b.full_name)
+                  )
+                ),
+                h('td', null, b.position),
+                h('td', null, fmtBa(b.ba)),
+                h('td', null, b.home_runs),
+                h('td', null, fmtBa(b.ops)),
+                h('td', null, fmtNum(b.avg_launch_speed, 1)),
+                h('td', null, fmtPct(b.barrel_rate)),
+                h('td', null, fmtBa(b.xwoba))
+              );
+            })
+          )
+        )
+      )
+    )
+  );
+}
+
+// ===========================
+// COMPARE PAGE
+// ===========================
+function ComparePage(props) {
+  var batters = props.batters;
+  var _p1 = useState(null), player1 = _p1[0], setPlayer1 = _p1[1];
+  var _p2 = useState(null), player2 = _p2[0], setPlayer2 = _p2[1];
+  var _d1 = useState(null), detail1 = _d1[0], setDetail1 = _d1[1];
+  var _d2 = useState(null), detail2 = _d2[0], setDetail2 = _d2[1];
+
+  useEffect(function() {
+    if (player1) {
+      fetchJSON(API + '/batters/' + player1.batter_id + '/summary.json', 'player_' + player1.batter_id)
+        .then(setDetail1).catch(function(){});
+    } else { setDetail1(null); }
+  }, [player1]);
+
+  useEffect(function() {
+    if (player2) {
+      fetchJSON(API + '/batters/' + player2.batter_id + '/summary.json', 'player_' + player2.batter_id)
+        .then(setDetail2).catch(function(){});
+    } else { setDetail2(null); }
+  }, [player2]);
+
+  if (!batters) return h('div', {className:'container'}, h(Loading));
+
+  var compareStats = [
+    {key:'ba', label:'BA', fmt: fmtBa},
+    {key:'obp', label:'OBP', fmt: fmtBa},
+    {key:'slg', label:'SLG', fmt: fmtBa},
+    {key:'ops', label:'OPS', fmt: fmtBa},
+    {key:'home_runs', label:'HR', fmt: fmtNum},
+    {key:'avg_launch_speed', label:'EV', fmt: function(v){return fmtNum(v,1);}},
+    {key:'hard_hit_rate', label:'HH%', fmt: fmtPct},
+    {key:'barrel_rate', label:'BRL%', fmt: fmtPct},
+    {key:'xwoba', label:'xwOBA', fmt: fmtBa},
+  ];
+  var funCompareStats = [
+    {key:'due_for_ratio', label:'Barrel Drought', fmt: function(v){return v!=null?v.toFixed(2)+'x':'\u2014';}},
+    {key:'thicc_boy_index', label:'Thicc Boy Index', fmt: function(v){return v!=null?v.toFixed(1):'\u2014';}},
+    {key:'plate_discipline_score', label:'Plate Discipline', fmt: function(v){return v!=null?v.toFixed(1):'\u2014';}},
+  ];
+
+  return h('section', null,
+    h('div', {className:'container'},
+      h('div', {className:'page-header'},
+        h('h1', {className:'page-title'}, 'PLAYER COMPARISON \uD83D\uDD04'),
+        h('p', {className:'page-subtitle'}, 'Select two players to compare them head to head')
+      ),
+      h('div', {className:'compare-container'},
+        h('div', {className:'compare-player-select'},
+          h(PlayerSearchSelect, {batters: batters, selected: player1, onSelect: setPlayer1, label: 'Player 1'}),
+          detail1 && h('div', {className:'compare-headshot-area', style:{marginTop:16}},
+            h('img', {src: detail1.headshot_url, alt: detail1.full_name}),
+            h('div', {className:'name'}, detail1.full_name),
+            h('div', {className:'team-pos'}, detail1.team + ' \u00B7 ' + detail1.position)
+          )
+        ),
+        h('div', {className:'compare-vs'}, 'VS'),
+        h('div', {className:'compare-player-select'},
+          h(PlayerSearchSelect, {batters: batters, selected: player2, onSelect: setPlayer2, label: 'Player 2'}),
+          detail2 && h('div', {className:'compare-headshot-area', style:{marginTop:16}},
+            h('img', {src: detail2.headshot_url, alt: detail2.full_name}),
+            h('div', {className:'name'}, detail2.full_name),
+            h('div', {className:'team-pos'}, detail2.team + ' \u00B7 ' + detail2.position)
+          )
+        )
+      ),
+      (detail1 && detail2) && h('div', {style:{marginTop:32}},
+        h('div', {className:'stats-section-title'}, 'STAT COMPARISON'),
+        compareStats.concat(funCompareStats).map(function(stat) {
+          var v1 = detail1[stat.key];
+          var v2 = detail2[stat.key];
+          var max = Math.max(Math.abs(v1||0), Math.abs(v2||0)) || 1;
+          var pct1 = (Math.abs(v1||0)/max)*100;
+          var pct2 = (Math.abs(v2||0)/max)*100;
+          var higher1 = (v1||0)>(v2||0);
+          var higher2 = (v2||0)>(v1||0);
+          var color1 = higher1 ? 'var(--green)' : (higher2 ? 'var(--red)' : 'var(--muted)');
+          var color2 = higher2 ? 'var(--green)' : (higher1 ? 'var(--red)' : 'var(--muted)');
+          return h('div', {className:'compare-row', key:stat.key},
+            h('div', {className:'compare-left'},
+              h('div', {className:'compare-val', style:{color: color1}}, stat.fmt(v1)),
+              h('div', {className:'compare-bar-wrap'},
+                h('div', {className:'compare-bar', style:{width:pct1+'%', background:color1, float:'right'}})
+              )
+            ),
+            h('div', {className:'compare-stat-label'}, stat.label),
+            h('div', {className:'compare-right'},
+              h('div', {className:'compare-val', style:{color: color2}}, stat.fmt(v2)),
+              h('div', {className:'compare-bar-wrap'},
+                h('div', {className:'compare-bar', style:{width:pct2+'%', background:color2}})
+              )
+            )
+          );
+        })
+      )
+    )
+  );
+}
+
+function PlayerSearchSelect(props) {
+  var _q = useState(''), query = _q[0], setQuery = _q[1];
+  var _open = useState(false), open = _open[0], setOpen = _open[1];
+  var results = useMemo(function() {
+    if (!query || query.length < 2 || !props.batters) return [];
+    var q = query.toLowerCase();
+    return props.batters.filter(function(b){ return b.full_name.toLowerCase().indexOf(q)>=0; }).slice(0,10);
+  }, [query, props.batters]);
+
+  return h('div', {className:'compare-search'},
+    h('input', {
+      className:'search-input',
+      style:{width:'100%'},
+      placeholder: props.label + ': type to search...',
+      value: props.selected ? props.selected.full_name : query,
+      onChange: function(e){ setQuery(e.target.value); setOpen(true); if(props.selected) props.onSelect(null); },
+      onFocus: function(){ setOpen(true); }
+    }),
+    open && results.length > 0 && h('div', {className:'compare-search-results'},
+      results.map(function(b) {
+        return h('div', {key:b.batter_id, className:'compare-search-item', onClick: function(){
+          props.onSelect(b);
+          setQuery('');
+          setOpen(false);
+        }},
+          h('img', {src: b.headshot_url, alt: b.full_name, loading:'lazy'}),
+          h('span', null, b.full_name),
+          h('span', {style:{color:'var(--muted)', fontSize:11, marginLeft:'auto'}}, b.team)
+        );
+      })
+    )
+  );
+}
+
+// ===========================
+// LEADERBOARD PAGES
+// ===========================
+function LeaderboardPage(props) {
+  var type = props.type;
+  var _d = useState(null), data = _d[0], setData = _d[1];
+  var _l = useState(true), loading = _l[0], setLoading = _l[1];
+  var _e = useState(false), error = _e[0], setError = _e[1];
+
+  var load = useCallback(function() {
+    setLoading(true);
+    setError(false);
+    fetchJSON(API + '/leaderboards/' + type + '.json', 'lb_' + type)
+      .then(function(d){ setData(d); setLoading(false); })
+      .catch(function(){ setError(true); setLoading(false); });
+  }, [type]);
+
+  useEffect(function(){ setData(null); load(); }, [load]);
+
+  if (loading) return h('div', {className:'container'}, h(Loading));
+  if (error) return h('div', {className:'container'}, h(ErrorMsg, {onRetry: load}));
+
+  var config = {
+    'due-for': {
+      title: 'BARREL DROUGHT \uD83D\uDEE2\uFE0F',
+      subtitle: 'Finds hitters who are barreling the ball and making hard contact but haven\'t hit a HR in a while. High barrel rate + high hard-hit rate + long HR drought = someone about to go yard. Filters out the guys who just suck now.',
+      columns: [
+        {key:'rank', label:'#'},
+        {key:'name', label:'Player'},
+        {key:'team', label:'Team'},
+        {key:'barrel_rate', label:'BRL%'},
+        {key:'hard_hit_rate', label:'HH%'},
+        {key:'avg_exit_velo', label:'Avg EV'},
+        {key:'drought_ratio', label:'Drought'},
+        {key:'barrel_drought_score', label:'Score'},
+        {key:'status', label:'Status'},
+      ],
+      renderRow: function(row, i) {
+        var statusCls = (row.due_for_status||'').toLowerCase().replace(/\s/g,'-');
+        if (statusCls === 'warming-up') statusCls = 'on-pace';
+        return h('tr', {key:row.batter_id||i, onClick: function(){navigate('/player/'+row.batter_id);}},
+          h('td', null, row.rank),
+          h('td', null, h('div', {className:'player-cell'},
+            h('img', {src:row.headshot_url, alt:row.full_name, loading:'lazy'}),
+            h('span', {className:'player-cell-name'}, row.full_name)
+          )),
+          h('td', null, row.team),
+          h('td', null, fmtPct(row.barrel_rate)),
+          h('td', null, fmtPct(row.hard_hit_rate)),
+          h('td', null, row.avg_exit_velo ? row.avg_exit_velo.toFixed(1) : '\u2014'),
+          h('td', null, row.drought_ratio ? row.drought_ratio.toFixed(1) + 'x' : '\u2014'),
+          h('td', {style:{fontWeight:800, color:'var(--red)'}}, row.barrel_drought_score != null ? row.barrel_drought_score.toFixed(1) : '\u2014'),
+          h('td', null, h('span', {className:'status-badge '+statusCls}, row.due_for_status))
+        );
+      }
+    },
+    'thicc-boy': {
+      title: 'THICC BOY INDEX \uD83C\uDF54',
+      subtitle: 'Measures barrel rate relative to body weight. Bigger guys who barrel the ball earn a higher score. Is this a real stat? It is now.',
+      columns: [
+        {key:'rank', label:'#'},
+        {key:'name', label:'Player'},
+        {key:'team', label:'Team'},
+        {key:'weight_lbs', label:'Weight'},
+        {key:'barrel_rate', label:'BRL%'},
+        {key:'tbi', label:'TBI Score'},
+      ],
+      renderRow: function(row, i) {
+        return h('tr', {key:row.batter_id||i, onClick: function(){navigate('/player/'+row.batter_id);}},
+          h('td', null, row.rank),
+          h('td', null, h('div', {className:'player-cell'},
+            h('img', {src:row.headshot_url, alt:row.full_name, loading:'lazy'}),
+            h('span', {className:'player-cell-name'}, row.full_name)
+          )),
+          h('td', null, row.team),
+          h('td', null, row.weight_lbs + ' lbs'),
+          h('td', null, fmtPct(row.barrel_rate)),
+          h('td', {style:{fontWeight:800, color:'var(--blue)'}}, row.thicc_boy_index != null ? row.thicc_boy_index.toFixed(1) : '\u2014')
+        );
+      }
+    },
+    'plate-discipline': {
+      title: 'PLATE DISCIPLINE \uD83D\uDC40',
+      subtitle: 'Grades each hitter on chase rate and whiff rate \u2014 low chase + low whiff = elite eye. The guys at the bottom swing at everything. Respect the commitment.',
+      columns: [
+        {key:'rank', label:'#'},
+        {key:'name', label:'Player'},
+        {key:'team', label:'Team'},
+        {key:'chase_rate', label:'Chase%'},
+        {key:'whiff_rate', label:'Whiff%'},
+        {key:'score', label:'Score'},
+        {key:'grade', label:'Grade'},
+      ],
+      renderRow: function(row, i) {
+        var g = (row.plate_discipline_grade||'C').charAt(0).toLowerCase();
+        var gradeCls = 'grade-'+g;
+        return h('tr', {key:row.batter_id||i, onClick: function(){navigate('/player/'+row.batter_id);}},
+          h('td', null, row.rank),
+          h('td', null, h('div', {className:'player-cell'},
+            h('img', {src:row.headshot_url, alt:row.full_name, loading:'lazy'}),
+            h('span', {className:'player-cell-name'}, row.full_name)
+          )),
+          h('td', null, row.team),
+          h('td', null, fmtPct(row.chase_rate)),
+          h('td', null, fmtPct(row.whiff_rate)),
+          h('td', {style:{fontWeight:800, color:'var(--blue)'}}, row.plate_discipline_score != null ? row.plate_discipline_score.toFixed(1) : '\u2014'),
+          h('td', null, h('span', {className:'grade-badge '+gradeCls}, row.plate_discipline_grade))
+        );
+      }
+    },
+    'hbp': {
+      title: 'HBP PAIN INDEX \uD83E\uDD15',
+      subtitle: 'Ranks batters by career hit-by-pitches. Some guys crowd the plate. Some guys just have bad luck. Either way, it hurts.',
+      columns: [
+        {key:'rank', label:'#'},
+        {key:'name', label:'Player'},
+        {key:'team', label:'Team'},
+        {key:'career_hbp', label:'Career HBP'},
+        {key:'season_hbp', label:'Season HBP'},
+        {key:'abs_since', label:'ABs Since HBP'},
+      ],
+      renderRow: function(row, i) {
+        return h('tr', {key:row.batter_id||i, onClick: function(){navigate('/player/'+row.batter_id);}},
+          h('td', null, row.rank),
+          h('td', null, h('div', {className:'player-cell'},
+            h('img', {src:row.headshot_url, alt:row.full_name, loading:'lazy'}),
+            h('span', {className:'player-cell-name'}, row.full_name)
+          )),
+          h('td', null, row.team),
+          h('td', {style:{fontWeight:800, color:'var(--blue)'}}, row.career_hbp),
+          h('td', null, row.season_hbp),
+          h('td', null, row.abs_since_last_hbp)
+        );
+      }
+    },
+    'full-moon': {
+      title: 'FULL MOON EFFECT \uD83C\uDF15',
+      subtitle: 'Compares each batter\'s average during full moon games vs. all other games. Statistically meaningless. But are you really gonna ignore the moon?',
+      columns: [
+        {key:'rank', label:'#'},
+        {key:'name', label:'Player'},
+        {key:'team', label:'Team'},
+        {key:'moon_ba', label:'Moon BA'},
+        {key:'normal_ba', label:'Normal BA'},
+        {key:'diff', label:'Diff'},
+        {key:'games', label:'Moon Games'},
+      ],
+      renderRow: function(row, i) {
+        var diffColor = (row.ba_diff||0) > 0 ? 'var(--green)' : ((row.ba_diff||0) < 0 ? 'var(--red)' : 'var(--muted)');
+        return h('tr', {key:row.batter_id||i, onClick: function(){navigate('/player/'+row.batter_id);}},
+          h('td', null, row.rank),
+          h('td', null, h('div', {className:'player-cell'},
+            h('img', {src:row.headshot_url, alt:row.full_name, loading:'lazy'}),
+            h('span', {className:'player-cell-name'}, row.full_name)
+          )),
+          h('td', null, row.team),
+          h('td', null, fmtBa(row.full_moon_ba)),
+          h('td', null, fmtBa(row.normal_ba)),
+          h('td', {style:{fontWeight:800, color:diffColor}}, (row.ba_diff >= 0 ? '+' : '') + fmtBa(row.ba_diff)),
+          h('td', null, row.full_moon_games)
+        );
+      },
+      filterFn: function(d) { return d.filter(function(r){ return r.full_moon_ab >= 3; }); }
+    }
+  };
+
+  var cfg = config[type];
+  if (!cfg) return h('div', {className:'container'}, h('p', null, 'Unknown leaderboard type.'));
+
+  var rows = cfg.filterFn ? cfg.filterFn(data) : data;
+
+  return h('section', null,
+    h('div', {className:'container'},
+      h('div', {className:'back-btn', onClick: function(){navigate('/');}}, '\u2190 Home'),
+      h('div', {className:'lb-page-header'},
+        h('h1', {className:'lb-page-title'}, cfg.title),
+        h('p', {className:'lb-page-subtitle'}, cfg.subtitle),
+        h(DataBadge, {dashboard: props.dashboard, style:{marginTop:6}})
+      ),
+      h('div', {className:'data-table-wrap', style:{marginTop:24}},
+        h('table', {className:'data-table'},
+          h('thead', null,
+            h('tr', null,
+              cfg.columns.map(function(col) {
+                return h('th', {key:col.key, style:{cursor:'default'}}, col.label);
+              })
+            )
+          ),
+          h('tbody', null,
+            rows.map(function(row, i) { return cfg.renderRow(row, i); })
+          )
+        )
+      )
+    )
+  );
+}
+
+// ===========================
+// SCATTER PAGE
+// ===========================
+function ScatterPage(props) {
+  var _hd = useState(null), heightData = _hd[0], setHeightData = _hd[1];
+  var _wd = useState(null), weightData = _wd[0], setWeightData = _wd[1];
+  var _l = useState(true), loading = _l[0], setLoading = _l[1];
+  var _e = useState(false), error = _e[0], setError = _e[1];
+  var heightChartRef = useRef(null);
+  var weightChartRef = useRef(null);
+  var heightInstanceRef = useRef(null);
+  var weightInstanceRef = useRef(null);
+
+  var load = useCallback(function() {
+    setLoading(true);
+    setError(false);
+    Promise.all([
+      fetchJSON(API + '/scatter/height-hr.json', 'scatter_height'),
+      fetchJSON(API + '/scatter/weight-hr.json', 'scatter_weight')
+    ]).then(function(arr) {
+      setHeightData(arr[0]);
+      setWeightData(arr[1]);
+      setLoading(false);
+    }).catch(function() {
+      setError(true);
+      setLoading(false);
+    });
+  }, []);
+
+  useEffect(function(){ load(); }, [load]);
+
+  useEffect(function() {
+    if (!heightData || !weightData) return;
+    // Destroy old instances
+    if (heightInstanceRef.current) { heightInstanceRef.current.destroy(); }
+    if (weightInstanceRef.current) { weightInstanceRef.current.destroy(); }
+
+    var chartOpts = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function(ctx) {
+              var p = ctx.raw;
+              return p.name + ' (' + p.team + ') - ' + p.xLabel + ', ' + p.y + ' HR';
+            }
+          },
+          backgroundColor: '#1a2439',
+          titleColor: '#f1f5f9',
+          bodyColor: '#94a3b8',
+          borderColor: 'rgba(255,255,255,0.1)',
+          borderWidth: 1
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: 'rgba(255,255,255,0.06)' },
+          ticks: { color: '#94a3b8', font: { size: 11 } }
+        },
+        y: {
+          grid: { color: 'rgba(255,255,255,0.06)' },
+          ticks: { color: '#94a3b8', font: { size: 11 } },
+          title: { display: true, text: 'Home Runs', color: '#94a3b8' }
+        }
+      }
+    };
+
+    // Height chart
+    if (heightChartRef.current) {
+      var ctx1 = heightChartRef.current.getContext('2d');
+      heightInstanceRef.current = new Chart(ctx1, {
+        type: 'scatter',
+        data: {
+          datasets: [{
+            data: heightData.map(function(p) {
+              return { x: p.height_inches, y: p.home_runs, name: p.full_name, team: p.team, xLabel: (p.height_display || p.height_inches + '"') };
+            }),
+            backgroundColor: 'rgba(239,68,68,0.6)',
+            borderColor: 'rgba(239,68,68,0.8)',
+            pointRadius: 4,
+            pointHoverRadius: 7
+          }]
+        },
+        options: Object.assign({}, chartOpts, {
+          scales: Object.assign({}, chartOpts.scales, {
+            x: Object.assign({}, chartOpts.scales.x, { title: { display: true, text: 'Height (inches)', color: '#94a3b8' } })
+          })
+        })
+      });
+    }
+
+    // Weight chart
+    if (weightChartRef.current) {
+      var ctx2 = weightChartRef.current.getContext('2d');
+      weightInstanceRef.current = new Chart(ctx2, {
+        type: 'scatter',
+        data: {
+          datasets: [{
+            data: weightData.map(function(p) {
+              return { x: p.weight_lbs, y: p.home_runs, name: p.full_name, team: p.team, xLabel: p.weight_lbs + ' lbs' };
+            }),
+            backgroundColor: 'rgba(56,189,248,0.6)',
+            borderColor: 'rgba(56,189,248,0.8)',
+            pointRadius: 4,
+            pointHoverRadius: 7
+          }]
+        },
+        options: Object.assign({}, chartOpts, {
+          scales: Object.assign({}, chartOpts.scales, {
+            x: Object.assign({}, chartOpts.scales.x, { title: { display: true, text: 'Weight (lbs)', color: '#94a3b8' } })
+          })
+        })
+      });
+    }
+
+    return function() {
+      if (heightInstanceRef.current) { heightInstanceRef.current.destroy(); heightInstanceRef.current = null; }
+      if (weightInstanceRef.current) { weightInstanceRef.current.destroy(); weightInstanceRef.current = null; }
+    };
+  }, [heightData, weightData]);
+
+  if (loading) return h('div', {className:'container'}, h(Loading));
+  if (error) return h('div', {className:'container'}, h(ErrorMsg, {onRetry: load}));
+
+  return h('section', null,
+    h('div', {className:'container'},
+      h('div', {className:'back-btn', onClick: function(){navigate('/');}}, '\u2190 Home'),
+      h('div', {className:'lb-page-header'},
+        h('h1', {className:'lb-page-title'}, 'SIZE vs POWER \uD83D\uDCCF'),
+        h('p', {className:'lb-page-subtitle'}, "Does being bigger make you hit more dingers? Let's find out."),
+        h(DataBadge, {dashboard: props.dashboard, style:{marginTop:6}})
+      ),
+      h('div', {className:'scatter-container', style:{marginTop:24}},
+        h('div', {className:'scatter-card'},
+          h('h3', null, 'HEIGHT vs HOME RUNS'),
+          h('div', {className:'scatter-canvas-wrap'},
+            h('canvas', {ref: heightChartRef})
+          )
+        ),
+        h('div', {className:'scatter-card'},
+          h('h3', null, 'WEIGHT vs HOME RUNS'),
+          h('div', {className:'scatter-canvas-wrap'},
+            h('canvas', {ref: weightChartRef})
+          )
+        )
+      )
+    )
+  );
+}
+
+// ===========================
+// HIT OR SPIT
+// ===========================
+
+// --- Sound Effects (Web Audio API) ---
+var _hosAudioCtx = null;
+function getHosAudio() {
+  if (!_hosAudioCtx) {
+    try { _hosAudioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
+  }
+  return _hosAudioCtx;
+}
+
+function playSpitSound() {
+  var ctx = getHosAudio();
+  if (!ctx) return;
+  // Wet "ptooey" — quick white noise burst with lowpass sweep
+  var dur = 0.18;
+  var bufSize = ctx.sampleRate * dur;
+  var buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+  var data = buf.getChannelData(0);
+  for (var i = 0; i < bufSize; i++) {
+    data[i] = (Math.random() * 2 - 1) * (1 - i / bufSize);
+  }
+  var src = ctx.createBufferSource();
+  src.buffer = buf;
+  var filt = ctx.createBiquadFilter();
+  filt.type = 'bandpass';
+  filt.frequency.setValueAtTime(1200, ctx.currentTime);
+  filt.frequency.exponentialRampToValueAtTime(300, ctx.currentTime + dur);
+  filt.Q.value = 2;
+  var gain = ctx.createGain();
+  gain.gain.setValueAtTime(0.35, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + dur);
+  src.connect(filt);
+  filt.connect(gain);
+  gain.connect(ctx.destination);
+  src.start();
+}
+
+function playBatCrack() {
+  var ctx = getHosAudio();
+  if (!ctx) return;
+  // Sharp crack: short noise burst + resonant ping
+  var dur = 0.12;
+  var bufSize = ctx.sampleRate * dur;
+  var buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+  var data = buf.getChannelData(0);
+  for (var i = 0; i < bufSize; i++) {
+    var t = i / ctx.sampleRate;
+    data[i] = (Math.random() * 2 - 1) * Math.exp(-t * 40) * 0.7
+            + Math.sin(t * 2200) * Math.exp(-t * 25) * 0.5;
+  }
+  var src = ctx.createBufferSource();
+  src.buffer = buf;
+  var filt = ctx.createBiquadFilter();
+  filt.type = 'highpass';
+  filt.frequency.value = 800;
+  var gain = ctx.createGain();
+  gain.gain.setValueAtTime(0.5, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + dur);
+  src.connect(filt);
+  filt.connect(gain);
+  gain.connect(ctx.destination);
+  src.start();
+}
+
+// --- Emoji Burst (spit) ---
+function spawnSpitBurst() {
+  var container = document.createElement('div');
+  container.className = 'spit-burst-container';
+  var emojis = ['\uD83D\uDE2E\u200D\uD83D\uDCA8', '\uD83D\uDCA6', '\uD83E\uDD2E', '\uD83D\uDC4E'];
+  var cx = window.innerWidth / 2;
+  var cy = window.innerHeight / 2;
+  for (var i = 0; i < 8; i++) {
+    var span = document.createElement('span');
+    span.className = 'spit-burst-emoji';
+    span.textContent = emojis[i % emojis.length];
+    var angle = (i / 8) * Math.PI * 2 + (Math.random() - 0.5) * 0.5;
+    var dist = 60 + Math.random() * 80;
+    span.style.left = cx + 'px';
+    span.style.top = cy + 'px';
+    span.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
+    span.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
+    container.appendChild(span);
+  }
+  document.body.appendChild(container);
+  setTimeout(function() { container.remove(); }, 800);
+}
+
+// --- Hit flash emoji ---
+function spawnHitFlash() {
+  var el = document.createElement('div');
+  el.className = 'hit-flash-emoji';
+  el.textContent = '\uD83D\uDCA5';
+  document.body.appendChild(el);
+  setTimeout(function() { el.remove(); }, 700);
+}
+
+// Pick random subset of HR-eligible batters for daily deck
+function buildHosDeck(batters) {
+  if (!batters || !batters.length) return [];
+  // Filter to batters with HR data and decent PA, shuffle, pick 15
+  var eligible = batters.filter(function(b) { return b.home_runs >= 5 && b.pa >= 100; });
+  // Seeded daily shuffle: use date as seed so everyone gets same order per day
+  var today = new Date().toISOString().slice(0,10);
+  var seed = 0;
+  for (var i=0; i<today.length; i++) seed = ((seed << 5) - seed + today.charCodeAt(i)) | 0;
+  function seededRandom() { seed = (seed * 16807 + 0) % 2147483647; return (seed & 0x7fffffff) / 2147483647; }
+  eligible.sort(function() { return seededRandom() - 0.5; });
+  return eligible.slice(0, 15);
+}
+
+// Use existing fmtBa / fmtPct for card display
+
+// Promo banner between tickers and Press Box
+function HitOrSpitBanner(props) {
+  // Pick a showcase player from the batters list (top HR hitter)
+  var showcase = useMemo(function() {
+    if (!props.batters || !props.batters.length) return null;
+    var sorted = props.batters.slice().sort(function(a,b){return (b.home_runs||0)-(a.home_runs||0);});
+    return sorted[0];
+  }, [props.batters]);
+
+  if (!showcase) return null;
+  var teamColor = TEAM_COLORS[showcase.team] || '#c8102e';
+
+  return h('div', {className:'hos-banner', onClick: props.onPlay},
+    h('div', {className:'hos-banner-inner'},
+      // Mini card preview
+      h('div', {className:'hos-banner-card-preview'},
+        h('div', {className:'hos-banner-card-topbar', style:{background:'linear-gradient(90deg, '+teamColor+', '+teamColor+'cc)'}},
+          h('span', null, 'UPPERDECKY')
+        ),
+        h('div', {className:'hos-banner-card-photo'},
+          h('img', {src: showcase.headshot_url, alt: showcase.full_name, loading:'lazy'})
+        ),
+        h('div', {className:'hos-banner-card-name', style:{background:'linear-gradient(90deg, '+teamColor+', '+teamColor+'cc)'}},
+          h('span', null, showcase.full_name.split(' ').pop().toUpperCase())
+        )
+      ),
+      // Text
+      h('div', {className:'hos-banner-text'},
+        h('div', {className:'hos-banner-badge'},
+          h('span', {className:'pulse-dot'}),
+          'NEW \u2014 DAILY GAME'
+        ),
+        h('div', {className:'hos-banner-title'}, 'HIT OR ', h('em', null, 'SPIT')),
+        h('div', {className:'hos-banner-sub'}, 'Swipe through today\u2019s lineup. Will they go yard?')
+      ),
+      // CTA
+      h('div', {className:'hos-banner-cta'}, '\u26BE PLAY NOW')
+    )
+  );
+}
+
+// Full-screen overlay game
+function HitOrSpitOverlay(props) {
+  var batters = props.batters;
+  var onClose = props.onClose;
+
+  var deck = useMemo(function() { return buildHosDeck(batters); }, [batters]);
+  var _idx = useState(0), idx = _idx[0], setIdx = _idx[1];
+  var _cardState = useState('entered'), cardState = _cardState[0], setCardState = _cardState[1];
+  var _showConsensus = useState(false), showConsensus = _showConsensus[0], setShowConsensus = _showConsensus[1];
+  var _results = useState([]), results = _results[0], setResults = _results[1];
+  var _dragClass = useState(''), dragClass = _dragClass[0], setDragClass = _dragClass[1];
+  var _done = useState(false), done = _done[0], setDone = _done[1];
+
+  var current = deck[idx] || null;
+
+  function doSwipe(dir) {
+    if (!current || showConsensus) return;
+    setDragClass(dir === 'hit' ? 'dragging-right' : 'dragging-left');
+    setShowConsensus(true);
+    // Sound + visual effects
+    if (dir === 'spit') { playSpitSound(); spawnSpitBurst(); }
+    else { playBatCrack(); spawnHitFlash(); }
+    // Record result
+    setResults(function(prev) { return prev.concat([{player: current.full_name, choice: dir}]); });
+
+    // After showing consensus, animate card away and bring next
+    setTimeout(function() {
+      setCardState(dir === 'hit' ? 'swipe-right' : 'swipe-left');
+      setTimeout(function() {
+        if (idx + 1 >= deck.length) {
+          setDone(true);
+        } else {
+          setIdx(idx + 1);
+          setCardState('entering');
+          setShowConsensus(false);
+          setDragClass('');
+          // Trigger enter animation
+          setTimeout(function() { setCardState('entered'); }, 30);
+        }
+      }, 400);
+    }, 1500);
+  }
+
+  function resetGame() {
+    setIdx(0);
+    setResults([]);
+    setDone(false);
+    setShowConsensus(false);
+    setDragClass('');
+    setCardState('entered');
+  }
+
+  // Random fake consensus for demo (will be real when backend is wired)
+  var fakeHitPct = useMemo(function() { return Math.floor(Math.random() * 40) + 35; }, [idx]);
+  var fakeTotal = useMemo(function() { return Math.floor(Math.random() * 2000) + 400; }, [idx]);
+
+  // Summary screen
+  if (done) {
+    var hits = results.filter(function(r){return r.choice === 'hit';}).length;
+    var spits = results.filter(function(r){return r.choice === 'spit';}).length;
+    return h('div', {className:'hos-overlay'},
+      h('div', {className:'hos-overlay-header'},
+        h('div', {className:'hos-overlay-logo'}, 'UPPER', h('span', null, 'DECKY')),
+        h('button', {className:'hos-close-btn', onClick: onClose}, '\u2715')
+      ),
+      h('div', {className:'hos-game-area'},
+        h('div', {className:'hos-summary'},
+          h('div', {className:'hos-summary-title'}, "You're done!"),
+          h('div', {className:'hos-summary-sub'}, 'You swiped through all ' + deck.length + ' batters today. Come back tomorrow for a fresh deck.'),
+          h('div', {className:'hos-summary-stats'},
+            h('div', {className:'hos-summary-stat'},
+              h('div', {className:'hos-summary-stat-val hits-val'}, hits),
+              h('div', {className:'hos-summary-stat-label'}, 'Hits')
+            ),
+            h('div', {className:'hos-summary-stat'},
+              h('div', {className:'hos-summary-stat-val spits-val'}, spits),
+              h('div', {className:'hos-summary-stat-label'}, 'Spits')
+            )
+          ),
+          h('button', {className:'hos-play-again', onClick: resetGame}, '\u26BE Play Again')
+        )
+      )
+    );
+  }
+
+  if (!current) {
+    return h('div', {className:'hos-overlay'},
+      h('div', {className:'hos-overlay-header'},
+        h('div', {className:'hos-overlay-logo'}, 'UPPER', h('span', null, 'DECKY')),
+        h('button', {className:'hos-close-btn', onClick: onClose}, '\u2715')
+      ),
+      h('div', {className:'hos-game-area'},
+        h('div', {style:{color:'var(--muted)'}}, 'Loading deck...')
+      )
+    );
+  }
+
+  var teamColor = TEAM_COLORS[current.team] || '#c8102e';
+  var teamName = TEAM_NAMES[current.team] || current.team;
+
+  var hitCount = results.filter(function(r){return r.choice === 'hit';}).length;
+  var spitCount = results.filter(function(r){return r.choice === 'spit';}).length;
+
+  return h('div', {className:'hos-overlay'},
+    // Header
+    h('div', {className:'hos-overlay-header'},
+      h('div', {className:'hos-overlay-logo'}, 'HIT OR ', h('span', null, 'SPIT')),
+      h('button', {className:'hos-close-btn', onClick: onClose}, '\u2715')
+    ),
+    // Game area
+    h('div', {className:'hos-game-area'},
+      h('div', {className:'hos-question'}, 'Will this guy go ', h('em', null, 'yard'), ' today?'),
+      h('div', {className:'hos-counter'}, (idx + 1) + ' of ' + deck.length),
+
+      // Mobile scoreboard (visible <600px)
+      h('div', {className:'hos-scoreboard-mobile'},
+        h('div', {className:'sb-m-item sb-m-spit'},
+          h('span', null, '\uD83D\uDC4E'),
+          h('span', null, spitCount)
+        ),
+        h('div', {className:'sb-m-divider'}),
+        h('div', {className:'sb-m-item sb-m-hit'},
+          h('span', null, hitCount),
+          h('span', null, '\uD83D\uDC4D')
+        )
+      ),
+
+      // Desktop play area with scoreboard panels
+      h('div', {className:'hos-play-area'},
+        // Left scoreboard - SPITS
+        h('div', {className:'hos-scoreboard-panel sb-spit'},
+          h('div', {className:'sb-emoji'}, '\uD83D\uDC4E'),
+          h('div', {className:'sb-num'}, spitCount),
+          h('div', {className:'sb-label'}, 'SPITS')
+        ),
+
+        // The card
+        h('div', {className:'hos-card-wrapper'},
+        h('div', {className:'hos-card ' + cardState + ' ' + dragClass},
+          // Stamps
+          h('div', {className:'hos-stamp stamp-hit'}, 'HIT'),
+          h('div', {className:'hos-stamp stamp-spit'}, 'SPIT'),
+          // Card structure
+          h('div', {className:'hos-card-border', style:{background:'linear-gradient(180deg, '+teamColor+' 0%, '+teamColor+'99 100%)'}},
+            h('div', {className:'hos-corner-bl'}),
+            h('div', {className:'hos-corner-br'}),
+            h('div', {className:'hos-card-inner'},
+              h('div', {className:'hos-card-topbar', style:{background:'linear-gradient(90deg, '+teamColor+', '+teamColor+'cc)'}},
+                h('div', {className:'hos-card-logo'}, 'UPPER', h('span', null, 'DECKY')),
+                h('div', {className:'hos-card-year'}, '2026')
+              ),
+              h('div', {className:'hos-card-photo'},
+                h('span', {className:'hos-card-pos'}, current.position),
+                h('img', {className:'hos-card-watermark', src: getTeamLogo(current.team), alt:''}),
+                h('img', {className:'hos-player-img', src: current.headshot_url.replace('w_213', 'w_426'), alt: current.full_name})
+              ),
+              h('div', {className:'hos-card-name-banner', style:{background:'linear-gradient(90deg, '+teamColor+' 0%, '+teamColor+'cc 100%)'}},
+                h('div', {className:'hos-card-player-name'}, current.full_name.toUpperCase()),
+                h('div', {className:'hos-card-team-info'}, teamName + ' \u00B7 ' + current.position)
+              ),
+              h('div', {className:'hos-card-stats'},
+                h('div', {className:'hos-card-stat'},
+                  h('div', {className:'hos-card-stat-val'}, current.home_runs || 0),
+                  h('div', {className:'hos-card-stat-label'}, 'HR')
+                ),
+                h('div', {className:'hos-card-stat'},
+                  h('div', {className:'hos-card-stat-val'}, fmtBa(current.ba)),
+                  h('div', {className:'hos-card-stat-label'}, 'AVG')
+                ),
+                h('div', {className:'hos-card-stat'},
+                  h('div', {className:'hos-card-stat-val'}, fmtBa(current.ops)),
+                  h('div', {className:'hos-card-stat-label'}, 'OPS')
+                ),
+                h('div', {className:'hos-card-stat'},
+                  h('div', {className:'hos-card-stat-val'}, fmtPct(current.barrel_rate)),
+                  h('div', {className:'hos-card-stat-label'}, 'BRL%')
+                )
+              ),
+              h('div', {className:'hos-card-footer'}, 'UPPERDECKY.COM \u00B7 HIT OR SPIT')
+            )
+          )
+        )
+      ),
+
+        // Right scoreboard - HITS
+        h('div', {className:'hos-scoreboard-panel sb-hit'},
+          h('div', {className:'sb-emoji'}, '\uD83D\uDC4D'),
+          h('div', {className:'sb-num'}, hitCount),
+          h('div', {className:'sb-label'}, 'HITS')
+        )
+      ), // close hos-play-area
+
+      // Swipe labels
+      h('div', {className:'hos-swipe-labels'},
+        h('div', {className:'hos-swipe-label lbl-spit'}, '\u2190 SPIT'),
+        h('div', {className:'hos-swipe-label lbl-hit'}, 'HIT \u2192')
+      ),
+
+      // Swipe buttons
+      h('div', {className:'hos-swipe-btns'},
+        h('button', {className:'hos-swipe-btn btn-spit', onClick: function(){doSwipe('spit');}, disabled: showConsensus}, '\uD83D\uDC4E'),
+        h('button', {className:'hos-swipe-btn btn-hit', onClick: function(){doSwipe('hit');}, disabled: showConsensus}, '\uD83D\uDC4D')
+      ),
+
+      // Consensus bar
+      h('div', {className:'hos-consensus' + (showConsensus ? ' visible' : '')},
+        h('div', {className:'hos-consensus-label'}, 'Community says...'),
+        h('div', {className:'hos-consensus-bar'},
+          h('div', {className:'hos-consensus-hit', style:{width: fakeHitPct+'%'}}, fakeHitPct + '% HIT'),
+          h('div', {className:'hos-consensus-spit'}, (100-fakeHitPct) + '% SPIT')
+        ),
+        h('div', {className:'hos-consensus-total'}, fakeTotal.toLocaleString() + ' swipes today')
+      )
+    )
+  );
+}
+
+// ===========================
+// APP (ROOT)
+// ===========================
+function App() {
+  var hash = useHashRoute();
+  var _batters = useState(null), batters = _batters[0], setBatters = _batters[1];
+  var _teams = useState(null), teams = _teams[0], setTeams = _teams[1];
+  var _dash = useState(null), dashboard = _dash[0], setDashboard = _dash[1];
+  var _llhr = useState(null), llhrData = _llhr[0], setLlhrData = _llhr[1];
+  var _loading = useState(true), loading = _loading[0], setLoading = _loading[1];
+  var _error = useState(false), error = _error[0], setError = _error[1];
+  var _hosOpen = useState(false), hosOpen = _hosOpen[0], setHosOpen = _hosOpen[1];
+
+  function openHoS() { setHosOpen(true); document.body.style.overflow = 'hidden'; }
+  function closeHoS() { setHosOpen(false); document.body.style.overflow = ''; }
+
+  var loadInitial = useCallback(function() {
+    setLoading(true);
+    setError(false);
+    Promise.all([
+      fetchJSON(API + '/batters.json', 'batters'),
+      fetchJSON(API + '/teams.json', 'teams'),
+      fetchJSON(API + '/dashboard.json', 'dashboard'),
+      fetchJSON(API + '/llhr.json', 'llhr')
+    ]).then(function(arr) {
+      setBatters(arr[0]);
+      setTeams(arr[1]);
+      setDashboard(arr[2]);
+      setLlhrData(arr[3]);
+      setLoading(false);
+    }).catch(function() {
+      setError(true);
+      setLoading(false);
+    });
+  }, []);
+
+  useEffect(function(){ loadInitial(); }, [loadInitial]);
+
+  // Parse route
+  var route = hash.split('?')[0];
+  var page;
+  if (route === '/' || route === '') {
+    page = loading ? h(Loading) : error ? h(ErrorMsg, {onRetry: loadInitial}) : h(HomePage, {batters:batters, teams:teams, dashboard:dashboard, llhr:llhrData, onPlayHoS: openHoS});
+  } else if (route === '/players' || route.startsWith('/players?')) {
+    page = h(PlayersPage, {batters:batters, teams:teams, dashboard:dashboard});
+  } else if (route.match(/^\/player\/(\d+)/)) {
+    var playerId = route.match(/^\/player\/(\d+)/)[1];
+    page = h(PlayerDetailPage, {id: playerId, key: playerId, dashboard: dashboard});
+  } else if (route.match(/^\/team\/([A-Z]+)/)) {
+    var teamAbbr = route.match(/^\/team\/([A-Z]+)/)[1];
+    page = h(TeamPage, {abbrev: teamAbbr, batters: batters, key: teamAbbr});
+  } else if (route === '/compare') {
+    page = h(ComparePage, {batters: batters});
+  } else if (route.match(/^\/leaderboard\/([\w-]+)/)) {
+    var lbType = route.match(/^\/leaderboard\/([\w-]+)/)[1];
+    page = h(LeaderboardPage, {type: lbType, key: lbType, dashboard: dashboard});
+  } else if (route === '/scatter') {
+    page = h(ScatterPage, {dashboard: dashboard});
+  } else {
+    page = h('div', {className:'container', style:{padding:'80px 24px', textAlign:'center'}},
+      h('h2', null, '404'),
+      h('p', {style:{color:'var(--muted)'}}, "Page not found. Maybe it got traded."),
+      h('button', {className:'retry-btn', onClick: function(){navigate('/');}}, 'Go Home')
+    );
+  }
+
+  return h(Fragment, null,
+    h(Navbar, {onPlayHoS: openHoS}),
+    page,
+    h(Footer),
+    hosOpen && h(HitOrSpitOverlay, {batters: batters, onClose: closeHoS})
+  );
+}
+
+// ===========================
+// MOUNT
+// ===========================
+var root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(h(App));
+</script>
+</body>
+</html>

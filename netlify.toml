@@ -1,0 +1,56 @@
+[build]
+  publish = "."
+  functions = "netlify/functions"
+
+# Serve static files directly (don't let SPA redirect catch these)
+[[redirects]]
+  from = "/robots.txt"
+  to = "/robots.txt"
+  status = 200
+
+[[redirects]]
+  from = "/sitemap.xml"
+  to = "/sitemap.xml"
+  status = 200
+
+[[redirects]]
+  from = "/og-image.jpg"
+  to = "/og-image.jpg"
+  status = 200
+
+# Serve API JSON files directly
+[[redirects]]
+  from = "/api/*"
+  to = "/api/:splat"
+  status = 200
+
+# SPA fallback — all other routes serve index.html
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[functions."daily-refresh"]
+  schedule = "@daily"
+
+[[headers]]
+  for = "/api/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
+    Access-Control-Allow-Origin = "*"
+
+[[headers]]
+  for = "/og-image.jpg"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+    Access-Control-Allow-Origin = "*"
+
+[[headers]]
+  for = "/robots.txt"
+  [headers.values]
+    Content-Type = "text/plain"
+
+[[headers]]
+  for = "/sitemap.xml"
+  [headers.values]
+    Content-Type = "application/xml"

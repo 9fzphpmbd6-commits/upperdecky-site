@@ -1,0 +1,60 @@
+{
+  "season": 2025,
+  "total": 6,
+  "giveaway_active": true,
+  "giveaway_details": {
+    "prize": "Box of baseball cards + $50 Amazon gift card",
+    "how_to_enter": "Follow @UpperDecky15 on X and DM us: LLHR",
+    "rules": "One winner per inside-the-park HR. Must follow + DM before the next LLHR to be eligible."
+  },
+  "events": [
+    {
+      "player": "Wilyer Abreu",
+      "team": "BOS",
+      "date": "2025-06-30",
+      "opponent": "TOR",
+      "home_to_home_secs": 16.72,
+      "description": "Gets a favorable bounce and turns on the jets for Boston's first inside-the-parker since 2018"
+    },
+    {
+      "player": "Jake Mangum",
+      "team": "TB",
+      "date": "2025-07-02",
+      "opponent": "BAL",
+      "home_to_home_secs": 14.98,
+      "description": "Drive just evades Denzel Clarke in center field, giving the Rays speedster a chance to motor around the bases"
+    },
+    {
+      "player": "Patrick Bailey",
+      "team": "SF",
+      "date": "2025-07-08",
+      "opponent": "TEX",
+      "home_to_home_secs": 16.59,
+      "description": "Perfectly placed off the facade in right center, leading to a wild race around the bases to walk it off"
+    },
+    {
+      "player": "Jarren Duran",
+      "team": "BOS",
+      "date": "2025-08-31",
+      "opponent": "NYY",
+      "home_to_home_secs": 14.71,
+      "description": "Hit one into the alley, sped around the bases and collected his first career inside-the-parker"
+    },
+    {
+      "player": "Daylen Lile",
+      "team": "WSH",
+      "date": "2025-09-20",
+      "opponent": "MIA",
+      "home_to_home_secs": 14.86,
+      "description": "Broke the tie in extras and recorded the Nationals' fastest home-to-home time in the Statcast Era"
+    },
+    {
+      "player": "Noelvi Marte",
+      "team": "CIN",
+      "date": "2025-09-24",
+      "opponent": "PIT",
+      "home_to_home_secs": 15.56,
+      "description": "Already had 2 little league homers in 2025 so of course he had to add another to his resume"
+    }
+  ]
+}
