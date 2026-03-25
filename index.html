@@ -29,6 +29,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>UpperDecky — Free MLB Analytics</title>
 <meta name="description" content="Free MLB batter analytics. No paywalls. No subscriptions. No BS. Advanced Statcast data for every hitter.">
+<meta name="keywords" content="MLB stats, baseball analytics, Statcast data, free MLB analytics, batting average, exit velocity, barrel rate, xwOBA, home runs, player stats, fantasy baseball, sabermetrics, baseball statistics, MLB player comparison">
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://upperrdecky.com">
 <meta property="og:title" content="UpperDecky — Free MLB Analytics">
@@ -44,6 +46,9 @@
 <meta name="twitter:description" content="No paywalls. No subscriptions. No BS. Free advanced baseball analytics for every MLB hitter.">
 <meta name="twitter:image" content="https://upperrdecky.com/og-image.jpg">
 <link rel="canonical" href="https://upperrdecky.com">
+<script id="seo-jsonld" type="application/ld+json">
+{"@context":"https://schema.org","@graph":[{"@type":"WebSite","name":"UpperDecky","url":"https://upperrdecky.com","description":"Free MLB batter analytics with advanced Statcast data. No paywalls. No subscriptions. No BS.","potentialAction":{"@type":"SearchAction","target":"https://upperrdecky.com/#/players?sort={search_term_string}","query-input":"required name=search_term_string"}},{"@type":"WebPage","name":"UpperDecky — Free MLB Analytics","url":"https://upperrdecky.com","description":"Free MLB batter analytics. No paywalls. No subscriptions. No BS. Advanced Statcast data for every hitter.","isPartOf":{"@type":"WebSite","name":"UpperDecky","url":"https://upperrdecky.com"}},{"@type":"SportsOrganization","name":"UpperDecky","url":"https://upperrdecky.com","sameAs":["https://x.com/UpperDecky15"],"description":"Free baseball analytics platform providing MLB Statcast data for 461+ batters across all 30 teams.","sport":"Baseball"},{"@type":"Organization","name":"UpperDecky","url":"https://upperrdecky.com","logo":"https://upperrdecky.com/mascot-upperdecky.png","sameAs":["https://x.com/UpperDecky15"],"contactPoint":{"@type":"ContactPoint","contactType":"customer support","url":"https://x.com/UpperDecky15"}}]}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
@@ -2881,6 +2886,521 @@ section + section { padding-top: 0; }
 </head>
 <body>
 <div id="root"></div>
+<noscript>
+<div style="padding:40px;max-width:900px;margin:0 auto;font-family:sans-serif">
+<h1>UpperDecky — Free MLB Analytics & Statcast Data</h1>
+<p>UpperDecky is a completely free baseball analytics platform. Browse advanced Statcast data for 461+ MLB batters across all 30 teams. No paywalls, no subscriptions — just data.</p>
+<h2>Features</h2>
+<ul>
+<li>Batting Average (AVG), On-Base Percentage (OBP), Slugging (SLG), OPS for every MLB hitter</li>
+<li>Statcast metrics: Exit Velocity, Hard Hit Rate, Barrel Rate, Sweet Spot Rate, xwOBA</li>
+<li>Side-by-side player comparison tool</li>
+<li>Unique leaderboards: Barrel Drought, Thicc Boy Index, Plate Discipline, HBP Pain Index, Full Moon Effect</li>
+<li>Height & Weight vs Power scatter plots</li>
+<li>Hit or Spit — daily baseball guessing game</li>
+<li>Inside-the-Park Home Run (LLHR) Tracker with giveaway</li>
+</ul>
+<h2>MLB Teams</h2>
+<ul>
+<li><a href="/#/team/ARI">Arizona Diamondbacks</a></li>
+<li><a href="/#/team/ATL">Atlanta Braves</a></li>
+<li><a href="/#/team/BAL">Baltimore Orioles</a></li>
+<li><a href="/#/team/BOS">Boston Red Sox</a></li>
+<li><a href="/#/team/CHC">Chicago Cubs</a></li>
+<li><a href="/#/team/CWS">Chicago White Sox</a></li>
+<li><a href="/#/team/CIN">Cincinnati Reds</a></li>
+<li><a href="/#/team/CLE">Cleveland Guardians</a></li>
+<li><a href="/#/team/COL">Colorado Rockies</a></li>
+<li><a href="/#/team/DET">Detroit Tigers</a></li>
+<li><a href="/#/team/HOU">Houston Astros</a></li>
+<li><a href="/#/team/KC">Kansas City Royals</a></li>
+<li><a href="/#/team/LAA">Los Angeles Angels</a></li>
+<li><a href="/#/team/LAD">Los Angeles Dodgers</a></li>
+<li><a href="/#/team/MIA">Miami Marlins</a></li>
+<li><a href="/#/team/MIL">Milwaukee Brewers</a></li>
+<li><a href="/#/team/MIN">Minnesota Twins</a></li>
+<li><a href="/#/team/NYM">New York Mets</a></li>
+<li><a href="/#/team/NYY">New York Yankees</a></li>
+<li><a href="/#/team/OAK">Oakland Athletics</a></li>
+<li><a href="/#/team/PHI">Philadelphia Phillies</a></li>
+<li><a href="/#/team/PIT">Pittsburgh Pirates</a></li>
+<li><a href="/#/team/SD">San Diego Padres</a></li>
+<li><a href="/#/team/SF">San Francisco Giants</a></li>
+<li><a href="/#/team/SEA">Seattle Mariners</a></li>
+<li><a href="/#/team/STL">St. Louis Cardinals</a></li>
+<li><a href="/#/team/TB">Tampa Bay Rays</a></li>
+<li><a href="/#/team/TEX">Texas Rangers</a></li>
+<li><a href="/#/team/TOR">Toronto Blue Jays</a></li>
+<li><a href="/#/team/WSH">Washington Nationals</a></li>
+</ul>
+<h2>MLB Players</h2>
+<ul>
+<li><a href="/#/player/592450">Aaron Judge (NYY)</a></li>
+<li><a href="/#/player/647351">Abraham Toro (KC)</a></li>
+<li><a href="/#/player/691182">Adael Amador (COL)</a></li>
+<li><a href="/#/player/624428">Adam Frazier (LAA)</a></li>
+<li><a href="/#/player/680718">Addison Barger (TOR)</a></li>
+<li><a href="/#/player/668939">Adley Rutschman (BAL)</a></li>
+<li><a href="/#/player/666969">Adolis García (PHI)</a></li>
+<li><a href="/#/player/680728">Adrian Del Castillo (ARI)</a></li>
+<li><a href="/#/player/682663">Agustín Ramírez (MIA)</a></li>
+<li><a href="/#/player/702176">Alan Roden (MIN)</a></li>
+<li><a href="/#/player/664761">Alec Bohm (PHI)</a></li>
+<li><a href="/#/player/676475">Alec Burleson (STL)</a></li>
+<li><a href="/#/player/672386">Alejandro Kirk (TOR)</a></li>
+<li><a href="/#/player/696030">Alejandro Osuna (TEX)</a></li>
+<li><a href="/#/player/677950">Alek Thomas (ARI)</a></li>
+<li><a href="/#/player/608324">Alex Bregman (CHC)</a></li>
+<li><a href="/#/player/669743">Alex Call (LAD)</a></li>
+<li><a href="/#/player/656577">Alex Jackson (MIN)</a></li>
+<li><a href="/#/player/657077">Alex Verdugo (ATL)</a></li>
+<li><a href="/#/player/672744">Alexander Canario (UNK)</a></li>
+<li><a href="/#/player/642708">Amed Rosario (NYY)</a></li>
+<li><a href="/#/player/643217">Andrew Benintendi (CWS)</a></li>
+<li><a href="/#/player/457705">Andrew McCutchen (PIT)</a></li>
+<li><a href="/#/player/683734">Andrew Vaughn (MIL)</a></li>
+<li><a href="/#/player/655316">Andruw Monasterio (BOS)</a></li>
+<li><a href="/#/player/665926">Andrés Giménez (TOR)</a></li>
+<li><a href="/#/player/628451">Andy Ibáñez (OAK)</a></li>
+<li><a href="/#/player/681624">Andy Pages (LAD)</a></li>
+<li><a href="/#/player/682657">Angel Martínez (CLE)</a></li>
+<li><a href="/#/player/623993">Anthony Santander (TOR)</a></li>
+<li><a href="/#/player/683011">Anthony Volpe (NYY)</a></li>
+<li><a href="/#/player/669720">Austin Hays (CWS)</a></li>
+<li><a href="/#/player/595978">Austin Hedges (CLE)</a></li>
+<li><a href="/#/player/668885">Austin Martin (MIN)</a></li>
+<li><a href="/#/player/663586">Austin Riley (ATL)</a></li>
+<li><a href="/#/player/596103">Austin Slater (DET)</a></li>
+<li><a href="/#/player/669224">Austin Wells (NYY)</a></li>
+<li><a href="/#/player/642851">Austin Wynns (OAK)</a></li>
+<li><a href="/#/player/700250">Ben Rice (NYY)</a></li>
+<li><a href="/#/player/666163">Ben Rortvedt (NYM)</a></li>
+<li><a href="/#/player/810938">Ben Williamson (TB)</a></li>
+<li><a href="/#/player/663368">Blake Perkins (MIL)</a></li>
+<li><a href="/#/player/677942">Blaze Alexander (BAL)</a></li>
+<li><a href="/#/player/666182">Bo Bichette (NYM)</a></li>
+<li><a href="/#/player/666310">Bo Naylor (CLE)</a></li>
+<li><a href="/#/player/677951">Bobby Witt Jr. (KC)</a></li>
+<li><a href="/#/player/691781">Brady House (WSH)</a></li>
+<li><a href="/#/player/663604">Brandon Lockridge (MIL)</a></li>
+<li><a href="/#/player/664040">Brandon Lowe (PIT)</a></li>
+<li><a href="/#/player/669016">Brandon Marsh (PHI)</a></li>
+<li><a href="/#/player/607043">Brandon Nimmo (TEX)</a></li>
+<li><a href="/#/player/690924">Braxton Fulford (COL)</a></li>
+<li><a href="/#/player/677587">Brayan Rocchio (CLE)</a></li>
+<li><a href="/#/player/680977">Brendan Donovan (SEA)</a></li>
+<li><a href="/#/player/663898">Brendan Rodgers (BOS)</a></li>
+<li><a href="/#/player/667670">Brent Rooker (OAK)</a></li>
+<li><a href="/#/player/686668">Brenton Doyle (COL)</a></li>
+<li><a href="/#/player/683146">Brett Baty (NYM)</a></li>
+<li><a href="/#/player/668930">Brice Turang (MIL)</a></li>
+<li><a href="/#/player/681460">Brooks Baldwin (CWS)</a></li>
+<li><a href="/#/player/686797">Brooks Lee (MIN)</a></li>
+<li><a href="/#/player/668804">Bryan Reynolds (PIT)</a></li>
+<li><a href="/#/player/547180">Bryce Harper (PHI)</a></li>
+<li><a href="/#/player/669326">Bryce Teodosio (LAA)</a></li>
+<li><a href="/#/player/681082">Bryson Stott (PHI)</a></li>
+<li><a href="/#/player/621439">Byron Buxton (MIN)</a></li>
+<li><a href="/#/player/682928">CJ Abrams (WSH)</a></li>
+<li><a href="/#/player/692216">CJ Kayfus (CLE)</a></li>
+<li><a href="/#/player/663728">Cal Raleigh (SEA)</a></li>
+<li><a href="/#/player/702332">Caleb Durbin (BOS)</a></li>
+<li><a href="/#/player/701358">Cam Smith (HOU)</a></li>
+<li><a href="/#/player/621043">Carlos Correa (HOU)</a></li>
+<li><a href="/#/player/665966">Carlos Narváez (BOS)</a></li>
+<li><a href="/#/player/467793">Carlos Santana (ARI)</a></li>
+<li><a href="/#/player/608348">Carson Kelly (CHC)</a></li>
+<li><a href="/#/player/700246">Carson Williams (TB)</a></li>
+<li><a href="/#/player/669477">Casey Schmitt (SF)</a></li>
+<li><a href="/#/player/678882">Ceddanne Rafaela (BOS)</a></li>
+<li><a href="/#/player/656775">Cedric Mullins (TB)</a></li>
+<li><a href="/#/player/802415">Chandler Simpson (TB)</a></li>
+<li><a href="/#/player/676801">Chas McCormick (CHC)</a></li>
+<li><a href="/#/player/805367">Chase Meidroth (CWS)</a></li>
+<li><a href="/#/player/621035">Chris Taylor (LAA)</a></li>
+<li><a href="/#/player/687952">Christian Encarnacion-Strand (CIN)</a></li>
+<li><a href="/#/player/683766">Christian Koss (SF)</a></li>
+<li><a href="/#/player/695681">Christian Moore (LAA)</a></li>
+<li><a href="/#/player/543877">Christian Vázquez (UNK)</a></li>
+<li><a href="/#/player/572233">Christian Walker (HOU)</a></li>
+<li><a href="/#/player/592885">Christian Yelich (MIL)</a></li>
+<li><a href="/#/player/666624">Christopher Morel (MIA)</a></li>
+<li><a href="/#/player/691723">Coby Mayo (BAL)</a></li>
+<li><a href="/#/player/641355">Cody Bellinger (NYY)</a></li>
+<li><a href="/#/player/683227">Cody Freeman (TEX)</a></li>
+<li><a href="/#/player/687515">Colby Thomas (OAK)</a></li>
+<li><a href="/#/player/702284">Cole Young (SEA)</a></li>
+<li><a href="/#/player/695657">Colson Montgomery (CWS)</a></li>
+<li><a href="/#/player/690993">Colt Keith (DET)</a></li>
+<li><a href="/#/player/681297">Colton Cowser (BAL)</a></li>
+<li><a href="/#/player/681393">Connor Norby (MIA)</a></li>
+<li><a href="/#/player/657136">Connor Wong (BOS)</a></li>
+<li><a href="/#/player/669450">Cooper Hummel (TB)</a></li>
+<li><a href="/#/player/682998">Corbin Carroll (ARI)</a></li>
+<li><a href="/#/player/608369">Corey Seager (TEX)</a></li>
+<li><a href="/#/player/678554">Curtis Mead (CWS)</a></li>
+<li><a href="/#/player/518934">DJ LeMahieu (NYY)</a></li>
+<li><a href="/#/player/687221">Dalton Rushing (LAD)</a></li>
+<li><a href="/#/player/667472">Dane Myers (CIN)</a></li>
+<li><a href="/#/player/682177">Daniel Schneemann (CLE)</a></li>
+<li><a href="/#/player/643376">Danny Jansen (TEX)</a></li>
+<li><a href="/#/player/621020">Dansby Swanson (CHC)</a></li>
+<li><a href="/#/player/687231">Darell Hernaiz (OAK)</a></li>
+<li><a href="/#/player/662139">Daulton Varsho (TOR)</a></li>
+<li><a href="/#/player/681807">David Fry (CLE)</a></li>
+<li><a href="/#/player/666152">David Hamilton (MIL)</a></li>
+<li><a href="/#/player/676914">Davis Schneider (TOR)</a></li>
+<li><a href="/#/player/695734">Daylen Lile (WSH)</a></li>
+<li><a href="/#/player/672016">Denzel Clarke (OAK)</a></li>
+<li><a href="/#/player/656537">Derek Hill (CWS)</a></li>
+<li><a href="/#/player/693307">Dillon Dingler (DET)</a></li>
+<li><a href="/#/player/686527">Dominic Canzone (SEA)</a></li>
+<li><a href="/#/player/642086">Dominic Smith (ATL)</a></li>
+<li><a href="/#/player/456781">Donovan Solano (TEX)</a></li>
+<li><a href="/#/player/686948">Drake Baldwin (ATL)</a></li>
+<li><a href="/#/player/687551">Drew Gilbert (SF)</a></li>
+<li><a href="/#/player/671221">Drew Waters (KC)</a></li>
+<li><a href="/#/player/687637">Dylan Beavers (BAL)</a></li>
+<li><a href="/#/player/666185">Dylan Carlson (CHC)</a></li>
+<li><a href="/#/player/686611">Dylan Crews (WSH)</a></li>
+<li><a href="/#/player/664238">Dylan Moore (PHI)</a></li>
+<li><a href="/#/player/700337">Edgar Quero (CWS)</a></li>
+<li><a href="/#/player/624641">Edmundo Sosa (PHI)</a></li>
+<li><a href="/#/player/666397">Edouard Julien (COL)</a></li>
+<li><a href="/#/player/642201">Eli White (ATL)</a></li>
+<li><a href="/#/player/553869">Elias Díaz (KC)</a></li>
+<li><a href="/#/player/682829">Elly De La Cruz (CIN)</a></li>
+<li><a href="/#/player/656896">Emmanuel Rivera (UNK)</a></li>
+<li><a href="/#/player/665839">Enmanuel Valdez (PIT)</a></li>
+<li><a href="/#/player/571771">Enrique Hernández (LAD)</a></li>
+<li><a href="/#/player/676572">Eric Wagaman (MIN)</a></li>
+<li><a href="/#/player/676391">Ernie Clement (TOR)</a></li>
+<li><a href="/#/player/553993">Eugenio Suárez (CIN)</a></li>
+<li><a href="/#/player/694497">Evan Carter (TEX)</a></li>
+<li><a href="/#/player/677649">Ezequiel Duran (TEX)</a></li>
+<li><a href="/#/player/678662">Ezequiel Tovar (COL)</a></li>
+<li><a href="/#/player/665487">Fernando Tatis Jr. (SD)</a></li>
+<li><a href="/#/player/682626">Francisco Alvarez (NYM)</a></li>
+<li><a href="/#/player/596019">Francisco Lindor (NYM)</a></li>
+<li><a href="/#/player/518692">Freddie Freeman (LAD)</a></li>
+<li><a href="/#/player/666023">Freddy Fermin (SD)</a></li>
+<li><a href="/#/player/672356">Gabriel Arias (CLE)</a></li>
+<li><a href="/#/player/672515">Gabriel Moreno (ARI)</a></li>
+<li><a href="/#/player/596142">Gary Sánchez (MIL)</a></li>
+<li><a href="/#/player/666158">Gavin Lux (TB)</a></li>
+<li><a href="/#/player/657757">Gavin Sheets (SD)</a></li>
+<li><a href="/#/player/543807">George Springer (TOR)</a></li>
+<li><a href="/#/player/672695">Geraldo Perdomo (ARI)</a></li>
+<li><a href="/#/player/519317">Giancarlo Stanton (NYY)</a></li>
+<li><a href="/#/player/570482">Gio Urshela (MIN)</a></li>
+<li><a href="/#/player/650402">Gleyber Torres (DET)</a></li>
+<li><a href="/#/player/688363">Graham Pauley (MIA)</a></li>
+<li><a href="/#/player/683002">Gunnar Henderson (BAL)</a></li>
+<li><a href="/#/player/673490">Ha-Seong Kim (ATL)</a></li>
+<li><a href="/#/player/664056">Harrison Bader (SF)</a></li>
+<li><a href="/#/player/671218">Heliot Ramos (SF)</a></li>
+<li><a href="/#/player/680779">Henry Davis (PIT)</a></li>
+<li><a href="/#/player/681715">Heriberto Hernández (MIA)</a></li>
+<li><a href="/#/player/677008">Heston Kjerstad (BAL)</a></li>
+<li><a href="/#/player/676439">Hunter Feduccia (TB)</a></li>
+<li><a href="/#/player/696100">Hunter Goodman (COL)</a></li>
+<li><a href="/#/player/592669">Hunter Renfroe (KC)</a></li>
+<li><a href="/#/player/808975">Hyeseong Kim (LAD)</a></li>
+<li><a href="/#/player/664023">Ian Happ (CHC)</a></li>
+<li><a href="/#/player/545121">Ildemaro Vargas (ARI)</a></li>
+<li><a href="/#/player/686555">Isaac Collins (KC)</a></li>
+<li><a href="/#/player/670623">Isaac Paredes (HOU)</a></li>
+<li><a href="/#/player/643396">Isiah Kiner-Falefa (BOS)</a></li>
+<li><a href="/#/player/671056">Iván Herrera (STL)</a></li>
+<li><a href="/#/player/641487">J.P. Crawford (SEA)</a></li>
+<li><a href="/#/player/592663">J.T. Realmuto (PHI)</a></li>
+<li><a href="/#/player/668709">JJ Bleday (CIN)</a></li>
+<li><a href="/#/player/695506">Jac Caglianone (KC)</a></li>
+<li><a href="/#/player/669261">Jack Suwinski (LAD)</a></li>
+<li><a href="/#/player/694192">Jackson Chourio (MIL)</a></li>
+<li><a href="/#/player/702616">Jackson Holliday (BAL)</a></li>
+<li><a href="/#/player/701538">Jackson Merrill (SD)</a></li>
+<li><a href="/#/player/607732">Jacob Stallings (BAL)</a></li>
+<li><a href="/#/player/805779">Jacob Wilson (OAK)</a></li>
+<li><a href="/#/player/696285">Jacob Young (WSH)</a></li>
+<li><a href="/#/player/663330">Jahmai Jones (DET)</a></li>
+<li><a href="/#/player/641343">Jake Bauers (MIL)</a></li>
+<li><a href="/#/player/669394">Jake Burger (TEX)</a></li>
+<li><a href="/#/player/630105">Jake Cronenworth (SD)</a></li>
+<li><a href="/#/player/641584">Jake Fraley (TB)</a></li>
+<li><a href="/#/player/663968">Jake Mangum (PIT)</a></li>
+<li><a href="/#/player/664983">Jake McCarthy (COL)</a></li>
+<li><a href="/#/player/676694">Jake Meyers (HOU)</a></li>
+<li><a href="/#/player/668670">Jake Rogers (DET)</a></li>
+<li><a href="/#/player/805300">Jakob Marsee (MIA)</a></li>
+<li><a href="/#/player/543510">James McCann (ARI)</a></li>
+<li><a href="/#/player/681546">James Outman (MIN)</a></li>
+<li><a href="/#/player/695578">James Wood (WSH)</a></li>
+<li><a href="/#/player/669707">Jared Triolo (PIT)</a></li>
+<li><a href="/#/player/680776">Jarren Duran (BOS)</a></li>
+<li><a href="/#/player/691176">Jasson Domínguez (NYY)</a></li>
+<li><a href="/#/player/595879">Javier Báez (DET)</a></li>
+<li><a href="/#/player/691594">Javier Sanoja (MIA)</a></li>
+<li><a href="/#/player/665862">Jazz Chisholm Jr. (NYY)</a></li>
+<li><a href="/#/player/643446">Jeff McNeil (OAK)</a></li>
+<li><a href="/#/player/669236">Jeremiah Jackson (BAL)</a></li>
+<li><a href="/#/player/665161">Jeremy Peña (HOU)</a></li>
+<li><a href="/#/player/660821">Jesús Sánchez (TOR)</a></li>
+<li><a href="/#/player/678877">Jhonkensy Noel (BAL)</a></li>
+<li><a href="/#/player/666176">Jo Adell (LAA)</a></li>
+<li><a href="/#/player/592626">Joc Pederson (TEX)</a></li>
+<li><a href="/#/player/663698">Joey Bart (PIT)</a></li>
+<li><a href="/#/player/694388">Joey Loperfido (HOU)</a></li>
+<li><a href="/#/player/687401">Joey Ortiz (MIL)</a></li>
+<li><a href="/#/player/679032">Johan Rojas (PHI)</a></li>
+<li><a href="/#/player/670231">John Rave (KC)</a></li>
+<li><a href="/#/player/542932">Jon Berti (CHC)</a></li>
+<li><a href="/#/player/681146">Jonah Bride (TEX)</a></li>
+<li><a href="/#/player/641680">Jonah Heim (ATL)</a></li>
+<li><a href="/#/player/682729">Jonatan Clase (TOR)</a></li>
+<li><a href="/#/player/666018">Jonathan Aranda (TB)</a></li>
+<li><a href="/#/player/663697">Jonathan India (KC)</a></li>
+<li><a href="/#/player/687597">Jordan Beck (COL)</a></li>
+<li><a href="/#/player/691023">Jordan Walker (STL)</a></li>
+<li><a href="/#/player/676059">Jordan Westburg (BAL)</a></li>
+<li><a href="/#/player/593871">Jorge Polanco (NYM)</a></li>
+<li><a href="/#/player/624585">Jorge Soler (LAA)</a></li>
+<li><a href="/#/player/514888">Jose Altuve (HOU)</a></li>
+<li><a href="/#/player/645444">Jose Herrera (TEX)</a></li>
+<li><a href="/#/player/578428">Jose Iglesias (SD)</a></li>
+<li><a href="/#/player/624431">Jose Trevino (CIN)</a></li>
+<li><a href="/#/player/605137">Josh Bell (MIN)</a></li>
+<li><a href="/#/player/673962">Josh Jung (TEX)</a></li>
+<li><a href="/#/player/666139">Josh Lowe (LAA)</a></li>
+<li><a href="/#/player/647304">Josh Naylor (SEA)</a></li>
+<li><a href="/#/player/668942">Josh Rojas (KC)</a></li>
+<li><a href="/#/player/669701">Josh Smith (TEX)</a></li>
+<li><a href="/#/player/641943">Joshua Palacios (CWS)</a></li>
+<li><a href="/#/player/676609">José Caballero (NYY)</a></li>
+<li><a href="/#/player/608070">José Ramírez (CLE)</a></li>
+<li><a href="/#/player/677588">José Tena (WSH)</a></li>
+<li><a href="/#/player/665742">Juan Soto (NYM)</a></li>
+<li><a href="/#/player/677594">Julio Rodríguez (SEA)</a></li>
+<li><a href="/#/player/808982">Jung Hoo Lee (SF)</a></li>
+<li><a href="/#/player/691406">Junior Caminero (TB)</a></li>
+<li><a href="/#/player/595777">Jurickson Profar (ATL)</a></li>
+<li><a href="/#/player/457759">Justin Turner (CHC)</a></li>
+<li><a href="/#/player/669234">Justyn-Henry Malloy (TB)</a></li>
+<li><a href="/#/player/670224">Kameron Misner (KC)</a></li>
+<li><a href="/#/player/663647">Ke'Bryan Hayes (CIN)</a></li>
+<li><a href="/#/player/660688">Keibert Ruiz (WSH)</a></li>
+<li><a href="/#/player/681481">Kerry Carpenter (DET)</a></li>
+<li><a href="/#/player/606466">Ketel Marte (ARI)</a></li>
+<li><a href="/#/player/621028">Kevin Newman (KC)</a></li>
+<li><a href="/#/player/665019">Kody Clemens (MIN)</a></li>
+<li><a href="/#/player/692225">Kristian Campbell (BOS)</a></li>
+<li><a href="/#/player/571657">Kyle Farmer (ATL)</a></li>
+<li><a href="/#/player/543309">Kyle Higashioka (TEX)</a></li>
+<li><a href="/#/player/664728">Kyle Isbel (KC)</a></li>
+<li><a href="/#/player/691720">Kyle Karros (COL)</a></li>
+<li><a href="/#/player/700932">Kyle Manzardo (CLE)</a></li>
+<li><a href="/#/player/656941">Kyle Schwarber (PHI)</a></li>
+<li><a href="/#/player/669065">Kyle Stowers (MIA)</a></li>
+<li><a href="/#/player/691019">Kyle Teel (CWS)</a></li>
+<li><a href="/#/player/663656">Kyle Tucker (LAD)</a></li>
+<li><a href="/#/player/677347">Kyren Paris (LAA)</a></li>
+<li><a href="/#/player/664774">LaMonte Wade Jr. (CWS)</a></li>
+<li><a href="/#/player/657041">Lane Thomas (KC)</a></li>
+<li><a href="/#/player/663457">Lars Nootbaar (STL)</a></li>
+<li><a href="/#/player/671732">Lawrence Butler (OAK)</a></li>
+<li><a href="/#/player/672820">Lenyn Sosa (CWS)</a></li>
+<li><a href="/#/player/660844">Leo Rivas (SEA)</a></li>
+<li><a href="/#/player/665750">Leody Taveras (BAL)</a></li>
+<li><a href="/#/player/689414">Liam Hicks (MIA)</a></li>
+<li><a href="/#/player/681351">Logan O'Hoppe (LAA)</a></li>
+<li><a href="/#/player/666971">Lourdes Gurriel Jr. (ARI)</a></li>
+<li><a href="/#/player/650333">Luis Arraez (SF)</a></li>
+<li><a href="/#/player/671277">Luis García Jr. (WSH)</a></li>
+<li><a href="/#/player/682641">Luis Matos (SF)</a></li>
+<li><a href="/#/player/650859">Luis Rengifo (MIL)</a></li>
+<li><a href="/#/player/673357">Luis Robert Jr. (NYM)</a></li>
+<li><a href="/#/player/620443">Luis Torrens (NYM)</a></li>
+<li><a href="/#/player/649966">Luis Urías (MIL)</a></li>
+<li><a href="/#/player/682668">Luisangel Acuña (CWS)</a></li>
+<li><a href="/#/player/807712">Luke Keaschall (MIN)</a></li>
+<li><a href="/#/player/670042">Luke Raley (SEA)</a></li>
+<li><a href="/#/player/672580">Maikel Garcia (KC)</a></li>
+<li><a href="/#/player/592518">Manny Machado (SD)</a></li>
+<li><a href="/#/player/542303">Marcell Ozuna (PIT)</a></li>
+<li><a href="/#/player/691785">Marcelo Mayer (BOS)</a></li>
+<li><a href="/#/player/543760">Marcus Semien (NYM)</a></li>
+<li><a href="/#/player/592192">Mark Canha (TEX)</a></li>
+<li><a href="/#/player/668901">Mark Vientos (NYM)</a></li>
+<li><a href="/#/player/455117">Martín Maldonado (UNK)</a></li>
+<li><a href="/#/player/807799">Masataka Yoshida (BOS)</a></li>
+<li><a href="/#/player/691026">Masyn Winn (STL)</a></li>
+<li><a href="/#/player/656305">Matt Chapman (SF)</a></li>
+<li><a href="/#/player/680574">Matt McLain (CIN)</a></li>
+<li><a href="/#/player/670223">Matt Mervis (WSH)</a></li>
+<li><a href="/#/player/621566">Matt Olson (ATL)</a></li>
+<li><a href="/#/player/807713">Matt Shaw (CHC)</a></li>
+<li><a href="/#/player/642136">Matt Thaiss (BOS)</a></li>
+<li><a href="/#/player/663837">Matt Vierling (DET)</a></li>
+<li><a href="/#/player/670242">Matt Wallner (MIN)</a></li>
+<li><a href="/#/player/643289">Mauricio Dubón (ATL)</a></li>
+<li><a href="/#/player/596146">Max Kepler (PHI)</a></li>
+<li><a href="/#/player/571970">Max Muncy (LAD)</a></li>
+<li><a href="/#/player/691777">Max Muncy (OAK)</a></li>
+<li><a href="/#/player/680474">Max Schuemann (NYY)</a></li>
+<li><a href="/#/player/572191">Michael A. Taylor (CWS)</a></li>
+<li><a href="/#/player/683737">Michael Busch (CHC)</a></li>
+<li><a href="/#/player/624424">Michael Conforto (CHC)</a></li>
+<li><a href="/#/player/671739">Michael Harris II (ATL)</a></li>
+<li><a href="/#/player/680737">Michael Helman (TEX)</a></li>
+<li><a href="/#/player/686681">Michael Massey (KC)</a></li>
+<li><a href="/#/player/669911">Michael Toglia (CIN)</a></li>
+<li><a href="/#/player/681508">Mickey Gasper (BOS)</a></li>
+<li><a href="/#/player/666160">Mickey Moniak (COL)</a></li>
+<li><a href="/#/player/665804">Miguel Amaya (CHC)</a></li>
+<li><a href="/#/player/609280">Miguel Andujar (SD)</a></li>
+<li><a href="/#/player/500743">Miguel Rojas (LAD)</a></li>
+<li><a href="/#/player/678246">Miguel Vargas (CWS)</a></li>
+<li><a href="/#/player/643565">Mike Tauchman (NYM)</a></li>
+<li><a href="/#/player/545361">Mike Trout (LAA)</a></li>
+<li><a href="/#/player/573262">Mike Yastrzemski (ATL)</a></li>
+<li><a href="/#/player/670156">Miles Mastrobuoni (SEA)</a></li>
+<li><a href="/#/player/641598">Mitch Garver (SEA)</a></li>
+<li><a href="/#/player/605141">Mookie Betts (LAD)</a></li>
+<li><a href="/#/player/664702">Myles Straw (TOR)</a></li>
+<li><a href="/#/player/805373">Nacho Alvarez Jr. (ATL)</a></li>
+<li><a href="/#/player/664770">Nathan Lukes (TOR)</a></li>
+<li><a href="/#/player/663993">Nathaniel Lowe (CIN)</a></li>
+<li><a href="/#/player/669397">Nick Allen (HOU)</a></li>
+<li><a href="/#/player/592206">Nick Castellanos (SD)</a></li>
+<li><a href="/#/player/663743">Nick Fortes (TB)</a></li>
+<li><a href="/#/player/693304">Nick Gonzales (PIT)</a></li>
+<li><a href="/#/player/701762">Nick Kurtz (OAK)</a></li>
+<li><a href="/#/player/679845">Nick Loftin (KC)</a></li>
+<li><a href="/#/player/605361">Nick Martini (OAK)</a></li>
+<li><a href="/#/player/686765">Nick Sogard (BOS)</a></li>
+<li><a href="/#/player/663538">Nico Hoerner (CHC)</a></li>
+<li><a href="/#/player/682622">Noelvi Marte (CIN)</a></li>
+<li><a href="/#/player/571448">Nolan Arenado (ARI)</a></li>
+<li><a href="/#/player/669357">Nolan Gorman (STL)</a></li>
+<li><a href="/#/player/666134">Nolan Jones (CLE)</a></li>
+<li><a href="/#/player/694384">Nolan Schanuel (LAA)</a></li>
+<li><a href="/#/player/665833">Oneil Cruz (PIT)</a></li>
+<li><a href="/#/player/606115">Orlando Arcia (MIN)</a></li>
+<li><a href="/#/player/672724">Oswald Peraza (LAA)</a></li>
+<li><a href="/#/player/665828">Oswaldo Cabrera (NYY)</a></li>
+<li><a href="/#/player/805249">Otto Kemp (PHI)</a></li>
+<li><a href="/#/player/672640">Otto Lopez (MIA)</a></li>
+<li><a href="/#/player/645277">Ozzie Albies (ATL)</a></li>
+<li><a href="/#/player/678009">Parker Meadows (DET)</a></li>
+<li><a href="/#/player/672275">Patrick Bailey (SF)</a></li>
+<li><a href="/#/player/657557">Paul DeJong (NYY)</a></li>
+<li><a href="/#/player/502671">Paul Goldschmidt (NYY)</a></li>
+<li><a href="/#/player/656976">Pavin Smith (ARI)</a></li>
+<li><a href="/#/player/686780">Pedro Pagés (STL)</a></li>
+<li><a href="/#/player/624413">Pete Alonso (BAL)</a></li>
+<li><a href="/#/player/691718">Pete Crow-Armstrong (CHC)</a></li>
+<li><a href="/#/player/2025">Player 2025 (UNK)</a></li>
+<li><a href="/#/player/646240">Rafael Devers (SF)</a></li>
+<li><a href="/#/player/665561">Rafael Marchán (PHI)</a></li>
+<li><a href="/#/player/657656">Ramón Laureano (SD)</a></li>
+<li><a href="/#/player/602104">Ramón Urías (STL)</a></li>
+<li><a href="/#/player/545341">Randal Grichuk (NYY)</a></li>
+<li><a href="/#/player/668227">Randy Arozarena (SEA)</a></li>
+<li><a href="/#/player/624512">Reese McGuire (MIL)</a></li>
+<li><a href="/#/player/656555">Rhys Hoskins (CLE)</a></li>
+<li><a href="/#/player/656180">Riley Adams (WSH)</a></li>
+<li><a href="/#/player/682985">Riley Greene (DET)</a></li>
+<li><a href="/#/player/608701">Rob Refsnyder (SEA)</a></li>
+<li><a href="/#/player/690987">Robert Hassell III (WSH)</a></li>
+<li><a href="/#/player/701350">Roman Anthony (BOS)</a></li>
+<li><a href="/#/player/663853">Romy Gonzalez (BOS)</a></li>
+<li><a href="/#/player/660670">Ronald Acuña Jr. (ATL)</a></li>
+<li><a href="/#/player/677595">Ronny Mauricio (NYM)</a></li>
+<li><a href="/#/player/642133">Rowdy Tellez (TEX)</a></li>
+<li><a href="/#/player/668904">Royce Lewis (MIN)</a></li>
+<li><a href="/#/player/680777">Ryan Jeffers (MIN)</a></li>
+<li><a href="/#/player/641857">Ryan McMahon (NYY)</a></li>
+<li><a href="/#/player/663624">Ryan Mountcastle (BAL)</a></li>
+<li><a href="/#/player/656811">Ryan O'Hearn (PIT)</a></li>
+<li><a href="/#/player/690022">Ryan Ritter (COL)</a></li>
+<li><a href="/#/player/686217">Sal Frelick (MIL)</a></li>
+<li><a href="/#/player/521692">Salvador Perez (KC)</a></li>
+<li><a href="/#/player/664059">Sam Haggerty (TEX)</a></li>
+<li><a href="/#/player/694212">Samuel Basallo (BAL)</a></li>
+<li><a href="/#/player/669289">Santiago Espinal (LAD)</a></li>
+<li><a href="/#/player/669221">Sean Murphy (ATL)</a></li>
+<li><a href="/#/player/673548">Seiya Suzuki (CHC)</a></li>
+<li><a href="/#/player/669127">Shea Langeliers (OAK)</a></li>
+<li><a href="/#/player/660271">Shohei Ohtani (LAD)</a></li>
+<li><a href="/#/player/687462">Spencer Horwitz (PIT)</a></li>
+<li><a href="/#/player/668715">Spencer Steer (CIN)</a></li>
+<li><a href="/#/player/679529">Spencer Torkelson (DET)</a></li>
+<li><a href="/#/player/516782">Starling Marte (KC)</a></li>
+<li><a href="/#/player/680757">Steven Kwan (CLE)</a></li>
+<li><a href="/#/player/670770">TJ Friedl (CIN)</a></li>
+<li><a href="/#/player/666211">Taylor Trammell (HOU)</a></li>
+<li><a href="/#/player/670764">Taylor Walls (TB)</a></li>
+<li><a href="/#/player/621493">Taylor Ward (BAL)</a></li>
+<li><a href="/#/player/606192">Teoscar Hernández (LAD)</a></li>
+<li><a href="/#/player/642731">Thairo Estrada (BAL)</a></li>
+<li><a href="/#/player/695336">Thomas Saggese (STL)</a></li>
+<li><a href="/#/player/694374">Tim Tawa (ARI)</a></li>
+<li><a href="/#/player/669242">Tommy Edman (LAD)</a></li>
+<li><a href="/#/player/502054">Tommy Pham (PIT)</a></li>
+<li><a href="/#/player/518595">Travis d'Arnaud (LAA)</a></li>
+<li><a href="/#/player/607208">Trea Turner (PHI)</a></li>
+<li><a href="/#/player/663757">Trent Grisham (NYY)</a></li>
+<li><a href="/#/player/663616">Trevor Larnach (MIN)</a></li>
+<li><a href="/#/player/596115">Trevor Story (BOS)</a></li>
+<li><a href="/#/player/700242">Trey Sweeney (DET)</a></li>
+<li><a href="/#/player/671213">Triston Casas (BOS)</a></li>
+<li><a href="/#/player/687859">Troy Johnston (COL)</a></li>
+<li><a href="/#/player/664034">Ty France (SD)</a></li>
+<li><a href="/#/player/666149">Tyler Fitzgerald (SF)</a></li>
+<li><a href="/#/player/671289">Tyler Freeman (COL)</a></li>
+<li><a href="/#/player/623168">Tyler Heineman (TOR)</a></li>
+<li><a href="/#/player/682988">Tyler Locklear (ARI)</a></li>
+<li><a href="/#/player/641933">Tyler O'Neill (BAL)</a></li>
+<li><a href="/#/player/691016">Tyler Soderstrom (OAK)</a></li>
+<li><a href="/#/player/663886">Tyler Stephenson (CIN)</a></li>
+<li><a href="/#/player/642180">Tyler Wade (TEX)</a></li>
+<li><a href="/#/player/621438">Tyrone Taylor (NYM)</a></li>
+<li><a href="/#/player/605170">Victor Caratini (MIN)</a></li>
+<li><a href="/#/player/645302">Victor Robles (SEA)</a></li>
+<li><a href="/#/player/687363">Victor Scott II (STL)</a></li>
+<li><a href="/#/player/686469">Vinnie Pasquantino (KC)</a></li>
+<li><a href="/#/player/681962">Vinny Capra (BOS)</a></li>
+<li><a href="/#/player/665489">Vladimir Guerrero Jr. (TOR)</a></li>
+<li><a href="/#/player/682653">Warming Bernabel (WSH)</a></li>
+<li><a href="/#/player/672761">Wenceel Pérez (DET)</a></li>
+<li><a href="/#/player/642215">Weston Wilson (BAL)</a></li>
+<li><a href="/#/player/666181">Will Benson (CIN)</a></li>
+<li><a href="/#/player/669257">Will Smith (LAD)</a></li>
+<li><a href="/#/player/695238">Will Wagner (SD)</a></li>
+<li><a href="/#/player/650489">Willi Castro (COL)</a></li>
+<li><a href="/#/player/661388">William Contreras (MIL)</a></li>
+<li><a href="/#/player/680862">Willie MacIver (TEX)</a></li>
+<li><a href="/#/player/575929">Willson Contreras (BOS)</a></li>
+<li><a href="/#/player/642715">Willy Adames (SF)</a></li>
+<li><a href="/#/player/527038">Wilmer Flores (SF)</a></li>
+<li><a href="/#/player/677800">Wilyer Abreu (BOS)</a></li>
+<li><a href="/#/player/694671">Wyatt Langford (TEX)</a></li>
+<li><a href="/#/player/593428">Xander Bogaerts (SD)</a></li>
+<li><a href="/#/player/669364">Xavier Edwards (MIA)</a></li>
+<li><a href="/#/player/673237">Yainer Diaz (HOU)</a></li>
+<li><a href="/#/player/650490">Yandy Díaz (TB)</a></li>
+<li><a href="/#/player/692585">Yanquiel Fernández (NYY)</a></li>
+<li><a href="/#/player/650968">Yohel Pozo (STL)</a></li>
+<li><a href="/#/player/670541">Yordan Alvarez (HOU)</a></li>
+<li><a href="/#/player/660162">Yoán Moncada (LAA)</a></li>
+<li><a href="/#/player/701305">Zach Dezenzo (HOU)</a></li>
+<li><a href="/#/player/656716">Zach McKinstry (DET)</a></li>
+<li><a href="/#/player/687263">Zach Neto (LAA)</a></li>
+<li><a href="/#/player/680869">Zack Gelof (OAK)</a></li>
+</ul>
+<p>Data sourced from MLB Statcast. Updated for the 2025 season. Follow us on <a href="https://x.com/UpperDecky15">X @UpperDecky15</a>.</p>
+</div>
+</noscript>
 <script>
 // ===========================
 // UpperDecky — React SPA
@@ -2925,6 +3445,110 @@ function getHash() {
 function navigate(path) {
   window.location.hash = '#' + path;
 }
+
+/* ========== SEO HELPERS ========== */
+var SEO_BASE_TITLE = 'UpperDecky — Free MLB Analytics';
+var SEO_BASE_DESC = 'Free MLB batter analytics. No paywalls. No subscriptions. No BS. Advanced Statcast data for every hitter.';
+
+function updateSEO(opts) {
+  var title = opts.title || SEO_BASE_TITLE;
+  var desc = opts.description || SEO_BASE_DESC;
+  var canonical = 'https://upperrdecky.com/' + (opts.path ? '#' + opts.path : '');
+  document.title = title;
+  var metaDesc = document.querySelector('meta[name="description"]');
+  if (metaDesc) metaDesc.setAttribute('content', desc);
+  var ogTitle = document.querySelector('meta[property="og:title"]');
+  if (ogTitle) ogTitle.setAttribute('content', title);
+  var ogDesc = document.querySelector('meta[property="og:description"]');
+  if (ogDesc) ogDesc.setAttribute('content', desc);
+  var ogUrl = document.querySelector('meta[property="og:url"]');
+  if (ogUrl) ogUrl.setAttribute('content', canonical);
+  var twTitle = document.querySelector('meta[name="twitter:title"]');
+  if (twTitle) twTitle.setAttribute('content', title);
+  var twDesc = document.querySelector('meta[name="twitter:description"]');
+  if (twDesc) twDesc.setAttribute('content', desc);
+  var link = document.querySelector('link[rel="canonical"]');
+  if (link) link.setAttribute('href', canonical);
+  // Update JSON-LD
+  var ld = document.getElementById('seo-jsonld');
+  if (ld) {
+    var data = JSON.parse(ld.textContent);
+    if (data['@graph']) {
+      data['@graph'].forEach(function(item) {
+        if (item['@type'] === 'WebPage') {
+          item.name = title;
+          item.description = desc;
+          item.url = canonical;
+        }
+      });
+      ld.textContent = JSON.stringify(data);
+    }
+  }
+}
+
+function setRouteSEO(route, context) {
+  context = context || {};
+  if (route === '/' || route === '') {
+    updateSEO({title: SEO_BASE_TITLE, description: SEO_BASE_DESC, path: '/'});
+  } else if (route === '/players' || route.startsWith('/players?')) {
+    var sortLabel = context.sort ? ' — Sorted by ' + context.sort : '';
+    updateSEO({
+      title: 'MLB Player Stats & Rankings' + sortLabel + ' | UpperDecky',
+      description: 'Browse and compare 461+ MLB batters. Sort by batting average, home runs, exit velocity, barrel rate, xwOBA, and more Statcast metrics. Free forever.',
+      path: route
+    });
+  } else if (route.match(/^\/player\//)) {
+    var p = context.player;
+    if (p) {
+      updateSEO({
+        title: p.full_name + ' Stats & Statcast Data — ' + p.team + ' | UpperDecky',
+        description: p.full_name + ' (' + p.team + ' ' + p.position + ') — .'+((p.ba||0)*1000|0)+' AVG, ' + (p.home_runs||0) + ' HR, ' + (p.avg_launch_speed||0).toFixed(1) + ' mph EV, ' + (p.barrel_rate||0).toFixed(1) + '% BRL. Free advanced Statcast analytics at UpperDecky.',
+        path: route
+      });
+    } else {
+      updateSEO({title: 'Player Stats | UpperDecky', description: 'Detailed MLB player analytics with Statcast data. Free forever.', path: route});
+    }
+  } else if (route.match(/^\/team\//)) {
+    var t = context.team;
+    if (t) {
+      updateSEO({
+        title: t.full_name + ' Roster & Stats | UpperDecky',
+        description: 'Full ' + t.full_name + ' batter roster with Statcast analytics. Exit velocity, barrel rate, xwOBA, and more for every ' + t.name + ' hitter. Free.',
+        path: route
+      });
+    } else {
+      updateSEO({title: 'Team Stats | UpperDecky', path: route});
+    }
+  } else if (route === '/compare') {
+    updateSEO({
+      title: 'Compare MLB Players Side by Side | UpperDecky',
+      description: 'Compare any two MLB batters head-to-head. Statcast metrics, batting stats, and advanced analytics side by side. Free.',
+      path: '/compare'
+    });
+  } else if (route === '/scatter') {
+    updateSEO({
+      title: 'MLB Height & Weight vs Power — Scatter Plot | UpperDecky',
+      description: 'Interactive scatter plots showing how MLB hitter size correlates with power. Height vs HR, weight vs HR. Free Statcast visualization.',
+      path: '/scatter'
+    });
+  } else if (route.match(/^\/leaderboard\//)) {
+    var lbNames = {
+      'due-for': {t: 'Barrel Drought Leaderboard', d: 'Which MLB hitters are barreling up but not hitting home runs? Find out who\'s due for a big fly.'},
+      'thicc-boy': {t: 'Thicc Boy Index — Power Per Pound', d: 'MLB\'s most efficient power hitters by body weight. Who packs the most punch per pound?'},
+      'plate-discipline': {t: 'Plate Discipline Leaderboard', d: 'The best eyes in baseball. MLB hitters ranked by plate discipline — walk rate, chase rate, and more.'},
+      'hbp': {t: 'HBP Pain Index', d: 'Which MLB hitters get plunked the most? Hit-by-pitch leaders and the batters who wear it.'},
+      'full-moon': {t: 'Full Moon Effect — Lunar Batting Average', d: 'Do MLB hitters really perform differently under a full moon? We ran the numbers.'}
+    };
+    var lbSlug = route.replace('/leaderboard/', '');
+    var lb = lbNames[lbSlug] || {t: 'Leaderboard', d: 'Fun MLB leaderboards with unique Statcast analytics.'};
+    updateSEO({
+      title: lb.t + ' | UpperDecky',
+      description: lb.d + ' Free at UpperDecky.',
+      path: route
+    });
+  }
+}
+
 function fmtBa(v) {
   if (v == null) return '—';
   return v < 1 ? (''+v.toFixed(3)).replace(/^0/,'') : v.toFixed(3);
@@ -4119,6 +4743,11 @@ function PlayerDetailPage(props) {
 
   useEffect(function(){ loadPlayer(); }, [loadPlayer]);
 
+  // SEO: update title/meta when player data loads
+  useEffect(function() {
+    if (player) setRouteSEO('/player/' + id, {player: player});
+  }, [player, id]);
+
   if (loading) return h('div', {className:'container'}, h(Loading));
   if (error || !player) return h('div', {className:'container'}, h(ErrorMsg, {onRetry: loadPlayer}));
 
@@ -4211,11 +4840,19 @@ function PlayerDetailPage(props) {
 // ===========================
 // TEAM PAGE
 // ===========================
+var TEAM_FULL_NAMES = {NYY:'New York Yankees',BOS:'Boston Red Sox',TOR:'Toronto Blue Jays',TB:'Tampa Bay Rays',BAL:'Baltimore Orioles',CLE:'Cleveland Guardians',MIN:'Minnesota Twins',DET:'Detroit Tigers',CWS:'Chicago White Sox',KC:'Kansas City Royals',HOU:'Houston Astros',TEX:'Texas Rangers',SEA:'Seattle Mariners',LAA:'Los Angeles Angels',OAK:'Oakland Athletics',ATL:'Atlanta Braves',PHI:'Philadelphia Phillies',NYM:'New York Mets',MIA:'Miami Marlins',WSH:'Washington Nationals',MIL:'Milwaukee Brewers',CHC:'Chicago Cubs',STL:'St. Louis Cardinals',PIT:'Pittsburgh Pirates',CIN:'Cincinnati Reds',LAD:'Los Angeles Dodgers',SD:'San Diego Padres',ARI:'Arizona Diamondbacks',SF:'San Francisco Giants',COL:'Colorado Rockies'};
+
 function TeamPage(props) {
   var abbrev = props.abbrev;
   var batters = props.batters;
   var _sort = useState('ops'), sortKey = _sort[0], setSortKey = _sort[1];
   var _dir = useState('desc'), sortDir = _dir[0], setSortDir = _dir[1];
+
+  // SEO: update title/meta for team page
+  useEffect(function() {
+    var fullName = TEAM_FULL_NAMES[abbrev] || TEAM_NAMES[abbrev] || abbrev;
+    setRouteSEO('/team/' + abbrev, {team: {full_name: fullName, name: TEAM_NAMES[abbrev] || abbrev}});
+  }, [abbrev]);
 
   var roster = useMemo(function() {
     if (!batters) return [];
@@ -5227,6 +5864,15 @@ function App() {
       h('button', {className:'retry-btn', onClick: function(){navigate('/');}}, 'Go Home')
     );
   }
+
+  // SEO: update title/meta on every route change (static pages)
+  useEffect(function() {
+    var r = hash.split('?')[0];
+    // Player and team pages handle their own SEO after data loads
+    if (!r.match(/^\/player\//) && !r.match(/^\/team\//)) {
+      setRouteSEO(r, {sort: hash.indexOf('?sort=') >= 0 ? hash.split('?sort=')[1] : null});
+    }
+  }, [hash]);
 
   return h(Fragment, null,
     h(Navbar, {onPlayHoS: openHoS}),
