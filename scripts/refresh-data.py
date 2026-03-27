@@ -26,6 +26,12 @@ API_BASE = "https://statsapi.mlb.com/api/v1"
 SAVANT_BASE = "https://baseballsavant.mlb.com"
 OUT_DIR = os.environ.get("OUT_DIR", "api")
 
+# MLB API abbreviation -> site abbreviation (fix mismatches)
+ABBR_OVERRIDES = {
+    "ATH": "OAK",   # Oakland Athletics
+    "AZ": "ARI",    # Arizona Diamondbacks
+}
+
 def fetch_json(url, retries=3):
     """Fetch JSON from a URL with retries."""
     for attempt in range(retries):
@@ -86,9 +92,11 @@ def fetch_teams():
         return []
     teams = []
     for t in data.get("teams", []):
+        raw_abbr = t.get("abbreviation", "")
+        abbr = ABBR_OVERRIDES.get(raw_abbr, raw_abbr)
         teams.append({
             "team_id": t["id"],
-            "abbreviation": t.get("abbreviation", ""),
+            "abbreviation": abbr,
             "name": t.get("teamName", ""),
             "full_name": t.get("name", ""),
             "league": t.get("league", {}).get("abbreviation", ""),
@@ -450,6 +458,212 @@ def generate_outputs(batters, teams):
     return len(batter_list)
 
 # ============================================================
+# 6. HIT OR SPIT — DAILY PICKS + PREDICTION TRACKING
+# ============================================================
+import hashlib
+import random as _random
+
+def _seeded_rng(date_str):
+    """Create a seeded RNG from a date string so picks are deterministic per day."""
+    seed = int(hashlib.md5(date_str.encode()).hexdigest()[:8], 16)
+    return _random.Random(seed)
+
+def get_todays_schedule():
+    """Get team abbreviations playing today."""
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    url = f"{API_BASE}/schedule?sportId=1&date={today}"
+    data = fetch_json(url)
+    if not data:
+        return set(), today
+    playing = set()
+    teams_data = fetch_json(f"{API_BASE}/teams?sportId=1&season={SEASON}")
+    id_to_abbr = {}
+    if teams_data:
+        for t in teams_data.get("teams", []):
+            raw = t.get("abbreviation", "")
+            id_to_abbr[t["id"]] = ABBR_OVERRIDES.get(raw, raw)
+    for d in data.get("dates", []):
+        for g in d.get("games", []):
+            for side in ["away", "home"]:
+                tid = g.get("teams", {}).get(side, {}).get("team", {}).get("id", 0)
+                abbr = id_to_abbr.get(tid, "")
+                if abbr:
+                    playing.add(abbr)
+    return playing, today
+
+def get_yesterdays_hr_hitters():
+    """Get set of player IDs who hit a HR yesterday."""
+    from datetime import timedelta
+    yesterday = (datetime.now(timezone.utc) - timedelta(days=1)).strftime("%Y-%m-%d")
+    url = f"{API_BASE}/schedule?sportId=1&date={yesterday}"
+    data = fetch_json(url)
+    hr_pids = set()
+    if not data:
+        return hr_pids, yesterday
+    for d in data.get("dates", []):
+        for g in d.get("games", []):
+            gpk = g.get("gamePk")
+            status = g.get("status", {}).get("codedGameState", "")
+            if status != "F":  # Only final games
+                continue
+            box = fetch_json(f"{API_BASE}/game/{gpk}/boxscore")
+            if not box:
+                continue
+            for side in ["away", "home"]:
+                players = box.get("teams", {}).get(side, {}).get("players", {})
+                for pid_key, pdata in players.items():
+                    hr = safe_int(pdata.get("stats", {}).get("batting", {}).get("homeRuns", 0))
+                    if hr > 0:
+                        hr_pids.add(pdata.get("person", {}).get("id", 0))
+    return hr_pids, yesterday
+
+def compute_hr_probability(b):
+    """Estimate HR probability for a batter (0-100 scale). Used to make the AI pick."""
+    barrel = b.get("barrel_rate") or 0
+    hard_hit = b.get("hard_hit_rate") or 0
+    hr = b.get("home_runs", 0)
+    ab = max(b.get("ab", 0), 1)
+    hr_rate = hr / ab  # Season HR/AB rate
+    # Weighted formula: barrel rate is best predictor, then HR rate, then hard hit
+    score = (barrel * 0.5) + (hr_rate * 200) + (hard_hit * 0.15)
+    return min(round(score, 1), 99)
+
+def generate_hos_picks(batters):
+    """Generate Hit or Spit daily picks, grade yesterday's picks, maintain record."""
+    print("\n[6/6] Generating Hit or Spit picks...")
+    now = datetime.now(timezone.utc)
+    today_str = now.strftime("%Y-%m-%d")
+
+    # Load existing HoS tracking file
+    hos_path = os.path.join(OUT_DIR, "hos-tracker.json")
+    tracker = {"season_record": {"wins": 0, "losses": 0}, "history": [], "current_picks": [], "last_updated": ""}
+    if os.path.exists(hos_path):
+        try:
+            with open(hos_path) as f:
+                tracker = json.load(f)
+        except:
+            pass
+
+    # --- STEP 1: Grade yesterday's picks ---
+    prev_picks = tracker.get("current_picks", [])
+    if prev_picks and prev_picks[0].get("date") != today_str:
+        hr_pids, yesterday = get_yesterdays_hr_hitters()
+        print(f"  Yesterday ({yesterday}): {len(hr_pids)} players hit HRs")
+        day_w = 0
+        day_l = 0
+        graded = []
+        for pick in prev_picks:
+            pid = pick["batter_id"]
+            prediction = pick["prediction"]  # "HIT" or "SPIT"
+            hit_hr = pid in hr_pids
+            # HIT prediction = we predicted HR. Correct if they hit one.
+            # SPIT prediction = we predicted no HR. Correct if they didn't.
+            correct = (prediction == "HIT" and hit_hr) or (prediction == "SPIT" and not hit_hr)
+            if correct:
+                day_w += 1
+            else:
+                day_l += 1
+            graded.append({
+                **pick,
+                "actual_hr": hit_hr,
+                "result": "W" if correct else "L"
+            })
+        tracker["season_record"]["wins"] += day_w
+        tracker["season_record"]["losses"] += day_l
+        # Add to history (keep last 30 days)
+        tracker["history"].append({
+            "date": prev_picks[0].get("date", yesterday),
+            "picks": graded,
+            "day_record": f"{day_w}-{day_l}"
+        })
+        tracker["history"] = tracker["history"][-30:]
+        print(f"  Graded yesterday: {day_w}W-{day_l}L (Season: {tracker['season_record']['wins']}-{tracker['season_record']['losses']})")
+    elif prev_picks and prev_picks[0].get("date") == today_str:
+        print(f"  Today's picks already generated, skipping...")
+
+    # --- STEP 2: Generate today's picks ---
+    playing_teams, _ = get_todays_schedule()
+    print(f"  Teams playing today: {len(playing_teams)} — {', '.join(sorted(playing_teams))}")
+
+    # Filter to batters on teams playing today
+    batter_list = list(batters.values())
+    if playing_teams:
+        candidates = [b for b in batter_list if b.get("team") in playing_teams]
+    else:
+        # Off day — pick from full pool
+        candidates = batter_list
+
+    if not candidates:
+        candidates = batter_list
+
+    # Score all candidates and pick top 15 interesting matchups
+    # Interesting = mix of high-HR-probability and low-HR-probability batters
+    for c in candidates:
+        c["_hr_prob"] = compute_hr_probability(c)
+
+    candidates.sort(key=lambda x: x["_hr_prob"], reverse=True)
+
+    # Pick 8 from top tier (likely HIT picks) and 7 from bottom tier (likely SPIT picks)
+    rng = _seeded_rng(today_str + "hos")
+    top_pool = candidates[:max(len(candidates)//3, 15)]
+    bot_pool = candidates[len(candidates)//2:]
+    rng.shuffle(top_pool)
+    rng.shuffle(bot_pool)
+    deck = top_pool[:8] + bot_pool[:7]
+    rng.shuffle(deck)  # Mix them up
+
+    # Make predictions
+    picks = []
+    for b in deck[:15]:
+        prob = b.get("_hr_prob", 0)
+        # Threshold for HIT prediction (higher = more selective)
+        prediction = "HIT" if prob >= 12 else "SPIT"
+        picks.append({
+            "date": today_str,
+            "batter_id": b["batter_id"],
+            "full_name": b.get("full_name", ""),
+            "team": b.get("team", ""),
+            "position": b.get("position", ""),
+            "headshot_url": b.get("headshot_url", ""),
+            "prediction": prediction,
+            "hr_prob": prob,
+            "home_runs": b.get("home_runs", 0),
+            "ba": b.get("ba", 0),
+            "ops": b.get("ops", 0),
+            "barrel_rate": b.get("barrel_rate"),
+            "hard_hit_rate": b.get("hard_hit_rate"),
+            "avg_launch_speed": b.get("avg_launch_speed"),
+        })
+
+    tracker["current_picks"] = picks
+    tracker["last_updated"] = now.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    # Clean temp keys
+    for b in batters.values():
+        b.pop("_hr_prob", None)
+
+    # Write the tracker file (persistent — committed to repo)
+    write_json("hos-tracker.json", tracker)
+
+    # Write today's picks as a separate file for the front-end
+    write_json("hos-picks.json", {
+        "date": today_str,
+        "picks": picks,
+        "season_record": tracker["season_record"],
+        "last_5_days": [{
+            "date": h["date"],
+            "day_record": h["day_record"]
+        } for h in tracker["history"][-5:]]
+    })
+
+    print(f"  Generated {len(picks)} picks for {today_str}")
+    win = tracker['season_record']['wins']
+    loss = tracker['season_record']['losses']
+    total = win + loss
+    pct = round(win / total * 100, 1) if total > 0 else 0
+    print(f"  Season prediction record: {win}-{loss} ({pct}%)")
+
+# ============================================================
 # MAIN
 # ============================================================
 def main():
@@ -472,6 +686,7 @@ def main():
     batters = fetch_statcast(batters)
     compute_derived(batters)
     total = generate_outputs(batters, teams)
+    generate_hos_picks(batters)
 
     print(f"\n{'=' * 60}")
     print(f"DONE — {total} batters, {len(teams)} teams")

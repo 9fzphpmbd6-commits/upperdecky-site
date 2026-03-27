@@ -21,6 +21,12 @@ jobs:
         run: |
           # Create output dir for fresh data
           mkdir -p fresh-api
+
+          # Copy existing tracker so prediction record persists
+          if [ -f api/hos-tracker.json ]; then
+            cp api/hos-tracker.json fresh-api/hos-tracker.json
+          fi
+
           OUT_DIR=fresh-api python3 scripts/refresh-data.py
 
           echo ""
@@ -50,6 +56,18 @@ jobs:
           echo ""
           echo "API files:"
           find deploy/api -type f | wc -l
+
+      - name: Commit updated tracker back to repo
+        run: |
+          # Copy fresh tracker and picks back to repo api/
+          cp fresh-api/hos-tracker.json api/hos-tracker.json 2>/dev/null || true
+          cp fresh-api/hos-picks.json api/hos-picks.json 2>/dev/null || true
+
+          git config user.name "UpperDecky Bot"
+          git config user.email "bot@upperrdecky.com"
+          git add api/hos-tracker.json api/hos-picks.json
+          git diff --cached --quiet || git commit -m "Daily update: HoS picks + prediction record [skip ci]"
+          git push || true
 
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v3

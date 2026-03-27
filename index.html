@@ -2555,6 +2555,11 @@ section + section { padding-top: 0; }
   letter-spacing: 1px;
   color: #64748b;
 }
+/* AI Prediction badge on card */
+.hos-ai-prediction {
+  padding: 7px 12px;
+  margin: 0;
+}
 .hos-card-footer {
   background: #0e1420;
   padding: 4px;
@@ -5526,20 +5531,8 @@ function spawnHitFlash() {
 }
 
 // Pick random subset of HR-eligible batters for daily deck
-function buildHosDeck(batters) {
-  if (!batters || !batters.length) return [];
-  // Filter to batters with HR data and decent PA, shuffle, pick 15
-  var eligible = batters.filter(function(b) { return b.home_runs >= 5 && b.pa >= 100; });
-  // Seeded daily shuffle: use date as seed so everyone gets same order per day
-  var today = new Date().toISOString().slice(0,10);
-  var seed = 0;
-  for (var i=0; i<today.length; i++) seed = ((seed << 5) - seed + today.charCodeAt(i)) | 0;
-  function seededRandom() { seed = (seed * 16807 + 0) % 2147483647; return (seed & 0x7fffffff) / 2147483647; }
-  eligible.sort(function() { return seededRandom() - 0.5; });
-  return eligible.slice(0, 15);
-}
-
-// Use existing fmtBa / fmtPct for card display
+// buildHosDeck is now a no-op; deck comes from hos-picks.json
+function buildHosDeck() { return []; }
 
 // Promo banner between tickers and Press Box
 function HitOrSpitBanner(props) {
@@ -5584,10 +5577,20 @@ function HitOrSpitBanner(props) {
 
 // Full-screen overlay game
 function HitOrSpitOverlay(props) {
-  var batters = props.batters;
   var onClose = props.onClose;
 
-  var deck = useMemo(function() { return buildHosDeck(batters); }, [batters]);
+  // Fetch daily picks from hos-picks.json
+  var _picksData = useState(null), picksData = _picksData[0], setPicksData = _picksData[1];
+  var _picksLoading = useState(true), picksLoading = _picksLoading[0], setPicksLoading = _picksLoading[1];
+  useEffect(function() {
+    fetchJSON(API + '/hos-picks.json', 'hos_picks').then(function(data) {
+      setPicksData(data);
+      setPicksLoading(false);
+    }).catch(function() { setPicksLoading(false); });
+  }, []);
+
+  var deck = (picksData && picksData.picks) ? picksData.picks : [];
+  var seasonRecord = (picksData && picksData.season_record) ? picksData.season_record : {wins:0,losses:0};
   var _idx = useState(0), idx = _idx[0], setIdx = _idx[1];
   var _cardState = useState('entered'), cardState = _cardState[0], setCardState = _cardState[1];
   var _showConsensus = useState(false), showConsensus = _showConsensus[0], setShowConsensus = _showConsensus[1];
@@ -5634,9 +5637,9 @@ function HitOrSpitOverlay(props) {
     setCardState('entered');
   }
 
-  // Random fake consensus for demo (will be real when backend is wired)
-  var fakeHitPct = useMemo(function() { return Math.floor(Math.random() * 40) + 35; }, [idx]);
-  var fakeTotal = useMemo(function() { return Math.floor(Math.random() * 2000) + 400; }, [idx]);
+  // AI prediction data from picks
+  var aiPrediction = current ? (current.prediction || 'SPIT') : 'SPIT';
+  var aiProb = current ? (current.hr_prob || 0) : 0;
 
   // Summary screen
   if (done) {
@@ -5651,6 +5654,11 @@ function HitOrSpitOverlay(props) {
         h('div', {className:'hos-summary'},
           h('div', {className:'hos-summary-title'}, "You're done!"),
           h('div', {className:'hos-summary-sub'}, 'You swiped through all ' + deck.length + ' batters today. Come back tomorrow for a fresh deck.'),
+          h('div', {style:{margin:'12px 0', padding:'10px 16px', background:'rgba(212,168,67,0.12)', borderRadius:10, border:'1px solid rgba(212,168,67,0.3)', textAlign:'center'}},
+            h('div', {style:{fontSize:11, color:'#d4a843', letterSpacing:1, fontWeight:700, marginBottom:4}}, 'AI PREDICTION RECORD'),
+            h('div', {style:{fontSize:22, fontFamily:'Bebas Neue', color:'#fff', letterSpacing:2}}, seasonRecord.wins + ' - ' + seasonRecord.losses),
+            (seasonRecord.wins + seasonRecord.losses > 0) && h('div', {style:{fontSize:11, color:'var(--muted)'}}, Math.round(seasonRecord.wins / (seasonRecord.wins + seasonRecord.losses) * 100) + '% accuracy')
+          ),
           h('div', {className:'hos-summary-stats'},
             h('div', {className:'hos-summary-stat'},
               h('div', {className:'hos-summary-stat-val hits-val'}, hits),
@@ -5667,14 +5675,20 @@ function HitOrSpitOverlay(props) {
     );
   }
 
-  if (!current) {
+  if (picksLoading || !current) {
     return h('div', {className:'hos-overlay'},
       h('div', {className:'hos-overlay-header'},
         h('div', {className:'hos-overlay-logo'}, 'UPPER', h('span', null, 'DECKY')),
         h('button', {className:'hos-close-btn', onClick: onClose}, '\u2715')
       ),
-      h('div', {className:'hos-game-area'},
-        h('div', {style:{color:'var(--muted)'}}, 'Loading deck...')
+      h('div', {className:'hos-game-area', style:{display:'flex',alignItems:'center',justifyContent:'center',flexDirection:'column',minHeight:'60vh'}},
+        picksLoading
+          ? h('div', {style:{color:'var(--muted)', fontSize:16}}, 'Shuffling the deck...')
+          : h('div', {style:{textAlign:'center'}},
+              h('div', {style:{fontSize:42, marginBottom:12}}, '\u26BE'),
+              h('div', {style:{color:'#fff', fontSize:18, fontWeight:700, marginBottom:8}}, 'No picks today'),
+              h('div', {style:{color:'var(--muted)', fontSize:14}}, 'Come back tomorrow when there are games on the schedule.')
+            )
       )
     );
   }
@@ -5760,6 +5774,16 @@ function HitOrSpitOverlay(props) {
                   h('div', {className:'hos-card-stat-label'}, 'BRL%')
                 )
               ),
+              // AI Prediction Badge
+              h('div', {className:'hos-ai-prediction', style:{background: aiPrediction === 'HIT' ? 'linear-gradient(90deg, #1a472a, #2d6b3f)' : 'linear-gradient(90deg, #5c1a1a, #8b2020)'}},
+                h('div', {style:{display:'flex', alignItems:'center', justifyContent:'space-between'}},
+                  h('div', {style:{display:'flex', alignItems:'center', gap:6}},
+                    h('span', {style:{fontSize:10, color:'rgba(255,255,255,0.6)', fontWeight:700, letterSpacing:1}}, 'AI SAYS'),
+                    h('span', {style:{fontSize:14, fontFamily:'Bebas Neue', color:'#fff', letterSpacing:2}}, aiPrediction === 'HIT' ? '\uD83D\uDCA5 HIT' : '\uD83D\uDCA8 SPIT')
+                  ),
+                  h('div', {style:{fontSize:10, color:'rgba(255,255,255,0.5)'}}, seasonRecord.wins + '-' + seasonRecord.losses + ' record')
+                )
+              ),
               h('div', {className:'hos-card-footer'}, 'UPPERDECKY.COM \u00B7 HIT OR SPIT')
             )
           )
@@ -5786,14 +5810,13 @@ function HitOrSpitOverlay(props) {
         h('button', {className:'hos-swipe-btn btn-hit', onClick: function(){doSwipe('hit');}, disabled: showConsensus}, '\uD83D\uDC4D')
       ),
 
-      // Consensus bar
+      // AI Prediction reveal (after swipe)
       h('div', {className:'hos-consensus' + (showConsensus ? ' visible' : '')},
-        h('div', {className:'hos-consensus-label'}, 'Community says...'),
+        h('div', {className:'hos-consensus-label'}, 'The AI predicted...'),
         h('div', {className:'hos-consensus-bar'},
-          h('div', {className:'hos-consensus-hit', style:{width: fakeHitPct+'%'}}, fakeHitPct + '% HIT'),
-          h('div', {className:'hos-consensus-spit'}, (100-fakeHitPct) + '% SPIT')
+          h('div', {className: aiPrediction === 'HIT' ? 'hos-consensus-hit' : 'hos-consensus-spit', style:{width:'100%', textAlign:'center', borderRadius:8}}, aiPrediction === 'HIT' ? '\uD83D\uDCA5 HIT \u2014 Going Yard' : '\uD83D\uDCA8 SPIT \u2014 Not Today')
         ),
-        h('div', {className:'hos-consensus-total'}, fakeTotal.toLocaleString() + ' swipes today')
+        h('div', {className:'hos-consensus-total'}, 'HR Probability Score: ' + aiProb.toFixed(1))
       )
     )
   );
