@@ -3714,7 +3714,7 @@ function DataBadge(props) {
   var dash = props.dashboard;
   if (!dash) return null;
   var dateStr = formatUpdatedDate(dash.last_updated);
-  var label = dash.season + ' End-of-Season' + (dateStr ? ' \u00B7 Updated ' + dateStr : '');
+  var label = dash.season + ' Season' + (dateStr ? ' \u00B7 Updated ' + dateStr : '');
   return h('div', {className:'data-badge', style: props.style || {}},
     h('span', {className:'data-badge-dot'}),
     label
