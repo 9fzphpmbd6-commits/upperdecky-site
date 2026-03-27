@@ -1,51 +1,55 @@
-name: Daily Site Rebuild
+name: Daily Data Refresh & Deploy
 
 on:
   schedule:
-    - cron: '0 10 * * *'  # 4am CST (10am UTC)
+    - cron: '0 10 * * *'  # 4am CST / 5am CDT (10am UTC) — daily
   workflow_dispatch:  # Manual trigger
 
 jobs:
-  rebuild-and-deploy:
+  refresh-data-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Download current site from Netlify
-        env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-        run: |
-          mkdir -p deploy
-          
-          # Get the current production deploy ID and site name
-          SITE_INFO=$(curl -s -H "Authorization: Bearer $NETLIFY_AUTH_TOKEN" \
-            "https://api.netlify.com/api/v1/sites/$NETLIFY_SITE_ID")
-          DEPLOY_ID=$(echo $SITE_INFO | jq -r '.published_deploy.id')
-          SITE_NAME=$(echo $SITE_INFO | jq -r '.name')
-          DEPLOY_URL="https://${DEPLOY_ID}--${SITE_NAME}.netlify.app"
-          echo "Deploy URL: $DEPLOY_URL"
-          
-          # Get file listing
-          curl -s -H "Authorization: Bearer $NETLIFY_AUTH_TOKEN" \
-            "https://api.netlify.com/api/v1/deploys/$DEPLOY_ID/files" > files.json
-          
-          FILE_COUNT=$(jq length files.json)
-          echo "Total files: $FILE_COUNT"
-          
-          # Download each file from deploy URL
-          jq -r '.[].path' files.json | while read filepath; do
-            dir=$(dirname "deploy$filepath")
-            mkdir -p "$dir"
-            curl -s -o "deploy$filepath" "${DEPLOY_URL}${filepath}"
-          done
-          
-          echo "Downloaded files:"
-          find deploy -type f | wc -l
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-      - name: Ensure copyright is current year
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run data refresh script
         run: |
-          YEAR=$(date +%Y)
-          find deploy -name '*.html' -exec sed -i "s/UpperDecky .* 20[0-9][0-9]/UpperDecky \\\&copy; $YEAR/g" {} + || true
-          echo "Copyright set to $YEAR"
+          # Create output dir for fresh data
+          mkdir -p fresh-api
+          OUT_DIR=fresh-api python3 scripts/refresh-data.py
+
+          echo ""
+          echo "=== Generated files ==="
+          find fresh-api -type f | head -30
+          echo "..."
+          find fresh-api -type f | wc -l
+          echo "total files"
+
+      - name: Prepare deploy folder
+        run: |
+          # Copy the full site into deploy/
+          mkdir -p deploy
+          cp index.html deploy/
+          cp -r api deploy/
+
+          # Overwrite api/ with the fresh data we just fetched
+          cp -r fresh-api/* deploy/api/
+
+          # Preserve llhr.json if it exists (manually curated)
+          if [ -f api/llhr.json ]; then
+            cp api/llhr.json deploy/api/llhr.json
+          fi
+
+          echo "Deploy folder ready:"
+          ls -la deploy/
+          echo ""
+          echo "API files:"
+          find deploy/api -type f | wc -l
 
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v3
