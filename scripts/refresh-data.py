@@ -723,6 +723,244 @@ def generate_hos_picks(batters):
     print(f"  Season prediction record: {win}-{loss} ({pct}%)")
 
 # ============================================================
+# 7. PRESS BOX — AI ANALYST PICKS + RECORDS
+# ============================================================
+ANALYSTS = [
+    {"id": "sarah", "name": "Sarah Jenkins", "role": "The Analyst", "title": "Data Scientist",
+     "style": "data"},  # Favors strong Statcast + advanced stats
+    {"id": "ace", "name": '"Ace" Martinez', "role": "The Pitching Guru", "title": "Former Pitcher",
+     "style": "pitching"},  # Focuses on pitching matchups, unders
+    {"id": "pop", "name": '"Pop" Sullivan', "role": "The Old School Scout", "title": "40 Yrs in Baseball",
+     "style": "scout"},  # Eye-test, big-name favorites
+    {"id": "liam", "name": "Liam Chen", "role": "The Algorithm", "title": "Machine Learning",
+     "style": "algo"},  # Pure numbers, highest confidence
+    {"id": "mouth", "name": '"The Mouth"', "role": "The Hot Take Machine", "title": "Sports Radio Energy",
+     "style": "chaos"},  # Underdogs, longshots, chaos
+]
+
+def generate_pressbox_picks(batters):
+    """Generate daily Press Box analyst picks and track records."""
+    print("\n[7/7] Generating Press Box analyst picks...")
+    now = datetime.now(timezone.utc)
+    today_str = now.strftime("%Y-%m-%d")
+
+    # Load existing tracker
+    pb_path = os.path.join(OUT_DIR, "pressbox-tracker.json")
+    tracker = {"analysts": {a["id"]: {"wins": 0, "losses": 0} for a in ANALYSTS},
+               "current_day": "", "current_picks": {}, "history": []}
+    if os.path.exists(pb_path):
+        try:
+            with open(pb_path) as f:
+                tracker = json.load(f)
+        except:
+            pass
+
+    # Get today's schedule
+    url = f"{API_BASE}/schedule?sportId=1&date={today_str}&hydrate=probablePitcher"
+    sched = fetch_json(url)
+    games = []
+    teams_data = fetch_json(f"{API_BASE}/teams?sportId=1&season={SEASON}")
+    id_to_abbr = {}
+    if teams_data:
+        for t in teams_data.get("teams", []):
+            raw = t.get("abbreviation", "")
+            id_to_abbr[t["id"]] = ABBR_OVERRIDES.get(raw, raw)
+
+    if sched:
+        for d in sched.get("dates", []):
+            for g in d.get("games", []):
+                away = g.get("teams", {}).get("away", {})
+                home = g.get("teams", {}).get("home", {})
+                away_abbr = id_to_abbr.get(away.get("team", {}).get("id", 0), "???")
+                home_abbr = id_to_abbr.get(home.get("team", {}).get("id", 0), "???")
+                away_pitcher = away.get("probablePitcher", {}).get("fullName", "TBD")
+                home_pitcher = home.get("probablePitcher", {}).get("fullName", "TBD")
+                games.append({
+                    "gamePk": g.get("gamePk"),
+                    "away": away_abbr, "home": home_abbr,
+                    "away_pitcher": away_pitcher, "home_pitcher": home_pitcher
+                })
+
+    if not games:
+        print("  No games today, skipping Press Box")
+        write_json("pressbox.json", {"date": today_str, "analysts": [], "games_today": 0})
+        return
+
+    print(f"  {len(games)} games today")
+
+    # --- Grade yesterday's picks ---
+    prev_day = tracker.get("current_day", "")
+    prev_picks = tracker.get("current_picks", {})
+    if prev_day and prev_day != today_str and prev_picks:
+        from datetime import timedelta
+        yesterday = prev_day
+        ysched = fetch_json(f"{API_BASE}/schedule?sportId=1&date={yesterday}")
+        # Build results: {gamePk: {away_score, home_score}}
+        results = {}
+        if ysched:
+            for d in ysched.get("dates", []):
+                for g in d.get("games", []):
+                    if g.get("status", {}).get("codedGameState") == "F":
+                        gpk = g.get("gamePk")
+                        away_score = g.get("teams", {}).get("away", {}).get("score", 0)
+                        home_score = g.get("teams", {}).get("home", {}).get("score", 0)
+                        away_id = g.get("teams", {}).get("away", {}).get("team", {}).get("id", 0)
+                        home_id = g.get("teams", {}).get("home", {}).get("team", {}).get("id", 0)
+                        results[gpk] = {
+                            "away_abbr": id_to_abbr.get(away_id, "?"),
+                            "home_abbr": id_to_abbr.get(home_id, "?"),
+                            "away_score": away_score, "home_score": home_score,
+                            "total_runs": away_score + home_score
+                        }
+
+        day_results = {}
+        for aid, picks in prev_picks.items():
+            w = 0
+            l = 0
+            for pick in picks:
+                gpk = pick.get("gamePk")
+                res = results.get(gpk)
+                if not res:
+                    continue
+                ptype = pick.get("type")  # "winner" or "total"
+                if ptype == "winner":
+                    picked_team = pick.get("pick")
+                    if res["away_score"] > res["home_score"]:
+                        actual_winner = res["away_abbr"]
+                    elif res["home_score"] > res["away_score"]:
+                        actual_winner = res["home_abbr"]
+                    else:
+                        continue  # Tie / suspended
+                    if picked_team == actual_winner:
+                        w += 1
+                    else:
+                        l += 1
+                elif ptype == "total":
+                    line = pick.get("line", 8.5)
+                    direction = pick.get("direction")  # "over" or "under"
+                    actual = res["total_runs"]
+                    if direction == "over" and actual > line:
+                        w += 1
+                    elif direction == "under" and actual < line:
+                        w += 1
+                    elif actual == line:
+                        continue  # Push
+                    else:
+                        l += 1
+            day_results[aid] = {"wins": w, "losses": l}
+            if aid not in tracker["analysts"]:
+                tracker["analysts"][aid] = {"wins": 0, "losses": 0}
+            tracker["analysts"][aid]["wins"] += w
+            tracker["analysts"][aid]["losses"] += l
+
+        graded_summary = ", ".join([f"{a}: {day_results.get(a,{}).get('wins',0)}-{day_results.get(a,{}).get('losses',0)}" for a in day_results])
+        print(f"  Graded {yesterday}: {graded_summary}")
+
+    # --- Generate today's picks ---
+    rng = _seeded_rng(today_str + "pressbox")
+    batter_list = list(batters.values())
+
+    all_picks = {}
+    for analyst in ANALYSTS:
+        aid = analyst["id"]
+        style = analyst["style"]
+        picks = []
+        game_pool = list(games)
+        rng.shuffle(game_pool)
+
+        for g in game_pool[:3]:
+            gpk = g["gamePk"]
+            away = g["away"]
+            home = g["home"]
+
+            if style == "data":
+                # Data-driven: pick home team more often (home advantage in stats)
+                pick_team = home if rng.random() > 0.4 else away
+                pick_text = f"{pick_team} ML vs {away if pick_team == home else home}"
+                picks.append({"gamePk": gpk, "type": "winner", "pick": pick_team, "text": pick_text})
+            elif style == "pitching":
+                # Pitching guru: mix of winners and unders
+                if len(picks) < 1:
+                    pick_team = home if rng.random() > 0.45 else away
+                    pick_text = f"{pick_team} ML vs {away if pick_team == home else home}"
+                    picks.append({"gamePk": gpk, "type": "winner", "pick": pick_team, "text": pick_text})
+                else:
+                    line = rng.choice([7.0, 7.5, 8.0, 8.5])
+                    pick_text = f"Under {line} \u2014 {away}/{home}"
+                    picks.append({"gamePk": gpk, "type": "total", "direction": "under", "line": line, "text": pick_text})
+            elif style == "scout":
+                # Old school: always picks winners, favors big-market teams
+                pick_team = home if rng.random() > 0.35 else away
+                pick_text = f"{pick_team} -1.5 vs {away if pick_team == home else home}"
+                picks.append({"gamePk": gpk, "type": "winner", "pick": pick_team, "text": pick_text})
+            elif style == "algo":
+                # Algorithm: mix of overs and winners, high confidence
+                if len(picks) % 2 == 0:
+                    pick_team = home if rng.random() > 0.42 else away
+                    pick_text = f"{pick_team} ML vs {away if pick_team == home else home}"
+                    picks.append({"gamePk": gpk, "type": "winner", "pick": pick_team, "text": pick_text})
+                else:
+                    line = rng.choice([8.0, 8.5, 9.0, 9.5])
+                    direction = rng.choice(["over", "under"])
+                    pick_text = f"{direction.capitalize()} {line} \u2014 {away}/{home}"
+                    picks.append({"gamePk": gpk, "type": "total", "direction": direction, "line": line, "text": pick_text})
+            elif style == "chaos":
+                # Chaos: always picks underdogs (away teams), overs
+                pick_team = away
+                if len(picks) < 2:
+                    pick_text = f"{pick_team} ML vs {home}"
+                    picks.append({"gamePk": gpk, "type": "winner", "pick": pick_team, "text": pick_text})
+                else:
+                    line = rng.choice([9.5, 10.0, 10.5, 11.0])
+                    pick_text = f"Over {line} \u2014 {away}/{home}"
+                    picks.append({"gamePk": gpk, "type": "total", "direction": "over", "line": line, "text": pick_text})
+
+        all_picks[aid] = picks
+
+    tracker["current_day"] = today_str
+    tracker["current_picks"] = all_picks
+
+    # Write tracker (persists across days)
+    write_json("pressbox-tracker.json", tracker)
+
+    # Build front-end JSON
+    conf_labels = {"data": "87% conf", "pitching": "72% conf", "algo": "94% conf", "scout": "91% conf", "chaos": "YOLO"}
+    conf_emojis = {"data": "\U0001F525\U0001F525\U0001F525", "pitching": "\U0001F9CA\U0001F9CA",
+                   "scout": "\U0001F4AA\U0001F4AA\U0001F4AA", "algo": "\U0001F916\U0001F916\U0001F916",
+                   "chaos": "\U0001F92A\U0001F92A\U0001F92A"}
+    output_analysts = []
+    for analyst in ANALYSTS:
+        aid = analyst["id"]
+        rec = tracker["analysts"].get(aid, {"wins": 0, "losses": 0})
+        w = rec["wins"]
+        l = rec["losses"]
+        total = w + l
+        pct = f".{round(w / total * 1000):03d}" if total > 0 else ".000"
+        output_analysts.append({
+            "id": aid,
+            "name": analyst["name"],
+            "role": analyst["role"],
+            "title": analyst["title"],
+            "record": f"{w}-{l}",
+            "pct": pct,
+            "picks": [p["text"] for p in all_picks.get(aid, [])],
+            "conf": conf_emojis.get(analyst["style"], "") + " " + conf_labels.get(analyst["style"], "")
+        })
+
+    write_json("pressbox.json", {
+        "date": today_str,
+        "analysts": output_analysts,
+        "games_today": len(games)
+    })
+
+    for a in output_analysts:
+        try:
+            picks_preview = ', '.join(a['picks'][:2])
+            print(f"  {a['name']:20s} {a['record']:>6s} ({a['pct']}) -- {picks_preview}")
+        except UnicodeEncodeError:
+            print(f"  {a['name']:20s} {a['record']:>6s} ({a['pct']}) -- [picks generated]")
+
+# ============================================================
 # MAIN
 # ============================================================
 def main():
@@ -746,6 +984,7 @@ def main():
     compute_derived(batters)
     total = generate_outputs(batters, teams)
     generate_hos_picks(batters)
+    generate_pressbox_picks(batters)
 
     print(f"\n{'=' * 60}")
     print(f"DONE — {total} batters, {len(teams)} teams")

@@ -3913,18 +3913,32 @@ function DualTickers(props) {
 // THE PRESS BOX — AI EXPERTS
 // ===========================
 function PressBox() {
-  var analysts = [
-    {name:'Sarah Jenkins', role:'The Analyst', title:'Data Scientist', record:'42-28', pct:'.600', img:'expert-female-1.png',
-     picks:['NYY -1.5 vs BOS (+110)','Over 8.5 runs \u2014 LAD/SF','Ohtani HR +320'], conf:'\uD83D\uDD25\uD83D\uDD25\uD83D\uDD25 87% conf'},
-    {name:'"Ace" Martinez', role:'The Pitching Guru', title:'Former Pitcher', record:'38-32', pct:'.543', img:'expert-male-1.png',
-     picks:['ATL ML vs NYM (-135)','Under 7.5 runs \u2014 HOU/SEA','deGrom 9+ K\'s +180'], conf:'\uD83E\uDDCA\uD83E\uDDCA 72% conf'},
-    {name:'"Pop" Sullivan', role:'The Old School Scout', title:'40 Yrs in Baseball', record:'45-25', pct:'.643', img:'expert-male-2.png',
-     picks:['CLE -1.5 vs CWS (-140)','Over 9 runs \u2014 COL/ARI','Judge HR +280'], conf:'\uD83D\uDCAA\uD83D\uDCAA\uD83D\uDCAA 91% conf'},
-    {name:'Liam Chen', role:'The Algorithm', title:'Machine Learning', record:'50-20', pct:'.714', img:'expert-male-3.png',
-     picks:['LAD -2.5 vs MIA (+145)','Under 6.5 runs \u2014 TB/MIN','Soto 2+ hits +160'], conf:'\uD83E\uDD16\uD83E\uDD16\uD83E\uDD16 94% conf'},
-    {name:'"The Mouth"', role:'The Hot Take Machine', title:'Sports Radio Energy', record:'31-39', pct:'.443', img:'expert-female-2.png',
-     picks:['PIT ML vs PHI (+210)','Over 11 runs \u2014 COL/CIN','Schwarber 2 HR +1400'], conf:'\uD83E\uDD2A\uD83E\uDD2A\uD83E\uDD2A YOLO'}
-  ];
+  // Fetch live analyst data from pressbox.json
+  var _pb = useState(null), pbData = _pb[0], setPbData = _pb[1];
+  useEffect(function() {
+    fetchJSON(API + '/pressbox.json', 'pressbox').then(function(data) {
+      setPbData(data);
+    }).catch(function() {});
+  }, []);
+
+  // Fallback to default analysts while loading
+  var defaultImgs = {sarah:'expert-female-1.png', ace:'expert-male-1.png', pop:'expert-male-2.png', liam:'expert-male-3.png', mouth:'expert-female-2.png'};
+  var analysts = (pbData && pbData.analysts && pbData.analysts.length > 0)
+    ? pbData.analysts.map(function(a) {
+        return {name:a.name, role:a.role, title:a.title, record:a.record, pct:a.pct, img:defaultImgs[a.id]||'expert-male-1.png', picks:a.picks, conf:a.conf};
+      })
+    : [
+      {name:'Sarah Jenkins', role:'The Analyst', title:'Data Scientist', record:'0-0', pct:'.000', img:'expert-female-1.png',
+       picks:['Loading picks...'], conf:'\uD83D\uDD25\uD83D\uDD25\uD83D\uDD25 87% conf'},
+      {name:'"Ace" Martinez', role:'The Pitching Guru', title:'Former Pitcher', record:'0-0', pct:'.000', img:'expert-male-1.png',
+       picks:['Loading picks...'], conf:'\uD83E\uDDCA\uD83E\uDDCA 72% conf'},
+      {name:'"Pop" Sullivan', role:'The Old School Scout', title:'40 Yrs in Baseball', record:'0-0', pct:'.000', img:'expert-male-2.png',
+       picks:['Loading picks...'], conf:'\uD83D\uDCAA\uD83D\uDCAA\uD83D\uDCAA 91% conf'},
+      {name:'Liam Chen', role:'The Algorithm', title:'Machine Learning', record:'0-0', pct:'.000', img:'expert-male-3.png',
+       picks:['Loading picks...'], conf:'\uD83E\uDD16\uD83E\uDD16\uD83E\uDD16 94% conf'},
+      {name:'"The Mouth"', role:'The Hot Take Machine', title:'Sports Radio Energy', record:'0-0', pct:'.000', img:'expert-female-2.png',
+       picks:['Loading picks...'], conf:'\uD83E\uDD2A\uD83E\uDD2A\uD83E\uDD2A YOLO'}
+    ];
 
   return h('section', {className:'press-box-section section-gap'},
     h('div', {className:'container'},
