@@ -528,6 +528,35 @@ def compute_hr_probability(b):
     score = (barrel * 0.5) + (hr_rate * 200) + (hard_hit * 0.15)
     return min(round(score, 1), 99)
 
+def fetch_prev_season_stats(player_ids):
+    """Fetch previous season (2025) stats for specific players."""
+    print(f"  Fetching 2025 stats for {len(player_ids)} players...")
+    prev = SEASON - 1
+    stats_2025 = {}
+    for pid in player_ids:
+        url = f"{API_BASE}/people/{pid}/stats?stats=season&season={prev}&group=hitting&sportId=1"
+        data = fetch_json(url)
+        if not data:
+            continue
+        for st in data.get("stats", []):
+            for sp in st.get("splits", []):
+                s = sp.get("stat", {})
+                pa = safe_int(s.get("plateAppearances", 0))
+                if pa < 30:  # Need at least 30 PA to be meaningful
+                    continue
+                stats_2025[pid] = {
+                    "prev_hr": safe_int(s.get("homeRuns", 0)),
+                    "prev_ba": safe_float(s.get("avg", "0").replace(".---", "0"), 0),
+                    "prev_ops": safe_float(s.get("ops", "0").replace(".---", "0"), 0),
+                    "prev_ab": safe_int(s.get("atBats", 0)),
+                    "prev_pa": pa,
+                    "prev_rbi": safe_int(s.get("rbi", 0)),
+                    "prev_season": prev,
+                }
+        time.sleep(0.1)  # Be polite to the API
+    print(f"  Got 2025 stats for {len(stats_2025)} of {len(player_ids)} players")
+    return stats_2025
+
 def generate_hos_picks(batters):
     """Generate Hit or Spit daily picks, grade yesterday's picks, maintain record."""
     print("\n[6/6] Generating Hit or Spit picks...")
@@ -612,21 +641,51 @@ def generate_hos_picks(batters):
     deck = top_pool[:8] + bot_pool[:7]
     rng.shuffle(deck)  # Mix them up
 
+    # Fetch 2025 stats for the 15 picked players (so cards don't show tiny sample size junk)
+    pick_ids = [b["batter_id"] for b in deck[:15]]
+    prev_stats = fetch_prev_season_stats(pick_ids)
+
     # Make predictions
     picks = []
     for b in deck[:15]:
         prob = b.get("_hr_prob", 0)
         # Threshold for HIT prediction (higher = more selective)
         prediction = "HIT" if prob >= 12 else "SPIT"
+        pid = b["batter_id"]
+        pa_2026 = b.get("pa", 0)
+        prev = prev_stats.get(pid, {})
+
+        # Card display stats: use 2025 full-season when 2026 sample is tiny (<50 PA)
+        # Once a batter has 50+ PA in 2026, switch to current season
+        if pa_2026 >= 50 or not prev:
+            card_hr = b.get("home_runs", 0)
+            card_ba = b.get("ba", 0)
+            card_ops = b.get("ops", 0)
+            card_barrel = b.get("barrel_rate")
+            card_label = str(SEASON)
+        else:
+            card_hr = prev.get("prev_hr", 0)
+            card_ba = prev.get("prev_ba", 0)
+            card_ops = prev.get("prev_ops", 0)
+            card_barrel = None  # Statcast barrel not in basic stats
+            card_label = str(SEASON - 1)
+
         picks.append({
             "date": today_str,
-            "batter_id": b["batter_id"],
+            "batter_id": pid,
             "full_name": b.get("full_name", ""),
             "team": b.get("team", ""),
             "position": b.get("position", ""),
             "headshot_url": b.get("headshot_url", ""),
             "prediction": prediction,
             "hr_prob": prob,
+            # Card display stats (may be 2025 or 2026 depending on sample size)
+            "card_hr": card_hr,
+            "card_ba": card_ba,
+            "card_ops": card_ops,
+            "card_barrel": card_barrel,
+            "card_season_label": card_label,
+            # Raw current season stats (always 2026)
             "home_runs": b.get("home_runs", 0),
             "ba": b.get("ba", 0),
             "ops": b.get("ops", 0),

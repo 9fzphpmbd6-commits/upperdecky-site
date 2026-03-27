@@ -5745,7 +5745,7 @@ function HitOrSpitOverlay(props) {
             h('div', {className:'hos-card-inner'},
               h('div', {className:'hos-card-topbar', style:{background:'linear-gradient(90deg, '+teamColor+', '+teamColor+'cc)'}},
                 h('div', {className:'hos-card-logo'}, 'UPPER', h('span', null, 'DECKY')),
-                h('div', {className:'hos-card-year'}, '2026')
+                h('div', {className:'hos-card-year'}, current.card_season_label || '2026')
               ),
               h('div', {className:'hos-card-photo'},
                 h('span', {className:'hos-card-pos'}, current.position),
@@ -5758,22 +5758,23 @@ function HitOrSpitOverlay(props) {
               ),
               h('div', {className:'hos-card-stats'},
                 h('div', {className:'hos-card-stat'},
-                  h('div', {className:'hos-card-stat-val'}, current.home_runs || 0),
+                  h('div', {className:'hos-card-stat-val'}, current.card_hr != null ? current.card_hr : (current.home_runs || 0)),
                   h('div', {className:'hos-card-stat-label'}, 'HR')
                 ),
                 h('div', {className:'hos-card-stat'},
-                  h('div', {className:'hos-card-stat-val'}, fmtBa(current.ba)),
+                  h('div', {className:'hos-card-stat-val'}, fmtBa(current.card_ba != null ? current.card_ba : current.ba)),
                   h('div', {className:'hos-card-stat-label'}, 'AVG')
                 ),
                 h('div', {className:'hos-card-stat'},
-                  h('div', {className:'hos-card-stat-val'}, fmtBa(current.ops)),
+                  h('div', {className:'hos-card-stat-val'}, fmtBa(current.card_ops != null ? current.card_ops : current.ops)),
                   h('div', {className:'hos-card-stat-label'}, 'OPS')
                 ),
                 h('div', {className:'hos-card-stat'},
-                  h('div', {className:'hos-card-stat-val'}, fmtPct(current.barrel_rate)),
+                  h('div', {className:'hos-card-stat-val'}, current.card_barrel != null ? fmtPct(current.card_barrel) : (current.barrel_rate != null ? fmtPct(current.barrel_rate) : '\u2014')),
                   h('div', {className:'hos-card-stat-label'}, 'BRL%')
                 )
               ),
+              current.card_season_label && h('div', {style:{textAlign:'center', fontSize:9, color:'rgba(255,255,255,0.35)', letterSpacing:1, padding:'2px 0 0', fontWeight:600}}, current.card_season_label + ' STATS'),
               // AI Prediction Badge
               h('div', {className:'hos-ai-prediction', style:{background: aiPrediction === 'HIT' ? 'linear-gradient(90deg, #1a472a, #2d6b3f)' : 'linear-gradient(90deg, #5c1a1a, #8b2020)'}},
                 h('div', {style:{display:'flex', alignItems:'center', justifyContent:'space-between'}},
