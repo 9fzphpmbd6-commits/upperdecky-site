@@ -46,6 +46,13 @@ jobs:
           cp index.html deploy/
           cp -r api deploy/
 
+          # Copy all root-level assets (images, sitemap, robots, etc.)
+          cp *.png deploy/ 2>/dev/null || true
+          cp *.jpg deploy/ 2>/dev/null || true
+          cp *.svg deploy/ 2>/dev/null || true
+          cp sitemap.xml deploy/ 2>/dev/null || true
+          cp robots.txt deploy/ 2>/dev/null || true
+
           # Overwrite api/ with the fresh data we just fetched
           cp -r fresh-api/* deploy/api/
 

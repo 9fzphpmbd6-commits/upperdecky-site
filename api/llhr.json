@@ -1,13 +1,14 @@
 {
-  "season": 2025,
-  "total": 6,
+  "season": 2026,
+  "total": 0,
   "giveaway_active": true,
   "giveaway_details": {
     "prize": "Box of baseball cards + $50 Amazon gift card",
     "how_to_enter": "Follow @UpperDecky15 on X and DM us: LLHR",
     "rules": "One winner per inside-the-park HR. Must follow + DM before the next LLHR to be eligible."
   },
-  "events": [
+  "events": [],
+  "events_2025": [
     {
       "player": "Wilyer Abreu",
       "team": "BOS",

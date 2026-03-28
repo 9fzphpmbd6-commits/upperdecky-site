@@ -3691,7 +3691,7 @@ function useHashRoute() {
 function Footer() {
   return h('footer', {className:'site-footer'},
     h('div', {className:'container', style:{textAlign:'center'}},
-      h('p', {className:'footer-copy'}, 'UpperDecky \u00A9 2025 \u2014 Upper deck dingers. Upper lip pinches. Free data.'),
+      h('p', {className:'footer-copy'}, 'UpperDecky \u00A9 2026 \u2014 Upper deck dingers. Upper lip pinches. Free data.'),
       h('div', {className:'footer-tip-links'},
         h('a', {href:'https://venmo.com/u/upperdecky15', target:'_blank', rel:'noopener noreferrer'}, '\uD83D\uDCB2 Venmo')
       ),
@@ -4441,13 +4441,13 @@ function LLHRTracker(props) {
         )
       ),
       // Last LLHR
-      lastEvent && h('div', {className:'llhr-last'},
+      lastEvent ? h('div', {className:'llhr-last'},
         'Latest: ',
         h('strong', null, lastEvent.player),
         ' (' + lastEvent.team + ') \u2014 ',
         fmtDate(lastEvent.date),
         ' vs ' + lastEvent.opponent
-      ),
+      ) : h('div', {className:'llhr-last', style:{color:'var(--muted)'}}, 'No inside-the-park home runs yet this season. The wait begins.'),
       // Giveaway box
       data.giveaway_active && h('div', {className:'llhr-giveaway'},
         h('div', {className:'llhr-giveaway-title'}, '\uD83C\uDF81 LLHR Giveaway \u2014 Every. Single. One.'),
@@ -5788,7 +5788,7 @@ function HitOrSpitOverlay(props) {
                   h('div', {className:'hos-card-stat-label'}, 'BRL%')
                 )
               ),
-              current.card_season_label && h('div', {style:{textAlign:'center', fontSize:9, color:'rgba(255,255,255,0.35)', letterSpacing:1, padding:'2px 0 0', fontWeight:600}}, current.card_season_label + ' STATS'),
+              current.card_season_label && h('div', {style:{textAlign:'center', fontSize:9, color:'rgba(255,255,255,0.35)', letterSpacing:1, padding:'2px 0 0', fontWeight:600}}, current.card_season_label === '2025' ? "'25 SEASON STATS" : current.card_season_label + ' STATS'),
               // AI Prediction Badge
               h('div', {className:'hos-ai-prediction', style:{background: aiPrediction === 'HIT' ? 'linear-gradient(90deg, #1a472a, #2d6b3f)' : 'linear-gradient(90deg, #5c1a1a, #8b2020)'}},
                 h('div', {style:{display:'flex', alignItems:'center', justifyContent:'space-between'}},
@@ -5895,6 +5895,10 @@ function App() {
     page = h(LeaderboardPage, {type: lbType, key: lbType, dashboard: dashboard});
   } else if (route === '/scatter') {
     page = h(ScatterPage, {dashboard: dashboard});
+  } else if (route === '/hit-or-spit') {
+    // HoS is an overlay, not a page — redirect to home and open it
+    page = loading ? h(Loading) : error ? h(ErrorMsg, {onRetry: loadInitial}) : h(HomePage, {batters:batters, teams:teams, dashboard:dashboard, llhr:llhrData, onPlayHoS: openHoS});
+    if (!hosOpen && !loading) { openHoS(); }
   } else {
     page = h('div', {className:'container', style:{padding:'80px 24px', textAlign:'center'}},
       h('h2', null, '404'),
