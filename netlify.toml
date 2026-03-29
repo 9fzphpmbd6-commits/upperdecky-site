@@ -18,7 +18,8 @@
   to = "/og-image.jpg"
   status = 200
 
-# Serve API JSON files directly
+# Serve static API JSON files directly
+# Note: /api/dugout/* routes are handled by Netlify Functions (config.path)
 [[redirects]]
   from = "/api/*"
   to = "/api/:splat"

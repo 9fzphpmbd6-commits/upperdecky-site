@@ -3,6 +3,7 @@
   "version": "2.0.0",
   "description": "BarrelVision — MLB Advanced Analytics",
   "dependencies": {
-    "@netlify/functions": "^2.0.0"
+    "@netlify/functions": "^2.0.0",
+    "@netlify/blobs": "^8.1.0"
   }
 }

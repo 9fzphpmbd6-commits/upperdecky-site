@@ -1458,6 +1458,168 @@ section + section { padding-top: 0; }
 .dugout-social {
   margin: 20px 0 32px;
 }
+/* Dugout Comment Board */
+.dugout-board {
+  max-width: 640px;
+  margin: 0 auto 32px;
+  text-align: left;
+}
+.dugout-prompt {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border: 1px solid #d4a84344;
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 16px;
+}
+.dugout-prompt-badge {
+  display: inline-block;
+  background: #d4a843;
+  color: #1a1a2e;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  padding: 3px 10px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+.dugout-prompt-text {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.35;
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.5px;
+}
+.dugout-form {
+  margin-bottom: 20px;
+}
+.dugout-input {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 14px;
+  padding: 10px 14px;
+  font-family: inherit;
+  width: 100%;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.dugout-input:focus {
+  border-color: #d4a843;
+}
+.dugout-input::placeholder {
+  color: var(--muted);
+}
+.dugout-name-input {
+  max-width: 200px;
+  flex-shrink: 0;
+}
+.dugout-textarea {
+  resize: none;
+  min-height: 56px;
+}
+.dugout-char-count {
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+.dugout-error {
+  color: #ef4444;
+  font-size: 13px;
+  margin: 6px 0;
+}
+.dugout-submit {
+  background: #d4a843;
+  color: #1a1a2e;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+  margin-top: 8px;
+}
+.dugout-submit:hover:not(:disabled) {
+  background: #e5be5a;
+}
+.dugout-submit:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.dugout-comments {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.dugout-comment {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+.dugout-comment-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.dugout-comment-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #d4a843, #c8102e);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 14px;
+  color: #fff;
+  flex-shrink: 0;
+}
+.dugout-comment-name {
+  font-weight: 700;
+  color: #fff;
+  font-size: 14px;
+  margin-right: 8px;
+}
+.dugout-comment-time {
+  font-size: 12px;
+  color: var(--muted);
+}
+.dugout-comment-text {
+  font-size: 14px;
+  color: #e2e8f0;
+  line-height: 1.45;
+  word-break: break-word;
+}
+.dugout-comment-actions {
+  margin-top: 8px;
+}
+.dugout-upvote {
+  background: transparent;
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  color: var(--muted);
+  font-size: 13px;
+  padding: 4px 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+.dugout-upvote:hover:not(:disabled) {
+  border-color: #d4a843;
+  color: #d4a843;
+}
+.dugout-upvote.voted {
+  border-color: #d4a84366;
+  color: #d4a843;
+  cursor: default;
+}
 .x-btn {
   display: inline-flex;
   align-items: center;
@@ -4303,6 +4465,75 @@ function ExploreStats() {
 // THE DUGOUT — FEATURED CREATORS
 // ===========================
 function DugoutSection() {
+  var _prompt = useState(null), promptData = _prompt[0], setPromptData = _prompt[1];
+  var _comments = useState([]), comments = _comments[0], setComments = _comments[1];
+  var _loading = useState(true), loading = _loading[0], setLoading = _loading[1];
+  var _posting = useState(false), posting = _posting[0], setPosting = _posting[1];
+  var _name = useState(''), name = _name[0], setName = _name[1];
+  var _text = useState(''), text = _text[0], setText = _text[1];
+  var _error = useState(''), error = _error[0], setError = _error[1];
+  var _voted = useState({}), voted = _voted[0], setVoted = _voted[1];
+
+  // Load prompt and comments
+  useEffect(function() {
+    Promise.all([
+      fetchJSON(API + '/dugout-prompt.json', 'dugout_prompt'),
+      fetch('/api/dugout/comments?date=' + new Date().toISOString().slice(0,10)).then(function(r){return r.json();}).catch(function(){return {comments:[]};})  
+    ]).then(function(arr) {
+      setPromptData(arr[0]);
+      setComments(arr[1].comments || []);
+      setLoading(false);
+    }).catch(function() { setLoading(false); });
+    // Load saved name from localStorage
+    try { var saved = localStorage.getItem('dugout_name'); if (saved) setName(saved); } catch(e) {}
+    // Load voted state
+    try { var v = JSON.parse(localStorage.getItem('dugout_voted_' + new Date().toISOString().slice(0,10)) || '{}'); setVoted(v); } catch(e) {}
+  }, []);
+
+  function postComment() {
+    if (!name.trim() || !text.trim()) { setError('Need a name and a take, champ.'); return; }
+    if (text.length > 280) { setError('Max 280 chars. This ain\'t a blog.'); return; }
+    setPosting(true);
+    setError('');
+    try { localStorage.setItem('dugout_name', name.trim()); } catch(e) {}
+    fetch('/api/dugout/comments', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({name: name.trim(), comment: text.trim()})
+    }).then(function(r) { return r.json(); }).then(function(data) {
+      setPosting(false);
+      if (data.error) { setError(data.error); return; }
+      if (data.comment) { setComments(function(prev) { return [data.comment].concat(prev); }); }
+      setText('');
+    }).catch(function() { setPosting(false); setError('Failed to post. Try again.'); });
+  }
+
+  function upvote(id) {
+    if (voted[id]) return;
+    fetch('/api/dugout/upvote', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({id: id, date: new Date().toISOString().slice(0,10)})
+    }).then(function(r){return r.json();}).then(function(data) {
+      if (data.success) {
+        setComments(function(prev) { return prev.map(function(c) { return c.id === id ? Object.assign({}, c, {upvotes: data.upvotes}) : c; }); });
+        var nv = Object.assign({}, voted); nv[id] = true; setVoted(nv);
+        try { localStorage.setItem('dugout_voted_' + new Date().toISOString().slice(0,10), JSON.stringify(nv)); } catch(e) {}
+      }
+    }).catch(function(){});
+  }
+
+  function timeAgo(isoStr) {
+    var diff = (Date.now() - new Date(isoStr).getTime()) / 1000;
+    if (diff < 60) return 'just now';
+    if (diff < 3600) return Math.floor(diff/60) + 'm ago';
+    if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
+    return Math.floor(diff/86400) + 'd ago';
+  }
+
+  var prompt = (promptData && promptData.prompt) ? promptData.prompt : 'What\'s your hottest baseball take today?';
+  var sortedComments = comments.slice().sort(function(a,b) { return (b.upvotes||0) - (a.upvotes||0); });
+
   var creators = [
     {name:'Nick Pollack', handle:'@PitcherList', url:'https://x.com/PitcherList', desc:'Pitcher List Founder, 5x FSWA Winner', color:'#ef4444', letter:'N'},
     {name:'Codify', handle:'@CodifyBaseball', url:'https://x.com/CodifyBaseball', desc:'Trusted by 300+ MLB pitchers. Heat maps & pitch design.', color:'#38bdf8', letter:'C'},
@@ -4312,11 +4543,71 @@ function DugoutSection() {
 
   return h('section', {className:'dugout-section section-gap'},
     h('div', {className:'container'},
+      // Header
       h('div', {className:'section-header', style:{justifyContent:'center'}},
-        h('h2', {className:'section-title'}, 'THE DUGOUT')
+        h('h2', {className:'section-title'}, 'THE DUGOUT \uD83D\uDDE3\uFE0F')
       ),
-      h('p', {className:'section-subtitle', style:{textAlign:'center'}}, 'Follow us. Roast us. Whatever.'),
-      h('div', {className:'dugout-social', style:{textAlign:'center'}},
+      h('p', {className:'section-subtitle', style:{textAlign:'center', marginBottom:24}}, 'Daily hot takes. No filter. Drop yours below.'),
+
+      // Hot Take Board
+      h('div', {className:'dugout-board'},
+        // Prompt
+        h('div', {className:'dugout-prompt'},
+          h('div', {className:'dugout-prompt-badge'}, 'TODAY\'S HOT TAKE'),
+          h('div', {className:'dugout-prompt-text'}, prompt)
+        ),
+
+        // Post form
+        h('div', {className:'dugout-form'},
+          h('div', {style:{display:'flex', gap:8, marginBottom:8}},
+            h('input', {
+              type:'text', placeholder:'Your name', maxLength:50, value: name,
+              className:'dugout-input dugout-name-input',
+              onChange: function(e) { setName(e.target.value); }
+            }),
+            h('div', {className:'dugout-char-count', style:{color: text.length > 250 ? '#ef4444' : 'var(--muted)'}}, text.length + '/280')
+          ),
+          h('textarea', {
+            placeholder:'Drop your take...', maxLength:280, rows:2, value: text,
+            className:'dugout-input dugout-textarea',
+            onChange: function(e) { setText(e.target.value); },
+            onKeyDown: function(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); postComment(); } }
+          }),
+          error && h('div', {className:'dugout-error'}, error),
+          h('button', {
+            className:'dugout-submit', disabled: posting || !name.trim() || !text.trim(),
+            onClick: postComment
+          }, posting ? 'Posting...' : '\uD83D\uDD25 Drop Take')
+        ),
+
+        // Comments
+        h('div', {className:'dugout-comments'},
+          loading && h('div', {style:{textAlign:'center', color:'var(--muted)', padding:20}}, 'Loading takes...'),
+          !loading && comments.length === 0 && h('div', {style:{textAlign:'center', color:'var(--muted)', padding:20}}, 'No takes yet today. Be the first.'),
+          sortedComments.map(function(c) {
+            return h('div', {className:'dugout-comment', key: c.id},
+              h('div', {className:'dugout-comment-header'},
+                h('div', {className:'dugout-comment-avatar'}, (c.name || '?')[0].toUpperCase()),
+                h('div', null,
+                  h('span', {className:'dugout-comment-name'}, c.name),
+                  h('span', {className:'dugout-comment-time'}, timeAgo(c.createdAt))
+                )
+              ),
+              h('div', {className:'dugout-comment-text'}, c.comment),
+              h('div', {className:'dugout-comment-actions'},
+                h('button', {
+                  className:'dugout-upvote' + (voted[c.id] ? ' voted' : ''),
+                  onClick: function() { upvote(c.id); },
+                  disabled: !!voted[c.id]
+                }, '\uD83D\uDD25 ' + (c.upvotes || 0))
+              )
+            );
+          })
+        )
+      ),
+
+      // Social + Creators (below the board)
+      h('div', {style:{marginTop:40, textAlign:'center'}},
         h('a', {className:'x-btn', href:'https://x.com/UpperDecky15', target:'_blank', rel:'noopener noreferrer'},
           h('svg', {viewBox:'0 0 24 24', fill:'currentColor', width:20, height:20},
             h('path', {d:'M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z'})

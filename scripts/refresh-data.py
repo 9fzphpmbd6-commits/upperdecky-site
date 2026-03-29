@@ -961,6 +961,94 @@ def generate_pressbox_picks(batters):
             print(f"  {a['name']:20s} {a['record']:>6s} ({a['pct']}) -- [picks generated]")
 
 # ============================================================
+# 8. THE DUGOUT — DAILY HOT TAKE PROMPTS
+# ============================================================
+def generate_dugout_prompt(batters, teams):
+    """Generate a daily hot take prompt based on current stats and matchups."""
+    print("\n[8/8] Generating Dugout prompt...")
+    now = datetime.now(timezone.utc)
+    today_str = now.strftime("%Y-%m-%d")
+    rng = _seeded_rng(today_str + "dugout")
+
+    batter_list = sorted(batters.values(), key=lambda x: x.get("ops", 0), reverse=True)
+
+    # Get today's schedule for matchup-based prompts
+    sched = fetch_json(f"{API_BASE}/schedule?sportId=1&date={today_str}")
+    teams_data = fetch_json(f"{API_BASE}/teams?sportId=1&season={SEASON}")
+    id_to_abbr = {}
+    if teams_data:
+        for t in teams_data.get("teams", []):
+            raw = t.get("abbreviation", "")
+            id_to_abbr[t["id"]] = ABBR_OVERRIDES.get(raw, raw)
+    matchups = []
+    if sched:
+        for d in sched.get("dates", []):
+            for g in d.get("games", []):
+                away = id_to_abbr.get(g.get("teams",{}).get("away",{}).get("team",{}).get("id",0), "")
+                home = id_to_abbr.get(g.get("teams",{}).get("home",{}).get("team",{}).get("id",0), "")
+                if away and home:
+                    matchups.append((away, home))
+
+    # Build prompt templates
+    templates = []
+
+    # Hot hitters
+    hot = [b for b in batter_list if b.get("ba", 0) > 0.350 and b.get("pa", 0) >= 5]
+    if hot:
+        p = rng.choice(hot[:10])
+        templates.append(f"{p['full_name'].split()[-1]} is hitting {p['ba']:.3f} so far. Legit or small sample size fraud?")
+
+    # Cold stars
+    cold = [b for b in batter_list if b.get("ba", 0) < 0.150 and b.get("pa", 0) >= 5]
+    if cold:
+        p = rng.choice(cold[:10])
+        templates.append(f"{p['full_name'].split()[-1]} is hitting {p['ba']:.3f}. Time to panic or nah?")
+
+    # HR leaders
+    hr_leaders = sorted(batter_list, key=lambda x: x.get("home_runs", 0), reverse=True)
+    if hr_leaders and hr_leaders[0].get("home_runs", 0) > 0:
+        p = hr_leaders[0]
+        templates.append(f"{p['full_name'].split()[-1]} leads the league with {p['home_runs']} HR. Will he hit 40+ this year?")
+
+    # Matchup-based
+    if matchups:
+        m = rng.choice(matchups)
+        templates.append(f"{m[0]} vs {m[1]} today. Who you got and why?")
+        templates.append(f"Bold prediction for {m[0]} at {m[1]} tonight. Drop your hottest take.")
+
+    # Evergreen baseball takes
+    evergreen = [
+        "What's the most overrated stat in baseball? Wrong answers only.",
+        "If you could add one rule to baseball, what would it be?",
+        "Who's winning MVP this year? Lock it in now.",
+        "What team is going to surprise everyone this season?",
+        "Most underrated player in baseball right now. Go.",
+        "Pitch clock: best thing to happen to baseball or ruining the game?",
+        "What's your earliest baseball memory? Drop it below.",
+        "Name a player who's about to have a breakout season.",
+        "Hot take: the DH should be eliminated. Agree or disagree?",
+        "If you could watch one current player for the rest of their career, who?",
+        "What ballpark has the best food? Don't say yours just because.",
+        "Robot umps: ready or not, they're coming. Thoughts?",
+        "Who's the most fun player to watch in baseball right now?",
+        "Worst baseball take you've ever heard? Share the pain.",
+        "If baseball had a trade deadline for fans, which fanbase would you join?",
+    ]
+    templates.extend(rng.sample(evergreen, min(3, len(evergreen))))
+
+    # Pick today's prompt
+    prompt = rng.choice(templates)
+
+    # Write dugout prompt file
+    write_json("dugout-prompt.json", {
+        "date": today_str,
+        "prompt": prompt,
+        "comment_count": 0,  # Will be updated by the live function
+    })
+
+    print(f"  Prompt: {prompt}")
+
+# ============================================================
 # MAIN
 # ============================================================
 def main():
@@ -985,6 +1073,7 @@ def main():
     total = generate_outputs(batters, teams)
     generate_hos_picks(batters)
     generate_pressbox_picks(batters)
+    generate_dugout_prompt(batters, teams)
 
     print(f"\n{'=' * 60}")
     print(f"DONE — {total} batters, {len(teams)} teams")
