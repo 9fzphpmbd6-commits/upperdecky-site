@@ -3955,6 +3955,7 @@ function Navbar(props) {
     {emoji:'🤕', label:'HBP Pain Index', path:'/leaderboard/hbp'},
     {emoji:'🌕', label:'Full Moon Effect', path:'/leaderboard/full-moon'},
     {emoji:'📏', label:'Size vs Power', path:'/scatter'},
+    {emoji:'🛢️', label:'Crude Barrels', path:'/leaderboard/crude-barrels'},
   ];
 
   return h(Fragment, null,
@@ -4648,7 +4649,7 @@ function ExploreStats() {
     {emoji:'\uD83C\uDF15', label:'Full Moon', path:'/leaderboard/full-moon', desc:'Lunar batting avg'},
     {emoji:'\uD83D\uDCCF', label:'Height/Weight', path:'/scatter', desc:'Size vs power'},
     {emoji:'\uD83D\uDD04', label:'Compare', path:'/compare', desc:'Side by side'},
-    {emoji:'\uD83D\uDEE2\uFE0F', label:'Crude Barrels', path:'/crude-barrels', desc:'Petro-Barrel Rate'},
+    {emoji:'\uD83D\uDEE2\uFE0F', label:'Crude Barrels', path:'/leaderboard/crude-barrels', desc:'Petro-Barrel Rate'},
   ];
   return h('section', {className:'stats-grid-section section-gap', id:'stats'},
     h('div', {className:'container'},
