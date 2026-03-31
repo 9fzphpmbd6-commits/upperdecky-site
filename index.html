@@ -3872,7 +3872,8 @@ function setRouteSEO(route, context) {
       'thicc-boy': {t: 'Thicc Boy Index — Power Per Pound', d: 'MLB\'s most efficient power hitters by body weight. Who packs the most punch per pound?'},
       'plate-discipline': {t: 'Plate Discipline Leaderboard', d: 'The best eyes in baseball. MLB hitters ranked by plate discipline — walk rate, chase rate, and more.'},
       'hbp': {t: 'HBP Pain Index', d: 'Which MLB hitters get plunked the most? Hit-by-pitch leaders and the batters who wear it.'},
-      'full-moon': {t: 'Full Moon Effect — Lunar Batting Average', d: 'Do MLB hitters really perform differently under a full moon? We ran the numbers.'}
+      'full-moon': {t: 'Full Moon Effect — Lunar Batting Average', d: 'Do MLB hitters really perform differently under a full moon? We ran the numbers.'},
+      'crude-barrels': {t: 'Crude Barrels — Petro-Barrel Rate', d: 'We cross-referenced every Statcast barrel with WTI crude oil prices. Completely absurd. Completely real data.'}
     };
     var lbSlug = route.replace('/leaderboard/', '');
     var lb = lbNames[lbSlug] || {t: 'Leaderboard', d: 'Fun MLB leaderboards with unique Statcast analytics.'};
@@ -5813,6 +5814,46 @@ function LeaderboardPage(props) {
         );
       },
       filterFn: function(d) { return d.filter(function(r){ return r.full_moon_ab >= 3; }); }
+    },
+    'crude-barrels': {
+      title: 'CRUDE BARRELS \uD83D\uDEE2\uFE0F',
+      subtitle: 'Does oil price affect barrel rate? Probably not. But we cross-referenced every batted ball with WTI crude prices and here we are. Cheap oil (<$60), normal ($60-90), expensive (>$90). BOB% = Barrels on Barrels.',
+      columns: [
+        {key:'rank', label:'#'},
+        {key:'name', label:'Player'},
+        {key:'team', label:'Team'},
+        {key:'bob', label:'BOB%'},
+        {key:'barrels', label:'Barrels'},
+        {key:'bbe', label:'BBE'},
+        {key:'cheap', label:'Cheap'},
+        {key:'normal', label:'Normal'},
+        {key:'expensive', label:'Expensive'},
+        {key:'badges', label:'Badge'},
+      ],
+      renderRow: function(row, i) {
+        var rs = row.regime_stats || {};
+        var cheapPct = rs.cheap ? rs.cheap.bob_pct : 0;
+        var normPct = rs.normal ? rs.normal.bob_pct : 0;
+        var expPct = rs.expensive ? rs.expensive.bob_pct : 0;
+        var badge = row.badges && row.badges.length ? row.badges[0] : '';
+        var badgeColor = badge === 'Petro-Barrel King' ? '#d4a843' : badge === 'Recession Raker' ? '#22c55e' : badge === "OPEC\'s Finest" ? '#ef4444' : '#64748b';
+        return h('tr', {key:row.batter_id||i, onClick: function(){navigate('/player/'+row.batter_id);}},
+          h('td', null, i + 1),
+          h('td', null, h('div', {className:'player-cell'},
+            h('img', {src:row.headshot_url, alt:row.full_name, loading:'lazy'}),
+            h('span', {className:'player-cell-name'}, row.full_name)
+          )),
+          h('td', null, row.team),
+          h('td', {style:{fontWeight:800, color:'#d4a843'}}, row.career_bob_pct.toFixed(1) + '%'),
+          h('td', null, row.total_barrels),
+          h('td', null, row.total_batted_balls),
+          h('td', {style:{color:'#22c55e'}}, cheapPct.toFixed(1) + '%'),
+          h('td', {style:{color:'#d4a843'}}, normPct.toFixed(1) + '%'),
+          h('td', {style:{color:'#ef4444'}}, expPct.toFixed(1) + '%'),
+          h('td', null, badge ? h('span', {style:{fontSize:9, fontWeight:800, letterSpacing:1, padding:'2px 6px', borderRadius:3, background:badgeColor+'22', color:badgeColor, border:'1px solid '+badgeColor+'44', textTransform:'uppercase'}}, badge) : '')
+        );
+      },
+      filterFn: function(d) { return d.filter(function(r){ return r.total_batted_balls >= 5; }).sort(function(a,b){return (b.career_bob_pct||0) - (a.career_bob_pct||0);}).slice(0,50); }
     }
   };
 
