@@ -1864,6 +1864,174 @@ section + section { padding-top: 0; }
   width: 14px; height: 3px;
   background: #555; border-radius: 2px;
 }
+/* ========== OIL DERRICK WIDGET ========== */
+.oil-derrick-group {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 2;
+}
+.oil-derrick-label {
+  font-family: var(--font-heading);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  writing-mode: vertical-lr;
+  line-height: 1.2;
+  text-align: center;
+  white-space: nowrap;
+  color: #d4a843;
+  text-shadow: 0 0 8px rgba(212,168,67,0.4);
+}
+.oil-derrick {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.oil-body {
+  width: 140px;
+  background: radial-gradient(ellipse at 50% 30%, #2a2200 0%, #1a1500 60%, #0a0a00 100%);
+  border: 2px solid #5a4a20;
+  border-radius: 14px 14px 10px 10px;
+  padding: 8px 10px 10px;
+  box-shadow:
+    0 0 30px rgba(212,168,67,0.10),
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    0 4px 12px rgba(0,0,0,0.6);
+}
+.oil-top-label {
+  font-family: var(--font-heading);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #d4a843;
+  text-align: center;
+  margin-bottom: 4px;
+  text-shadow: 0 0 8px rgba(212,168,67,0.6);
+}
+.oil-screen {
+  background: #0a0800;
+  border: 1px solid #3a3210;
+  border-radius: 6px;
+  padding: 6px 6px 5px;
+  margin-bottom: 5px;
+  position: relative;
+  overflow: hidden;
+}
+.oil-screen::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(180deg, rgba(212,168,67,0.03) 0%, transparent 50%, rgba(212,168,67,0.02) 100%);
+  pointer-events: none;
+}
+.oil-price-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 3px;
+  margin-bottom: 1px;
+}
+.oil-dollar {
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: 700;
+  color: #d4a843;
+  line-height: 1;
+}
+.oil-big-num {
+  font-family: var(--font-heading);
+  font-size: 38px;
+  font-weight: 900;
+  color: #d4a843;
+  line-height: 1;
+  text-shadow: 0 0 20px rgba(212,168,67,0.7), 0 0 40px rgba(212,168,67,0.3);
+  letter-spacing: -1px;
+}
+.oil-unit {
+  font-family: var(--font-heading);
+  font-size: 10px;
+  font-weight: 700;
+  color: #a08030;
+  letter-spacing: 1px;
+}
+.oil-delta {
+  text-align: center;
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+.oil-delta.up { color: #ef4444; }
+.oil-delta.down { color: #22c55e; }
+.oil-delta.flat { color: #64748b; }
+.oil-regime-badge {
+  display: inline-block;
+  font-family: var(--font-heading);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 3px;
+  margin-top: 3px;
+}
+.oil-regime-badge.cheap { background: #22c55e22; color: #22c55e; border: 1px solid #22c55e44; }
+.oil-regime-badge.normal { background: #d4a84322; color: #d4a843; border: 1px solid #d4a84344; }
+.oil-regime-badge.expensive { background: #ef444422; color: #ef4444; border: 1px solid #ef444444; }
+.oil-bottom-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 4px;
+}
+.oil-barrel-icon {
+  font-size: 12px;
+}
+.oil-event-label {
+  font-family: var(--font-heading);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #888;
+}
+.oil-handle {
+  width: 32px; height: 14px;
+  background: linear-gradient(180deg, #3a3210 0%, #1a1500 100%);
+  border: 1px solid #5a4a20; border-top: none;
+  border-radius: 0 0 6px 6px;
+}
+.oil-handle::before {
+  content: '';
+  display: block;
+  margin: 3px auto 0;
+  width: 14px; height: 3px;
+  background: #5a4a20; border-radius: 2px;
+}
+@media (max-width: 900px) {
+  .oil-derrick-group {
+    position: static;
+    transform: none;
+    justify-content: center;
+    margin: 0 auto;
+  }
+  .oil-derrick-label { display: none; }
+  .oil-body { width: 120px; }
+  .oil-big-num { font-size: 28px; }
+}
+@media (max-width: 600px) {
+  .oil-body { width: 100px; padding: 6px 8px 8px; }
+  .oil-big-num { font-size: 24px; }
+  .oil-dollar { font-size: 14px; }
+}
 /* Post-Opening Day state */
 .radar-live .radar-big-num {
   font-size: 22px;
@@ -3965,12 +4133,58 @@ function RadarCountdown() {
   );
 }
 
+function OilDerrickWidget() {
+  var _oil = useState(null), oilData = _oil[0], setOilData = _oil[1];
+  useEffect(function() {
+    fetchJSON(API + '/oil-price.json', 'oil_price').then(function(data) {
+      setOilData(data);
+    }).catch(function() {});
+  }, []);
+  
+  if (!oilData || !oilData.latest) return null;
+  var latest = oilData.latest;
+  var price = latest.price || 0;
+  var delta = latest.delta || 0;
+  var regime = latest.regime || 'normal';
+  var deltaClass = delta > 0 ? 'up' : delta < 0 ? 'down' : 'flat';
+  var deltaStr = delta > 0 ? '+' + delta.toFixed(2) : delta.toFixed(2);
+  var priceWhole = Math.floor(price);
+  var priceDecimal = (price % 1).toFixed(2).slice(1);
+  
+  return h('div', {className:'oil-derrick-group'},
+    h('div', {className:'oil-derrick'},
+      h('div', {className:'oil-body'},
+        h('div', {className:'oil-top-label'}, 'WTI Crude'),
+        h('div', {className:'oil-screen'},
+          h('div', {className:'oil-price-row'},
+            h('span', {className:'oil-dollar'}, '$'),
+            h('span', {className:'oil-big-num'}, String(priceWhole)),
+            h('span', {className:'oil-dollar', style:{fontSize:16, alignSelf:'flex-start', marginTop:4}}, priceDecimal)
+          ),
+          h('div', {className:'oil-delta ' + deltaClass}, deltaStr + ' /bbl')
+        ),
+        h('div', {style:{textAlign:'center'}},
+          h('span', {className:'oil-regime-badge ' + regime}, regime === 'cheap' ? '\u26BD Cheap Oil' : regime === 'expensive' ? '\uD83D\uDD25 Expensive' : '\u26FD Normal')
+        ),
+        h('div', {className:'oil-bottom-row'},
+          h('span', {className:'oil-barrel-icon'}, '\uD83D\uDEE2\uFE0F'),
+          h('span', {className:'oil-event-label'}, 'CRUDE'),
+          h('span', {className:'oil-event-label'}, 'BARRELS')
+        )
+      ),
+      h('div', {className:'oil-handle'})
+    ),
+    h('div', {className:'oil-derrick-label'}, 'Crude Barrel Index')
+  );
+}
+
 function HeroSection(props) {
   var dash = props.dashboard;
   var _tip = useState(false), tipOpen = _tip[0], setTipOpen = _tip[1];
   return h('header', {className:'hero'},
     h('div', {className:'container hero-content'},
       h(RadarCountdown),
+      h(OilDerrickWidget),
       h('img', {className:'hero-mascot', src:'mascot-upperdecky.png', alt:'UpperDecky mascot'}),
       h('div', {className:'hero-text-block'},
         h('h1', {className:'hero-title'}, 'UPPER', h('span', null, 'DECKY')),
@@ -4434,6 +4648,7 @@ function ExploreStats() {
     {emoji:'\uD83C\uDF15', label:'Full Moon', path:'/leaderboard/full-moon', desc:'Lunar batting avg'},
     {emoji:'\uD83D\uDCCF', label:'Height/Weight', path:'/scatter', desc:'Size vs power'},
     {emoji:'\uD83D\uDD04', label:'Compare', path:'/compare', desc:'Side by side'},
+    {emoji:'\uD83D\uDEE2\uFE0F', label:'Crude Barrels', path:'/crude-barrels', desc:'Petro-Barrel Rate'},
   ];
   return h('section', {className:'stats-grid-section section-gap', id:'stats'},
     h('div', {className:'container'},
@@ -5142,7 +5357,54 @@ function PlayerDetailPage(props) {
           h('div', {className:'fun-stat-val'}, p.weight_lbs || '\u2014'),
           h('div', {className:'fun-stat-label'}, 'Weight (lbs)')
         )
-      )
+      ),
+      p.oil_profile ? h('div', null,
+        h('div', {className:'stats-section-title'}, 'CRUDE BARRELS \uD83D\uDEE2\uFE0F'),
+        h('div', {style:{background:'radial-gradient(ellipse at 50% 0%, #2a2200 0%, #0f0d00 100%)', border:'1.5px solid #5a4a20', borderRadius:12, padding:'16px 18px', marginBottom:8}},
+          h('div', {style:{display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:10}},
+            h('div', null,
+              h('div', {style:{fontFamily:'var(--font-heading)', fontSize:9, fontWeight:800, letterSpacing:3, textTransform:'uppercase', color:'#d4a843', marginBottom:2}}, 'Career BOB%'),
+              h('div', {style:{fontFamily:'var(--font-heading)', fontSize:36, fontWeight:900, color:'#d4a843', lineHeight:1, textShadow:'0 0 18px rgba(212,168,67,0.6)'}},
+                p.oil_profile.career_bob_pct != null ? p.oil_profile.career_bob_pct.toFixed(1) + '%' : '\u2014'
+              )
+            ),
+            p.oil_profile.dominant_regime ? h('div', {style:{textAlign:'right'}},
+              h('div', {style:{fontFamily:'var(--font-heading)', fontSize:9, fontWeight:700, letterSpacing:2, textTransform:'uppercase', color:'#888', marginBottom:4}}, 'Dominant Regime'),
+              h('span', {style:{display:'inline-block', fontFamily:'var(--font-heading)', fontSize:11, fontWeight:800, letterSpacing:2, textTransform:'uppercase', padding:'3px 10px', borderRadius:4,
+                background: p.oil_profile.dominant_regime === 'cheap' ? '#22c55e22' : p.oil_profile.dominant_regime === 'expensive' ? '#ef444422' : '#d4a84322',
+                color: p.oil_profile.dominant_regime === 'cheap' ? '#22c55e' : p.oil_profile.dominant_regime === 'expensive' ? '#ef4444' : '#d4a843',
+                border: '1px solid ' + (p.oil_profile.dominant_regime === 'cheap' ? '#22c55e44' : p.oil_profile.dominant_regime === 'expensive' ? '#ef444444' : '#d4a84344')
+              }},
+                p.oil_profile.dominant_regime === 'cheap' ? '\u26BD Cheap Oil' : p.oil_profile.dominant_regime === 'expensive' ? '\uD83D\uDD25 Expensive' : '\u26FD Normal'
+              )
+            ) : null
+          ),
+          h('div', {style:{display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:6, marginBottom:10}},
+            ['cheap','normal','expensive'].map(function(regime) {
+              var rs = p.oil_profile.regime_stats && p.oil_profile.regime_stats[regime];
+              var val = rs ? rs.bob_pct : null;
+              var label = regime === 'cheap' ? 'Cheap Oil' : regime === 'expensive' ? 'Expensive' : 'Normal';
+              var accent = regime === 'cheap' ? '#22c55e' : regime === 'expensive' ? '#ef4444' : '#d4a843';
+              return h('div', {key:regime, style:{background:'rgba(0,0,0,0.4)', border:'1px solid ' + accent + '33', borderRadius:6, padding:'7px 4px', textAlign:'center'}},
+                h('div', {style:{fontFamily:'var(--font-heading)', fontSize:16, fontWeight:900, color:accent, lineHeight:1, marginBottom:2}},
+                  val != null ? val.toFixed(1) + '%' : '\u2014'
+                ),
+                h('div', {style:{fontFamily:'var(--font-heading)', fontSize:8, fontWeight:700, letterSpacing:2, textTransform:'uppercase', color:'#888'}}, label)
+              );
+            })
+          ),
+          p.oil_profile.tagline ? h('div', {style:{fontFamily:'var(--font-heading)', fontSize:11, color:'#a08030', letterSpacing:1, textAlign:'center', marginBottom:8, fontStyle:'italic'}},
+            p.oil_profile.tagline
+          ) : null,
+          p.oil_profile.badges && p.oil_profile.badges.length ? h('div', {style:{display:'flex', flexWrap:'wrap', gap:5, justifyContent:'center'}},
+            p.oil_profile.badges.map(function(badge, i) {
+              return h('span', {key:i, style:{fontFamily:'var(--font-heading)', fontSize:9, fontWeight:800, letterSpacing:2, textTransform:'uppercase', padding:'3px 8px', borderRadius:3, background:'#d4a84322', color:'#d4a843', border:'1px solid #d4a84344'}},
+                badge
+              );
+            })
+          ) : null
+        )
+      ) : null
     )
   );
 }

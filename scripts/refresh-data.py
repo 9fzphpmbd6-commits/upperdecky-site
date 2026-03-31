@@ -1049,6 +1049,245 @@ def generate_dugout_prompt(batters, teams):
     print(f"  Prompt: {prompt}")
 
 # ============================================================
+# 9. CRUDE BARRELS — OIL PRICE + BARREL RATE SYSTEM
+# ============================================================
+EIA_API_URL = "https://api.eia.gov/v2/petroleum/pri/spt/data/"
+EIA_API_KEY = "DEMO_KEY"  # Free demo key, 1000 requests/day
+SAVANT_SEARCH = "https://baseballsavant.mlb.com/statcast_search/csv"
+
+def fetch_oil_prices():
+    """Fetch recent WTI crude oil prices from EIA."""
+    print("\n[9a] Fetching WTI crude oil prices...")
+    url = (f"{EIA_API_URL}?frequency=daily&data[0]=value"
+           f"&facets[series][]=RWTC&sort[0][column]=period"
+           f"&sort[0][direction]=desc&length=365&api_key={EIA_API_KEY}")
+    data = fetch_json(url)
+    if not data or "response" not in data:
+        print("  Failed to fetch oil prices")
+        return {}
+    prices = {}
+    rows = data.get("response", {}).get("data", [])
+    prev_price = None
+    # Sort chronologically
+    rows.sort(key=lambda r: r.get("period", ""))
+    for row in rows:
+        date = row.get("period", "")
+        price = safe_float(row.get("value"))
+        if not date or price is None:
+            continue
+        delta = round(price - prev_price, 2) if prev_price is not None else 0
+        pct_change = round(delta / prev_price, 4) if prev_price and prev_price != 0 else 0
+        # Regime bucket
+        if price < 60:
+            regime = "cheap"
+        elif price > 90:
+            regime = "expensive"
+        else:
+            regime = "normal"
+        is_spike = delta >= 5 or pct_change >= 0.05
+        is_crash = delta <= -5 or pct_change <= -0.05
+        prices[date] = {
+            "date": date, "price": price, "delta": delta,
+            "pct_change": pct_change, "regime": regime,
+            "is_spike": is_spike, "is_crash": is_crash
+        }
+        prev_price = price
+    print(f"  Got {len(prices)} daily oil prices")
+    if prices:
+        latest = list(prices.values())[-1]
+        print(f"  Latest: ${latest['price']} ({latest['regime']}) on {latest['date']}")
+    return prices
+
+def fetch_barrel_events():
+    """Fetch individual batted ball events with barrel flag from Savant."""
+    print("\n[9b] Fetching barrel events from Baseball Savant...")
+    # Get events from season start
+    season_start = f"{SEASON}-03-20"
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    url = (f"{SAVANT_SEARCH}?all=true&type=detail"
+           f"&game_date_gt={season_start}&game_date_lt={today}"
+           f"&player_type=batter&min_pitches=0&min_results=0")
+    rows = fetch_csv(url)
+    print(f"  Got {len(rows)} batted ball events")
+    
+    # Parse into structured data
+    events = []
+    for r in rows:
+        batter_id = safe_int(r.get("batter", 0))
+        game_date = r.get("game_date", "")
+        lsa = r.get("launch_speed_angle", "")
+        if not batter_id or not game_date:
+            continue
+        is_barrel = (lsa == "6")  # launch_speed_angle 6 = Barrel
+        events.append({
+            "batter_id": batter_id,
+            "game_date": game_date,
+            "is_barrel": is_barrel,
+            "ev": safe_float(r.get("launch_speed")),
+            "la": safe_float(r.get("launch_angle")),
+        })
+    
+    barrels = sum(1 for e in events if e["is_barrel"])
+    print(f"  {barrels} barrels out of {len(events)} batted balls")
+    return events
+
+def compute_crude_barrels(batters, oil_prices, barrel_events):
+    """Compute Crude Barrel (Petro-Barrel) stats per hitter."""
+    print("\n[9c] Computing Crude Barrel stats...")
+    
+    # Group events by batter
+    batter_events = {}
+    for e in barrel_events:
+        pid = e["batter_id"]
+        if pid not in batter_events:
+            batter_events[pid] = []
+        batter_events[pid].append(e)
+    
+    # Get the latest oil price for the widget
+    sorted_prices = sorted(oil_prices.values(), key=lambda x: x["date"])
+    latest_oil = sorted_prices[-1] if sorted_prices else {"price": 0, "regime": "normal", "delta": 0}
+    
+    profiles = []
+    for pid, events in batter_events.items():
+        if pid not in batters:
+            continue
+        b = batters[pid]
+        
+        total_bb = len(events)
+        total_barrels = sum(1 for e in events if e["is_barrel"])
+        career_bob_pct = round(total_barrels / total_bb * 100, 1) if total_bb > 0 else 0
+        
+        # Split by oil regime
+        regime_stats = {"cheap": {"bb": 0, "barrels": 0}, "normal": {"bb": 0, "barrels": 0}, "expensive": {"bb": 0, "barrels": 0}}
+        spike_bb = 0; spike_barrels = 0
+        crash_bb = 0; crash_barrels = 0
+        
+        for e in events:
+            oil = oil_prices.get(e["game_date"])
+            if not oil:
+                # Use nearest available oil price
+                regime = "normal"
+            else:
+                regime = oil["regime"]
+                if oil["is_spike"]:
+                    spike_bb += 1
+                    if e["is_barrel"]: spike_barrels += 1
+                if oil["is_crash"]:
+                    crash_bb += 1
+                    if e["is_barrel"]: crash_barrels += 1
+            
+            regime_stats[regime]["bb"] += 1
+            if e["is_barrel"]:
+                regime_stats[regime]["barrels"] += 1
+        
+        # Compute per-regime BOB%
+        for r in regime_stats:
+            bb = regime_stats[r]["bb"]
+            regime_stats[r]["bob_pct"] = round(regime_stats[r]["barrels"] / bb * 100, 1) if bb > 0 else 0
+        
+        # Oil Boost Index: expensive BOB% / career BOB%
+        oil_boost = round(regime_stats["expensive"]["bob_pct"] / career_bob_pct, 2) if career_bob_pct > 0 else 0
+        
+        # Crisis BOB (spike+crash combined)
+        crisis_bb = spike_bb + crash_bb
+        crisis_barrels_count = spike_barrels + crash_barrels
+        crisis_bob = round(crisis_barrels_count / crisis_bb * 100, 1) if crisis_bb > 0 else 0
+        
+        # Badges
+        badges = []
+        if oil_boost >= 1.5 and regime_stats["expensive"]["bb"] >= 3:
+            badges.append("Petro-Barrel King")
+        if crisis_bob >= 15 and crisis_bb >= 3:
+            badges.append("Recession Raker")
+        if regime_stats["cheap"]["bob_pct"] > regime_stats["expensive"]["bob_pct"] and regime_stats["cheap"]["bb"] >= 3:
+            badges.append("Barrel Embargo")
+        if oil_boost >= 2.0 and regime_stats["expensive"]["bb"] >= 3:
+            badges.append("OPEC\'s Finest")
+        
+        # Determine dominant regime
+        dom_regime = max(regime_stats, key=lambda r: regime_stats[r]["bb"])
+        
+        profiles.append({
+            "batter_id": pid,
+            "full_name": b.get("full_name", ""),
+            "team": b.get("team", ""),
+            "headshot_url": b.get("headshot_url", ""),
+            "total_batted_balls": total_bb,
+            "total_barrels": total_barrels,
+            "career_bob_pct": career_bob_pct,
+            "regime_stats": regime_stats,
+            "oil_boost_index": oil_boost,
+            "crisis_bob_pct": crisis_bob,
+            "spike_barrels": spike_barrels, "spike_bb": spike_bb,
+            "crash_barrels": crash_barrels, "crash_bb": crash_bb,
+            "dominant_regime": dom_regime,
+            "badges": badges,
+        })
+    
+    # Sort by oil_boost_index for leaderboard
+    profiles.sort(key=lambda x: x["oil_boost_index"], reverse=True)
+    
+    # Write outputs
+    # Oil price widget data
+    write_json("oil-price.json", {
+        "latest": latest_oil,
+        "history": [{"date": p["date"], "price": p["price"], "regime": p["regime"]} 
+                    for p in sorted_prices[-30:]],  # Last 30 days
+        "season_avg": round(sum(p["price"] for p in sorted_prices[-30:]) / max(len(sorted_prices[-30:]), 1), 2),
+        "updated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    })
+    
+    # Leaderboard: Petro-Barrel Kings (top 50 with enough BBs)
+    qualified = [p for p in profiles if p["total_batted_balls"] >= 5]
+    write_json("leaderboards/crude-barrels.json", qualified[:50])
+    
+    # Per-player oil profiles (add to individual summary files)
+    for p in profiles:
+        pid = p["batter_id"]
+        summary_path = os.path.join(OUT_DIR, f"batters/{pid}/summary.json")
+        if os.path.exists(summary_path):
+            try:
+                with open(summary_path) as f:
+                    existing = json.load(f)
+                existing["oil_profile"] = {
+                    "career_bob_pct": p["career_bob_pct"],
+                    "regime_stats": p["regime_stats"],
+                    "oil_boost_index": p["oil_boost_index"],
+                    "crisis_bob_pct": p["crisis_bob_pct"],
+                    "badges": p["badges"],
+                    "dominant_regime": p["dominant_regime"],
+                }
+                write_json(f"batters/{pid}/summary.json", existing)
+            except:
+                pass
+    
+    print(f"  Computed Crude Barrel profiles for {len(profiles)} batters")
+    print(f"  Qualified for leaderboard (5+ BBE): {len(qualified)}")
+    if qualified:
+        top = qualified[0]
+        print(f"  Top Petro-Barrel: {top['full_name']} ({top['team']}) - BOB%: {top['career_bob_pct']}%, Boost: {top['oil_boost_index']}x")
+    return latest_oil
+
+def generate_crude_barrels(batters):
+    """Main orchestrator for the Crude Barrels system."""
+    print(f"\n{'=' * 40}")
+    print("CRUDE BARRELS SYSTEM")
+    print(f"{'=' * 40}")
+    
+    oil_prices = fetch_oil_prices()
+    if not oil_prices:
+        print("  Skipping Crude Barrels (no oil data)")
+        return None
+    
+    barrel_events = fetch_barrel_events()
+    if not barrel_events:
+        print("  Skipping Crude Barrels (no barrel events)")
+        return None
+    
+    latest_oil = compute_crude_barrels(batters, oil_prices, barrel_events)
+    return latest_oil
+
+# ============================================================
 # MAIN
 # ============================================================
 def main():
@@ -1074,6 +1313,7 @@ def main():
     generate_hos_picks(batters)
     generate_pressbox_picks(batters)
     generate_dugout_prompt(batters, teams)
+    generate_crude_barrels(batters)
 
     print(f"\n{'=' * 60}")
     print(f"DONE — {total} batters, {len(teams)} teams")
