@@ -2016,6 +2016,83 @@ section + section { padding-top: 0; }
   width: 14px; height: 3px;
   background: #5a4a20; border-radius: 2px;
 }
+/* ========== MERCURY RETROGRADE BANNER ========== */
+.mercury-banner {
+  background: linear-gradient(90deg, #1a0a2e 0%, #2d1b69 50%, #1a0a2e 100%);
+  border-bottom: 1px solid #7c3aed44;
+  padding: 8px 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.mercury-banner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(90deg, transparent 0px, transparent 40px, rgba(124,58,237,0.05) 40px, rgba(124,58,237,0.05) 41px);
+  pointer-events: none;
+}
+.mercury-banner-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-family: var(--font-heading);
+  font-size: 13px;
+  letter-spacing: 1px;
+  position: relative;
+  flex-wrap: wrap;
+  padding: 0 16px;
+}
+.mercury-symbol {
+  font-size: 18px;
+  filter: drop-shadow(0 0 8px rgba(124,58,237,0.8));
+}
+.mercury-status-text {
+  color: #c4b5fd;
+  font-weight: 700;
+}
+.mercury-retro-active {
+  color: #a78bfa;
+  font-weight: 900;
+  text-shadow: 0 0 12px rgba(167,139,250,0.6);
+  animation: mercury-pulse 2s ease-in-out infinite;
+}
+@keyframes mercury-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+.mercury-stat {
+  color: #64748b;
+  font-size: 11px;
+  font-weight: 600;
+}
+.mercury-stat strong {
+  color: #a78bfa;
+}
+.mercury-direct-tag {
+  display: inline-block;
+  background: #22c55e22;
+  color: #22c55e;
+  border: 1px solid #22c55e44;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  padding: 2px 8px;
+  border-radius: 3px;
+}
+.mercury-retro-tag {
+  display: inline-block;
+  background: #a78bfa22;
+  color: #a78bfa;
+  border: 1px solid #a78bfa44;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  padding: 2px 8px;
+  border-radius: 3px;
+  animation: mercury-pulse 2s ease-in-out infinite;
+}
 @media (max-width: 900px) {
   .oil-derrick-group {
     position: static;
@@ -3873,7 +3950,8 @@ function setRouteSEO(route, context) {
       'plate-discipline': {t: 'Plate Discipline Leaderboard', d: 'The best eyes in baseball. MLB hitters ranked by plate discipline — walk rate, chase rate, and more.'},
       'hbp': {t: 'HBP Pain Index', d: 'Which MLB hitters get plunked the most? Hit-by-pitch leaders and the batters who wear it.'},
       'full-moon': {t: 'Full Moon Effect — Lunar Batting Average', d: 'Do MLB hitters really perform differently under a full moon? We ran the numbers.'},
-      'crude-barrels': {t: 'Crude Barrels — Petro-Barrel Rate', d: 'We cross-referenced every Statcast barrel with WTI crude oil prices. Completely absurd. Completely real data.'}
+      'crude-barrels': {t: 'Crude Barrels — Petro-Barrel Rate', d: 'We cross-referenced every Statcast barrel with WTI crude oil prices. Completely absurd. Completely real data.'},
+      'mercury-retrograde': {t: 'Mercury Retrograde Barrel Rate', d: 'Do MLB hitters barrel up differently during Mercury retrograde? We tracked every batted ball against astronomical data. Because science.'}
     };
     var lbSlug = route.replace('/leaderboard/', '');
     var lb = lbNames[lbSlug] || {t: 'Leaderboard', d: 'Fun MLB leaderboards with unique Statcast analytics.'};
@@ -3957,6 +4035,7 @@ function Navbar(props) {
     {emoji:'🌕', label:'Full Moon Effect', path:'/leaderboard/full-moon'},
     {emoji:'📏', label:'Size vs Power', path:'/scatter'},
     {emoji:'🛢️', label:'Crude Barrels', path:'/leaderboard/crude-barrels'},
+    {emoji:'\u263F', label:'Mercury Retro', path:'/leaderboard/mercury-retrograde'},
   ];
 
   return h(Fragment, null,
@@ -4219,6 +4298,47 @@ function HeroSection(props) {
 // ===========================
 // TICKER
 // ===========================
+function MercuryBanner() {
+  var _m = useState(null), mercury = _m[0], setMercury = _m[1];
+  useEffect(function() {
+    fetchJSON(API + '/mercury-status.json', 'mercury_status').then(function(data) {
+      setMercury(data);
+    }).catch(function() {});
+  }, []);
+  
+  if (!mercury) return null;
+  
+  var isRetro = mercury.is_retrograde;
+  var retroBrl = mercury.league_retro_barrel_rate || 0;
+  var directBrl = mercury.league_direct_barrel_rate || 0;
+  
+  return h('div', {className:'mercury-banner'},
+    h('div', {className:'mercury-banner-inner'},
+      h('span', {className:'mercury-symbol'}, '\u263F'),
+      isRetro
+        ? h(Fragment, null,
+            h('span', {className:'mercury-retro-tag'}, 'RETROGRADE'),
+            h('span', {className:'mercury-retro-active'}, 'MERCURY IS IN RETROGRADE'),
+            h('span', {className:'mercury-status-text'}, mercury.days_remaining + ' days remaining')
+          )
+        : h(Fragment, null,
+            h('span', {className:'mercury-direct-tag'}, 'DIRECT'),
+            h('span', {className:'mercury-status-text'}, 'Mercury Direct'),
+            mercury.next_start
+              ? h('span', {className:'mercury-stat'}, 'Next retrograde: ' + mercury.next_start + ' \u2014 ' + mercury.next_days_away + ' days')
+              : null
+          ),
+      (retroBrl > 0 || directBrl > 0)
+        ? h('span', {className:'mercury-stat'}, 'BRL%: ',
+            h('strong', null, 'Retro ' + retroBrl + '%'),
+            ' vs ',
+            h('strong', null, 'Direct ' + directBrl + '%')
+          )
+        : null
+    )
+  );
+}
+
 function DualTickers(props) {
   var batters = props.batters;
 
@@ -4651,6 +4771,7 @@ function ExploreStats() {
     {emoji:'\uD83D\uDCCF', label:'Height/Weight', path:'/scatter', desc:'Size vs power'},
     {emoji:'\uD83D\uDD04', label:'Compare', path:'/compare', desc:'Side by side'},
     {emoji:'\uD83D\uDEE2\uFE0F', label:'Crude Barrels', path:'/leaderboard/crude-barrels', desc:'Petro-Barrel Rate'},
+    {emoji:'\u263F', label:'Mercury Retro', path:'/leaderboard/mercury-retrograde', desc:'Retrograde barrel splits'},
   ];
   return h('section', {className:'stats-grid-section section-gap', id:'stats'},
     h('div', {className:'container'},
@@ -5019,6 +5140,7 @@ function LLHRTracker(props) {
 function HomePage(props) {
   return h(Fragment, null,
     h(HeroSection, {dashboard: props.dashboard}),
+    h(MercuryBanner),
     h(DualTickers, {batters: props.batters}),
     h(HitOrSpitBanner, {batters: props.batters, onPlay: props.onPlayHoS}),
     h(LLHRTracker, {data: props.llhr}),
@@ -5403,6 +5525,44 @@ function PlayerDetailPage(props) {
               return h('span', {key:i, style:{fontFamily:'var(--font-heading)', fontSize:9, fontWeight:800, letterSpacing:2, textTransform:'uppercase', padding:'3px 8px', borderRadius:3, background:'#d4a84322', color:'#d4a843', border:'1px solid #d4a84344'}},
                 badge
               );
+            })
+          ) : null
+        )
+      ) : null,
+      p.mercury_profile ? h('div', null,
+        h('div', {className:'stats-section-title'}, 'MERCURY RETROGRADE \u263F'),
+        h('div', {style:{background:'linear-gradient(135deg, #1a0a2e 0%, #0f0520 100%)', border:'1.5px solid #7c3aed44', borderRadius:12, padding:'16px 18px', marginBottom:8}},
+          h('div', {style:{display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:10}},
+            h('div', null,
+              h('div', {style:{fontFamily:'var(--font-heading)', fontSize:9, fontWeight:800, letterSpacing:3, textTransform:'uppercase', color:'#a78bfa', marginBottom:2}}, 'Retro BRL%'),
+              h('div', {style:{fontFamily:'var(--font-heading)', fontSize:36, fontWeight:900, color:'#a78bfa', lineHeight:1, textShadow:'0 0 18px rgba(167,139,250,0.6)'}},
+                p.mercury_profile.retro_barrel_rate != null ? p.mercury_profile.retro_barrel_rate.toFixed(1) + '%' : '\u2014'
+              )
+            ),
+            h('div', {style:{textAlign:'right'}},
+              h('div', {style:{fontFamily:'var(--font-heading)', fontSize:9, fontWeight:700, letterSpacing:2, textTransform:'uppercase', color:'#888', marginBottom:4}}, 'Direct BRL%'),
+              h('div', {style:{fontFamily:'var(--font-heading)', fontSize:24, fontWeight:900, color:'#22c55e', lineHeight:1}},
+                p.mercury_profile.direct_barrel_rate != null ? p.mercury_profile.direct_barrel_rate.toFixed(1) + '%' : '\u2014'
+              )
+            )
+          ),
+          p.mercury_profile.retro_diff != null ? h('div', {style:{textAlign:'center', fontFamily:'var(--font-heading)', fontSize:13, color: p.mercury_profile.retro_diff > 0 ? '#a78bfa' : p.mercury_profile.retro_diff < 0 ? '#ef4444' : '#64748b', marginBottom:8}},
+            'Retrograde diff: ' + (p.mercury_profile.retro_diff >= 0 ? '+' : '') + p.mercury_profile.retro_diff.toFixed(1) + '%'
+          ) : null,
+          h('div', {style:{display:'grid', gridTemplateColumns:'1fr 1fr', gap:8, marginBottom:10}},
+            h('div', {style:{background:'rgba(0,0,0,0.3)', borderRadius:6, padding:'8px', textAlign:'center', border:'1px solid #7c3aed33'}},
+              h('div', {style:{fontFamily:'var(--font-heading)', fontSize:11, color:'#a78bfa', fontWeight:700}}, p.mercury_profile.retro_bb || 0),
+              h('div', {style:{fontFamily:'var(--font-heading)', fontSize:8, fontWeight:700, letterSpacing:2, textTransform:'uppercase', color:'#888'}}, 'Retro BBE')
+            ),
+            h('div', {style:{background:'rgba(0,0,0,0.3)', borderRadius:6, padding:'8px', textAlign:'center', border:'1px solid #22c55e33'}},
+              h('div', {style:{fontFamily:'var(--font-heading)', fontSize:11, color:'#22c55e', fontWeight:700}}, p.mercury_profile.direct_bb || 0),
+              h('div', {style:{fontFamily:'var(--font-heading)', fontSize:8, fontWeight:700, letterSpacing:2, textTransform:'uppercase', color:'#888'}}, 'Direct BBE')
+            )
+          ),
+          p.mercury_profile.badges && p.mercury_profile.badges.length ? h('div', {style:{display:'flex', flexWrap:'wrap', gap:5, justifyContent:'center'}},
+            p.mercury_profile.badges.map(function(badge, i) {
+              var bc = badge === 'Star-Crossed Slugger' ? '#a78bfa' : badge === 'Cosmically Cursed' ? '#ef4444' : '#22c55e';
+              return h('span', {key:i, style:{fontFamily:'var(--font-heading)', fontSize:9, fontWeight:800, letterSpacing:2, textTransform:'uppercase', padding:'3px 8px', borderRadius:3, background:bc+'22', color:bc, border:'1px solid '+bc+'44'}}, badge);
             })
           ) : null
         )
@@ -5854,6 +6014,44 @@ function LeaderboardPage(props) {
         );
       },
       filterFn: function(d) { return d.filter(function(r){ return r.total_batted_balls >= 5; }).sort(function(a,b){return (b.career_bob_pct||0) - (a.career_bob_pct||0);}).slice(0,50); }
+    },
+    'mercury-retrograde': {
+      title: 'MERCURY RETROGRADE \u263F',
+      subtitle: 'We tracked every batted ball during Mercury retrograde vs. when Mercury is direct. Does the cosmos affect barrel rate? The data says... maybe. Badges: Star-Crossed Slugger (better in retro), Cosmically Cursed (worse), Retrograde Proof (unaffected).',
+      columns: [
+        {key:'rank', label:'#'},
+        {key:'name', label:'Player'},
+        {key:'team', label:'Team'},
+        {key:'retro_brl', label:'Retro BRL%'},
+        {key:'direct_brl', label:'Direct BRL%'},
+        {key:'diff', label:'Diff'},
+        {key:'retro_bbe', label:'Retro BBE'},
+        {key:'direct_bbe', label:'Direct BBE'},
+        {key:'badges', label:'Badge'},
+      ],
+      renderRow: function(row, i) {
+        var retroBrl = row.retro_barrel_rate;
+        var directBrl = row.direct_barrel_rate;
+        var diff = row.retro_diff;
+        var diffColor = diff != null ? (diff > 0 ? '#a78bfa' : diff < 0 ? '#ef4444' : 'var(--muted)') : 'var(--muted)';
+        var badge = row.badges && row.badges.length ? row.badges[0] : '';
+        var badgeColor = badge === 'Star-Crossed Slugger' ? '#a78bfa' : badge === 'Cosmically Cursed' ? '#ef4444' : badge === 'Retrograde Proof' ? '#22c55e' : '#64748b';
+        return h('tr', {key:row.batter_id||i, onClick: function(){navigate('/player/'+row.batter_id);}},
+          h('td', null, i + 1),
+          h('td', null, h('div', {className:'player-cell'},
+            h('img', {src:row.headshot_url, alt:row.full_name, loading:'lazy'}),
+            h('span', {className:'player-cell-name'}, row.full_name)
+          )),
+          h('td', null, row.team),
+          h('td', {style:{fontWeight:800, color:'#a78bfa'}}, retroBrl != null ? retroBrl.toFixed(1) + '%' : '\u2014'),
+          h('td', null, directBrl != null ? directBrl.toFixed(1) + '%' : '\u2014'),
+          h('td', {style:{fontWeight:800, color:diffColor}}, diff != null ? (diff >= 0 ? '+' : '') + diff.toFixed(1) + '%' : '\u2014'),
+          h('td', null, row.retro_batted_balls),
+          h('td', null, row.direct_batted_balls),
+          h('td', null, badge ? h('span', {style:{fontSize:9, fontWeight:800, letterSpacing:1, padding:'2px 6px', borderRadius:3, background:badgeColor+'22', color:badgeColor, border:'1px solid '+badgeColor+'44', textTransform:'uppercase'}}, badge) : '')
+        );
+      },
+      filterFn: function(d) { return d.filter(function(r){ return (r.retro_batted_balls + r.direct_batted_balls) >= 5; }).sort(function(a,b){ return ((b.retro_barrel_rate||0) - (a.retro_barrel_rate||0)); }); }
     }
   };
 

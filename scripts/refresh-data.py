@@ -1269,7 +1269,7 @@ def compute_crude_barrels(batters, oil_prices, barrel_events):
     return latest_oil
 
 def generate_crude_barrels(batters):
-    """Main orchestrator for the Crude Barrels system."""
+    """Main orchestrator for the Crude Barrels system. Returns barrel_events for reuse."""
     print(f"\n{'=' * 40}")
     print("CRUDE BARRELS SYSTEM")
     print(f"{'=' * 40}")
@@ -1277,15 +1277,218 @@ def generate_crude_barrels(batters):
     oil_prices = fetch_oil_prices()
     if not oil_prices:
         print("  Skipping Crude Barrels (no oil data)")
-        return None
+        return None, []
     
     barrel_events = fetch_barrel_events()
     if not barrel_events:
         print("  Skipping Crude Barrels (no barrel events)")
-        return None
+        return None, []
     
     latest_oil = compute_crude_barrels(batters, oil_prices, barrel_events)
-    return latest_oil
+    return latest_oil, barrel_events
+
+# ============================================================
+# 10. MERCURY RETROGRADE BATTING STATS
+# ============================================================
+# 2025-2026 Mercury Retrograde periods (fixed astronomical dates)
+RETROGRADE_PERIODS = [
+    # 2025
+    ("2025-03-14", "2025-04-07"),
+    ("2025-07-17", "2025-08-11"),
+    ("2025-11-09", "2025-11-29"),
+    # 2026
+    ("2026-02-26", "2026-03-20"),
+    ("2026-06-29", "2026-07-23"),
+    ("2026-10-24", "2026-11-13"),
+    # 2027 (for late-season coverage)
+    ("2027-02-09", "2027-03-03"),
+]
+
+def is_retrograde(date_str):
+    """Check if a date falls within a Mercury retrograde period."""
+    for start, end in RETROGRADE_PERIODS:
+        if start <= date_str <= end:
+            return True
+    return False
+
+def get_retrograde_status():
+    """Get current retrograde status and next retrograde info."""
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    currently_retro = is_retrograde(today)
+    
+    # Find current or next retrograde
+    current_period = None
+    next_period = None
+    for start, end in RETROGRADE_PERIODS:
+        if start <= today <= end:
+            current_period = {"start": start, "end": end}
+        elif start > today and next_period is None:
+            next_period = {"start": start, "end": end}
+    
+    if currently_retro and current_period:
+        from datetime import timedelta
+        end_date = datetime.strptime(current_period["end"], "%Y-%m-%d")
+        days_left = (end_date - datetime.strptime(today, "%Y-%m-%d")).days
+        return {
+            "is_retrograde": True,
+            "status": "RETROGRADE",
+            "days_remaining": days_left,
+            "period_start": current_period["start"],
+            "period_end": current_period["end"],
+            "next_start": None,
+            "next_days_away": None,
+        }
+    else:
+        days_away = None
+        if next_period:
+            next_start = datetime.strptime(next_period["start"], "%Y-%m-%d")
+            days_away = (next_start - datetime.strptime(today, "%Y-%m-%d")).days
+        return {
+            "is_retrograde": False,
+            "status": "DIRECT",
+            "days_remaining": None,
+            "period_start": None,
+            "period_end": None,
+            "next_start": next_period["start"] if next_period else None,
+            "next_days_away": days_away,
+        }
+
+def compute_retrograde_stats(batters, barrel_events):
+    """Compute batting stats split by Mercury retrograde vs direct."""
+    print("\n[10] Computing Mercury Retrograde stats...")
+    
+    # Group barrel_events by batter with hit/ab info
+    # barrel_events has: batter_id, game_date, is_barrel, ev, la
+    # We need actual hit/AB data per game. Use the Savant data which has 'events' column.
+    # For simplicity, use barrel_events and compute barrel-rate splits.
+    # Also fetch game-level stats from the stats API.
+    
+    # Group by batter and retrograde status
+    batter_splits = {}
+    for e in barrel_events:
+        pid = e["batter_id"]
+        if pid not in batter_splits:
+            batter_splits[pid] = {
+                "retro": {"bb": 0, "barrels": 0},
+                "direct": {"bb": 0, "barrels": 0}
+            }
+        retro = is_retrograde(e["game_date"])
+        key = "retro" if retro else "direct"
+        batter_splits[pid][key]["bb"] += 1
+        if e["is_barrel"]:
+            batter_splits[pid][key]["barrels"] += 1
+    
+    # Also get per-game hitting stats for BA splits
+    # Use the batters dict which has season BA — we'll compute retro/direct barrel rate
+    # since we have batted-ball-level data
+    
+    status = get_retrograde_status()
+    profiles = []
+    
+    for pid, splits in batter_splits.items():
+        if pid not in batters:
+            continue
+        b = batters[pid]
+        
+        retro_bb = splits["retro"]["bb"]
+        retro_barrels = splits["retro"]["barrels"]
+        direct_bb = splits["direct"]["bb"]
+        direct_barrels = splits["direct"]["barrels"]
+        
+        retro_brl = round(retro_barrels / retro_bb * 100, 1) if retro_bb > 0 else None
+        direct_brl = round(direct_barrels / direct_bb * 100, 1) if direct_bb > 0 else None
+        
+        # Retrograde diff (positive = better in retrograde)
+        if retro_brl is not None and direct_brl is not None:
+            retro_diff = round(retro_brl - direct_brl, 1)
+        else:
+            retro_diff = None
+        
+        # Badges
+        badges = []
+        if retro_brl is not None and direct_brl is not None and retro_bb >= 3 and direct_bb >= 3:
+            if retro_diff is not None and retro_diff >= 5:
+                badges.append("Star-Crossed Slugger")
+            elif retro_diff is not None and retro_diff <= -5:
+                badges.append("Cosmically Cursed")
+            elif retro_diff is not None and abs(retro_diff) <= 1:
+                badges.append("Retrograde Proof")
+        
+        profiles.append({
+            "batter_id": pid,
+            "full_name": b.get("full_name", ""),
+            "team": b.get("team", ""),
+            "headshot_url": b.get("headshot_url", ""),
+            "retro_barrel_rate": retro_brl,
+            "direct_barrel_rate": direct_brl,
+            "retro_diff": retro_diff,
+            "retro_batted_balls": retro_bb,
+            "direct_batted_balls": direct_bb,
+            "retro_barrels": retro_barrels,
+            "direct_barrels": direct_barrels,
+            "badges": badges,
+            "season_ba": b.get("ba", 0),
+            "season_ops": b.get("ops", 0),
+        })
+    
+    # Sort by retrograde barrel rate (descending) for leaderboard
+    profiles.sort(key=lambda x: (x["retro_barrel_rate"] or -1), reverse=True)
+    
+    # Write outputs
+    write_json("mercury-status.json", status)
+    
+    qualified = [p for p in profiles if (p["retro_batted_balls"] + p["direct_batted_balls"]) >= 5]
+    write_json("leaderboards/mercury-retrograde.json", qualified[:50])
+    
+    # Add to player summaries
+    for p in profiles:
+        pid = p["batter_id"]
+        summary_path = os.path.join(OUT_DIR, f"batters/{pid}/summary.json")
+        if os.path.exists(summary_path):
+            try:
+                with open(summary_path) as f:
+                    existing = json.load(f)
+                existing["mercury_profile"] = {
+                    "retro_barrel_rate": p["retro_barrel_rate"],
+                    "direct_barrel_rate": p["direct_barrel_rate"],
+                    "retro_diff": p["retro_diff"],
+                    "retro_bb": p["retro_batted_balls"],
+                    "direct_bb": p["direct_batted_balls"],
+                    "badges": p["badges"],
+                }
+                write_json(f"batters/{pid}/summary.json", existing)
+            except:
+                pass
+    
+    # League averages for the banner
+    all_retro_bb = sum(p["retro_batted_balls"] for p in profiles)
+    all_retro_barrels = sum(p["retro_barrels"] for p in profiles)
+    all_direct_bb = sum(p["direct_batted_balls"] for p in profiles)
+    all_direct_barrels = sum(p["direct_barrels"] for p in profiles)
+    league_retro_brl = round(all_retro_barrels / all_retro_bb * 100, 1) if all_retro_bb > 0 else 0
+    league_direct_brl = round(all_direct_barrels / all_direct_bb * 100, 1) if all_direct_bb > 0 else 0
+    
+    status["league_retro_barrel_rate"] = league_retro_brl
+    status["league_direct_barrel_rate"] = league_direct_brl
+    write_json("mercury-status.json", status)
+    
+    print(f"  Retrograde status: {status['status']}")
+    if status["is_retrograde"]:
+        print(f"  Days remaining: {status['days_remaining']}")
+    else:
+        print(f"  Next retrograde: {status.get('next_start', '?')} ({status.get('next_days_away', '?')} days away)")
+    print(f"  Computed profiles for {len(profiles)} batters ({len(qualified)} qualified)")
+    print(f"  League BRL%: Retrograde {league_retro_brl}% vs Direct {league_direct_brl}%")
+
+def generate_mercury_retrograde(batters, barrel_events):
+    """Main orchestrator for Mercury Retrograde system."""
+    print(f"\n{'=' * 40}")
+    print("MERCURY RETROGRADE SYSTEM")
+    print(f"{'=' * 40}")
+    if not barrel_events:
+        print("  No barrel events, skipping")
+        return
+    compute_retrograde_stats(batters, barrel_events)
 
 # ============================================================
 # MAIN
@@ -1313,7 +1516,8 @@ def main():
     generate_hos_picks(batters)
     generate_pressbox_picks(batters)
     generate_dugout_prompt(batters, teams)
-    generate_crude_barrels(batters)
+    _oil_result, barrel_events = generate_crude_barrels(batters)
+    generate_mercury_retrograde(batters, barrel_events)
 
     print(f"\n{'=' * 60}")
     print(f"DONE — {total} batters, {len(teams)} teams")
