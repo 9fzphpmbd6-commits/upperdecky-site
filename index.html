@@ -3294,6 +3294,539 @@ section + section { padding-top: 0; }
   .hos-scoreboard-panel { display: none; }
   .hos-scoreboard-mobile { display: flex; }
 }
+
+/* ========== NAVBAR SCORES PILL ========== */
+.nav-scores-pill {
+  background: #c8102e !important;
+  color: #fff !important;
+  border-radius: 20px !important;
+  padding: 6px 18px !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+  letter-spacing: 0.5px;
+  transition: background 0.2s !important;
+}
+.nav-scores-pill:hover {
+  background: #a00d24 !important;
+}
+
+/* ========== NEW HERO ========== */
+.new-hero {
+  padding: 64px 0 48px;
+  background: linear-gradient(180deg, #0a0e1a 0%, #0c1220 100%);
+  position: relative;
+  overflow: hidden;
+}
+.new-hero::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: radial-gradient(ellipse at 30% 50%, rgba(200,16,46,0.06) 0%, transparent 60%);
+  pointer-events: none;
+}
+.new-hero-inner {
+  display: flex;
+  align-items: center;
+  gap: 48px;
+  position: relative;
+  z-index: 1;
+}
+.new-hero-mascot {
+  flex-shrink: 0;
+  width: 220px;
+  height: auto;
+  filter: drop-shadow(0 0 40px rgba(200,16,46,0.2));
+  animation: hero-mascot-float 4s ease-in-out infinite;
+}
+@keyframes hero-mascot-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.new-hero-content {
+  flex: 1;
+  min-width: 0;
+}
+.new-hero-headline {
+  font-family: 'Bebas Neue', 'Oswald', sans-serif;
+  font-size: 64px;
+  line-height: 1;
+  letter-spacing: 2px;
+  color: #fff;
+  margin-bottom: 8px;
+}
+.new-hero-headline span {
+  color: #c8102e;
+}
+.new-hero-subtitle {
+  font-size: 18px;
+  color: #94a3b8;
+  margin-bottom: 24px;
+  font-weight: 500;
+}
+.hero-search {
+  position: relative;
+  margin-bottom: 16px;
+}
+.hero-search-wrapper {
+  display: flex;
+  background: #141c2e;
+  border: 1px solid #1e2a44;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.hero-search-wrapper:focus-within {
+  border-color: #c8102e;
+}
+.hero-search-icon {
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  color: #64748b;
+  font-size: 18px;
+}
+.hero-search-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #f1f5f9;
+  font-size: 16px;
+  padding: 14px 0;
+  font-family: inherit;
+}
+.hero-search-input::placeholder { color: #64748b; }
+.hero-search-btn {
+  background: #c8102e;
+  color: #fff;
+  border: none;
+  padding: 14px 28px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 16px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+.hero-search-btn:hover { background: #a00d24; }
+.hero-search-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0; right: 0;
+  background: #141c2e;
+  border: 1px solid #1e2a44;
+  border-top: none;
+  border-radius: 0 0 12px 12px;
+  max-height: 280px;
+  overflow-y: auto;
+  z-index: 100;
+}
+.hero-search-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.hero-search-item:hover { background: #1e2a44; }
+.hero-search-item img {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.hero-search-item-name { font-weight: 600; font-size: 14px; }
+.hero-search-item-team { color: #64748b; font-size: 12px; margin-left: auto; }
+.new-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #64748b;
+  padding: 6px 14px;
+  background: rgba(20,28,46,0.6);
+  border-radius: 20px;
+  border: 1px solid #1e2a44;
+}
+.new-hero-badge-dot {
+  width: 6px; height: 6px;
+  background: #22c55e;
+  border-radius: 50%;
+  animation: pulse-dot 2s infinite;
+}
+
+/* ========== NAV CARDS GRID ========== */
+.nav-cards-section {
+  padding: 48px 0;
+}
+.nav-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.nav-card {
+  background: #141c2e;
+  border: 1px solid #1e2a44;
+  border-radius: 12px;
+  padding: 24px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: relative;
+  overflow: hidden;
+}
+.nav-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; bottom: 0;
+  width: 4px;
+  background: transparent;
+  transition: background 0.2s;
+}
+.nav-card:hover {
+  border-color: #c8102e;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(200,16,46,0.1);
+}
+.nav-card:hover::before {
+  background: #c8102e;
+}
+.nav-card.nav-card-primary::before {
+  background: #c8102e;
+}
+.nav-card-icon {
+  width: 48px; height: 48px;
+  background: rgba(200,16,46,0.1);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.nav-card-body {
+  flex: 1;
+  min-width: 0;
+}
+.nav-card-label {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 20px;
+  letter-spacing: 1px;
+  color: #fff;
+  margin-bottom: 2px;
+}
+.nav-card-desc {
+  font-size: 13px;
+  color: #64748b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.nav-card-arrow {
+  color: #64748b;
+  font-size: 18px;
+  flex-shrink: 0;
+  transition: color 0.2s, transform 0.2s;
+}
+.nav-card:hover .nav-card-arrow {
+  color: #c8102e;
+  transform: translateX(4px);
+}
+
+/* ========== TRENDING STRIP ========== */
+.trending-strip {
+  background: #141c2e;
+  border-top: 1px solid #1e2a44;
+  border-bottom: 1px solid #1e2a44;
+  padding: 14px 0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.trending-strip::-webkit-scrollbar { height: 0; display: none; }
+.trending-strip-inner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: max-content;
+  padding: 0 24px;
+}
+.trending-strip-label {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 14px;
+  letter-spacing: 1px;
+  color: #c8102e;
+  white-space: nowrap;
+  margin-right: 8px;
+}
+.trending-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: rgba(30,42,68,0.8);
+  border: 1px solid #1e2a44;
+  border-radius: 20px;
+  font-size: 13px;
+  color: #f1f5f9;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.trending-chip:hover {
+  border-color: #c8102e;
+  background: rgba(200,16,46,0.08);
+}
+.trending-chip-stat {
+  color: #d4a843;
+  font-weight: 700;
+}
+.trending-chip-fire { font-size: 14px; }
+.trending-chip-divider {
+  width: 1px;
+  height: 20px;
+  background: #1e2a44;
+  margin: 0 4px;
+}
+
+/* ========== LEADERBOARD PREVIEWS ========== */
+.lb-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.lb-preview {
+  background: #141c2e;
+  border: 1px solid #1e2a44;
+  border-radius: 12px;
+  padding: 20px;
+}
+.lb-preview-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 18px;
+  letter-spacing: 1px;
+  color: #fff;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.lb-preview-title-icon {
+  font-size: 16px;
+}
+.lb-preview-row {
+  display: flex;
+  align-items: center;
+  padding: 7px 0;
+  border-bottom: 1px solid rgba(30,42,68,0.5);
+  cursor: pointer;
+  transition: background 0.15s;
+  border-radius: 4px;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+.lb-preview-row:hover {
+  background: rgba(30,42,68,0.6);
+}
+.lb-preview-row:last-of-type { border-bottom: none; }
+.lb-preview-rank {
+  width: 22px;
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 700;
+}
+.lb-preview-name {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 600;
+  color: #f1f5f9;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.lb-preview-team {
+  font-size: 11px;
+  color: #64748b;
+  margin-left: 4px;
+}
+.lb-preview-val {
+  font-size: 14px;
+  font-weight: 700;
+  color: #d4a843;
+  font-variant-numeric: tabular-nums;
+}
+.lb-preview-link {
+  display: block;
+  text-align: center;
+  margin-top: 12px;
+  font-size: 13px;
+  color: #c8102e;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.lb-preview-link:hover { color: #ff2d55; }
+
+/* ========== FEATURED SECTION ========== */
+.featured-section {
+  padding: 48px 0;
+}
+.featured-section-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 24px;
+  align-items: start;
+}
+.featured-article-card {
+  background: #141c2e;
+  border: 1px solid #1e2a44;
+  border-radius: 12px;
+  padding: 28px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.featured-badge {
+  display: inline-block;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: #c8102e;
+  background: rgba(200,16,46,0.1);
+  padding: 4px 12px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  width: fit-content;
+}
+.featured-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px;
+  line-height: 1.1;
+  color: #fff;
+  margin-bottom: 12px;
+}
+.featured-desc {
+  font-size: 14px;
+  color: #94a3b8;
+  line-height: 1.6;
+  flex: 1;
+  margin-bottom: 20px;
+}
+.featured-link {
+  font-size: 14px;
+  color: #c8102e;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.featured-link:hover { color: #ff2d55; }
+
+/* ========== NEW FOOTER ========== */
+.new-footer {
+  background: #0a0e1a;
+  border-top: 1px solid #1e2a44;
+  padding: 48px 0 32px;
+  margin-top: 48px;
+}
+.new-footer-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  gap: 40px;
+}
+.new-footer-brand-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px;
+  color: #fff;
+  letter-spacing: 2px;
+  margin-bottom: 4px;
+}
+.new-footer-brand-name span { color: #c8102e; }
+.new-footer-brand-desc {
+  font-size: 13px;
+  color: #64748b;
+  margin-bottom: 12px;
+}
+.new-footer-brand-url {
+  font-size: 12px;
+  color: #94a3b8;
+}
+.new-footer-social {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+}
+.new-footer-social a {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #94a3b8;
+  transition: color 0.2s;
+}
+.new-footer-social a:hover { color: #fff; }
+.new-footer-col-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 16px;
+  letter-spacing: 1px;
+  color: #fff;
+  margin-bottom: 16px;
+}
+.new-footer-col a {
+  display: block;
+  font-size: 13px;
+  color: #64748b;
+  padding: 4px 0;
+  transition: color 0.2s;
+}
+.new-footer-col a:hover { color: #f1f5f9; }
+.new-footer-bottom {
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid #1e2a44;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.new-footer-copy {
+  font-size: 12px;
+  color: #64748b;
+}
+.new-footer-perplexity {
+  font-size: 11px;
+  color: #64748b;
+  transition: color 0.2s;
+}
+.new-footer-perplexity:hover { color: #94a3b8; }
+
+/* ========== RESPONSIVE: NEW COMPONENTS ========== */
+@media (max-width: 900px) {
+  .new-hero-inner {
+    flex-direction: column;
+    text-align: center;
+    gap: 24px;
+  }
+  .new-hero-mascot { width: 160px; }
+  .new-hero-headline { font-size: 44px; }
+  .nav-cards-grid { grid-template-columns: repeat(2, 1fr); }
+  .featured-section-grid { grid-template-columns: 1fr; }
+  .lb-preview-grid { grid-template-columns: repeat(3, 1fr); }
+  .new-footer-grid { grid-template-columns: repeat(2, 1fr); gap: 24px; }
+}
+@media (max-width: 600px) {
+  .new-hero { padding: 40px 0 32px; }
+  .new-hero-mascot { width: 120px; }
+  .new-hero-headline { font-size: 36px; }
+  .new-hero-subtitle { font-size: 15px; }
+  .hero-search-btn { padding: 14px 16px; font-size: 13px; }
+  .nav-cards-grid { grid-template-columns: 1fr; }
+  .nav-card { padding: 18px; }
+  .lb-preview-grid { grid-template-columns: 1fr; }
+  .featured-section-grid { grid-template-columns: 1fr; }
+  .new-footer-grid { grid-template-columns: 1fr; gap: 20px; }
+  .new-footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+}
 </style>
 </head>
 <body>
@@ -4048,12 +4581,9 @@ function Navbar(props) {
           'UPPER', h('span', null, 'DECKY')
         ),
         h('div', {className:'navbar-links'},
-          h('a', {className:'nav-link' + (hash==='/' ? ' active' : ''), onClick: function(){navigate('/')}}, 'Home'),
-          h('a', {className:'nav-link' + (hash.startsWith('/players') ? ' active' : ''), onClick: function(){navigate('/players')}}, 'Players'),
-          h('a', {className:'nav-link' + (hash==='/compare' ? ' active' : ''), onClick: function(){navigate('/compare')}}, 'Compare'),
-          h('a', {className:'nav-link-hos', onClick: function(){if(props.onPlayHoS) props.onPlayHoS();}}, '\u26BE Hit or Spit'),
+          h('a', {className:'nav-link nav-scores-pill', onClick: function(){navigate('/leaderboard/hr');}}, 'Scores'),
           h('div', {className:'nav-dropdown', ref: dropRef},
-            h('a', {className:'nav-link' + (statsOpen ? ' active' : ''), onClick: function(e){e.stopPropagation();setStatsOpen(!statsOpen);}}, 'Stats ▾'),
+            h('a', {className:'nav-link' + (statsOpen ? ' active' : ''), onClick: function(e){e.stopPropagation();setStatsOpen(!statsOpen);}}, 'Stats \u25BE'),
             statsOpen && h('div', {className:'nav-dropdown-menu'},
               funStats.map(function(s) {
                 return h('div', {key:s.path, className:'nav-dropdown-item', onClick: function(){navigate(s.path);setStatsOpen(false);}},
@@ -4062,6 +4592,8 @@ function Navbar(props) {
               })
             )
           ),
+          h('a', {className:'nav-link', onClick: function(){navigate('/players')}}, 'Players'),
+          h('a', {className:'nav-link-hos', onClick: function(){if(props.onPlayHoS) props.onPlayHoS();}}, '\u26BE Hit or Spit'),
           h('a', {className:'nav-tip-btn', onClick: function(){setTipOpen(true);}}, '\uD83D\uDCB2 Tip')
         ),
         h('button', {className:'hamburger', onClick: function(){setMobileOpen(!mobileOpen)}, 'aria-label':'Menu'},
@@ -4102,13 +4634,47 @@ function useHashRoute() {
 
 // --- Footer ---
 function Footer() {
-  return h('footer', {className:'site-footer'},
-    h('div', {className:'container', style:{textAlign:'center'}},
-      h('p', {className:'footer-copy'}, 'UpperDecky \u00A9 2026 \u2014 Upper deck dingers. Upper lip pinches. Free data.'),
-      h('div', {className:'footer-tip-links'},
-        h('a', {href:'https://venmo.com/u/upperdecky15', target:'_blank', rel:'noopener noreferrer'}, '\uD83D\uDCB2 Venmo')
+  return h('footer', {className:'new-footer'},
+    h('div', {className:'container'},
+      h('div', {className:'new-footer-grid'},
+        // Brand column
+        h('div', null,
+          h('div', {className:'new-footer-brand-name'}, 'UPPER', h('span', null, 'DECKY')),
+          h('div', {className:'new-footer-brand-desc'}, 'Free MLB Analytics'),
+          h('div', {className:'new-footer-brand-url'}, 'upperrdecky.com'),
+          h('div', {className:'new-footer-social'},
+            h('a', {href:'https://x.com/UpperDecky15', target:'_blank', rel:'noopener noreferrer'}, '\uD835\uDD4F @UpperDecky15')
+          )
+        ),
+        // Stats column
+        h('div', {className:'new-footer-col'},
+          h('div', {className:'new-footer-col-title'}, 'STATS'),
+          h('a', {href:'/#/players', onClick: function(e){e.preventDefault();navigate('/players');}}, 'Players'),
+          h('a', {href:'/#/teams', onClick: function(e){e.preventDefault();navigate('/teams');}}, 'Teams'),
+          h('a', {href:'/#/leaderboard/hr', onClick: function(e){e.preventDefault();navigate('/leaderboard/hr');}}, 'Leaderboards'),
+          h('a', {href:'/#/compare', onClick: function(e){e.preventDefault();navigate('/compare');}}, 'Compare')
+        ),
+        // Tools column
+        h('div', {className:'new-footer-col'},
+          h('div', {className:'new-footer-col-title'}, 'TOOLS'),
+          h('a', {href:'/#/hit-or-spit', onClick: function(e){e.preventDefault();navigate('/hit-or-spit');}}, 'Hit or Spit'),
+          h('a', {href:'/#/leaderboard/crude-barrels', onClick: function(e){e.preventDefault();navigate('/leaderboard/crude-barrels');}}, 'Crude Barrels'),
+          h('a', {href:'/#/scatter', onClick: function(e){e.preventDefault();navigate('/scatter');}}, 'Size vs Power'),
+          h('a', {href:'https://venmo.com/u/upperdecky15', target:'_blank', rel:'noopener noreferrer'}, '\uD83D\uDCB2 Tip Jar')
+        ),
+        // More column
+        h('div', {className:'new-footer-col'},
+          h('div', {className:'new-footer-col-title'}, 'MORE'),
+          h('a', {href:'/#/leaderboard/abs-challenges', onClick: function(e){e.preventDefault();navigate('/leaderboard/abs-challenges');}}, 'ABS Challenges'),
+          h('a', {href:'/#/leaderboard/mercury-retrograde', onClick: function(e){e.preventDefault();navigate('/leaderboard/mercury-retrograde');}}, 'Mercury Retrograde'),
+          h('a', {href:'/#/leaderboard/due-for', onClick: function(e){e.preventDefault();navigate('/leaderboard/due-for');}}, 'Barrel Drought'),
+          h('a', {href:'/#/leaderboard/thicc-boy', onClick: function(e){e.preventDefault();navigate('/leaderboard/thicc-boy');}}, 'Thicc Boy Index')
+        )
       ),
-      h('a', {className:'footer-link', href:'https://www.perplexity.ai/computer', target:'_blank', rel:'noopener noreferrer', style:{display:'block', marginTop:8, fontSize:11}}, 'Created with Perplexity Computer')
+      h('div', {className:'new-footer-bottom'},
+        h('span', {className:'new-footer-copy'}, 'UpperDecky \u00A9 2026 \u2014 Upper deck dingers. Upper lip pinches. Free data.'),
+        h('a', {className:'new-footer-perplexity', href:'https://www.perplexity.ai/computer', target:'_blank', rel:'noopener noreferrer'}, 'Created with Perplexity Computer')
+      )
     )
   );
 }
@@ -4263,37 +4829,86 @@ function OilDerrickWidget() {
 
 function HeroSection(props) {
   var dash = props.dashboard;
-  var _tip = useState(false), tipOpen = _tip[0], setTipOpen = _tip[1];
-  return h('header', {className:'hero'},
-    h('div', {className:'container hero-content'},
-      h(RadarCountdown),
-      h(OilDerrickWidget),
-      h('img', {className:'hero-mascot', src:'mascot-upperdecky.png', alt:'UpperDecky mascot'}),
-      h('div', {className:'hero-text-block'},
-        h('h1', {className:'hero-title'}, 'UPPER', h('span', null, 'DECKY')),
-        h('p', {className:'hero-tagline'}, 'No paywalls. No subscriptions. No BS.'),
-        h(DataBadge, {dashboard: dash, style:{marginTop:2}}),
-        h('div', {className:'hero-kpis'},
-          h('div', {className:'hero-kpi'},
-            h('span', {className:'hero-kpi-value'}, dash ? dash.total_batters : '...'),
-            h('span', {className:'hero-kpi-label'}, 'Players')
+  var batters = props.batters;
+  var _q = useState(''), query = _q[0], setQuery = _q[1];
+  var _focused = useState(false), focused = _focused[0], setFocused = _focused[1];
+  var searchRef = useRef(null);
+
+  var filtered = useMemo(function() {
+    if (!query || query.length < 2 || !batters) return [];
+    var q = query.toLowerCase();
+    return batters.filter(function(b) {
+      return b.full_name.toLowerCase().indexOf(q) >= 0;
+    }).slice(0, 8);
+  }, [query, batters]);
+
+  var showDropdown = focused && filtered.length > 0;
+
+  useEffect(function() {
+    function handleClickOutside(e) {
+      if (searchRef.current && !searchRef.current.contains(e.target)) {
+        setFocused(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return function() { document.removeEventListener('mousedown', handleClickOutside); };
+  }, []);
+
+  function handleSelect(player) {
+    setQuery('');
+    setFocused(false);
+    navigate('/player/' + player.player_id);
+  }
+
+  function handleSearchBtn() {
+    if (filtered.length > 0) {
+      handleSelect(filtered[0]);
+    } else if (query) {
+      navigate('/players');
+    }
+  }
+
+  var playerCount = dash ? dash.total_batters : '...';
+  var teamCount = dash ? dash.total_teams : 30;
+  var season = dash ? dash.season : '2026';
+
+  return h('header', {className:'new-hero'},
+    h('div', {className:'container'},
+      h('div', {className:'new-hero-inner'},
+        h('img', {className:'new-hero-mascot', src:'mascot-upperdecky.png', alt:'UpperDecky mascot'}),
+        h('div', {className:'new-hero-content'},
+          h('h1', {className:'new-hero-headline'}, 'FREE ', h('span', null, 'MLB'), ' ANALYTICS'),
+          h('p', {className:'new-hero-subtitle'}, 'No paywalls. No subscriptions. No BS.'),
+          h('div', {className:'hero-search', ref: searchRef},
+            h('div', {className:'hero-search-wrapper'},
+              h('div', {className:'hero-search-icon'}, '\uD83D\uDD0D'),
+              h('input', {
+                className:'hero-search-input',
+                type:'text',
+                placeholder:'Search any MLB hitter...',
+                value: query,
+                onFocus: function() { setFocused(true); },
+                onChange: function(e) { setQuery(e.target.value); setFocused(true); }
+              }),
+              h('button', {className:'hero-search-btn', onClick: handleSearchBtn}, 'FIND HITTER \u26BE')
+            ),
+            showDropdown && h('div', {className:'hero-search-dropdown'},
+              filtered.map(function(p) {
+                return h('div', {className:'hero-search-item', key: p.player_id, onClick: function(){ handleSelect(p); }},
+                  p.headshot_url ? h('img', {src: p.headshot_url, alt: p.full_name, loading:'lazy'}) : null,
+                  h('span', {className:'hero-search-item-name'}, p.full_name),
+                  h('span', {className:'hero-search-item-team'}, p.team)
+                );
+              })
+            )
           ),
-          h('div', {className:'hero-kpi'},
-            h('span', {className:'hero-kpi-value'}, dash ? dash.total_teams : '...'),
-            h('span', {className:'hero-kpi-label'}, 'Teams')
-          ),
-          h('div', {className:'hero-kpi'},
-            h('span', {className:'hero-kpi-value'}, dash ? dash.season : '...'),
-            h('span', {className:'hero-kpi-label'}, 'Season')
-          ),
-          h('div', {className:'hero-kpi'},
-            h('span', {className:'hero-kpi-value'}, '$0'),
-            h('span', {className:'hero-kpi-label'}, 'Forever')
+          h('div', {className:'new-hero-badge'},
+            h('span', {className:'new-hero-badge-dot'}),
+            season + ' Season \u00B7 ' + playerCount + ' Players \u00B7 ' + teamCount + ' Teams \u00B7 Updated Daily'
           )
         )
       )
-    ),
-    h(TipModal, {open: tipOpen, onClose: function(){setTipOpen(false);}})
+    )
   );
 }
 
@@ -5138,21 +5753,161 @@ function LLHRTracker(props) {
 }
 
 // ===========================
+// NAV CARDS GRID
+// ===========================
+function NavCardsGrid() {
+  var cards = [
+    {icon:'\u26BE', label:'PLAYERS', desc:'Browse every MLB hitter\'s stats', route:'/players', primary:true},
+    {icon:'\uD83C\uDFDF\uFE0F', label:'TEAMS', desc:'Explore all 30 team rosters', route:'/teams'},
+    {icon:'\uD83C\uDFC6', label:'LEADERBOARDS', desc:'HR, OPS, EV and more leaders', route:'/leaderboard/hr'},
+    {icon:'\u2696\uFE0F', label:'ABS CHALLENGES', desc:'Automated ball-strike calls reviewed', route:'/leaderboard/abs-challenges'},
+    {icon:'\uD83D\uDEE2\uFE0F', label:'CRUDE BARRELS', desc:'Oil price vs barrel rate index', route:'/leaderboard/crude-barrels'},
+    {icon:'\uD83D\uDD2C', label:'RESEARCH', desc:'Deep dives into baseball data', route:null}
+  ];
+  return h('section', {className:'nav-cards-section'},
+    h('div', {className:'container'},
+      h('div', {className:'nav-cards-grid'},
+        cards.map(function(c) {
+          return h('div', {
+            key: c.label,
+            className: 'nav-card' + (c.primary ? ' nav-card-primary' : ''),
+            onClick: function() { if(c.route) navigate(c.route); }
+          },
+            h('div', {className:'nav-card-icon'}, c.icon),
+            h('div', {className:'nav-card-body'},
+              h('div', {className:'nav-card-label'}, c.label),
+              h('div', {className:'nav-card-desc'}, c.desc)
+            ),
+            h('div', {className:'nav-card-arrow'}, '\u2192')
+          );
+        })
+      )
+    )
+  );
+}
+
+// ===========================
+// TRENDING STRIP
+// ===========================
+function TrendingStrip(props) {
+  var batters = props.batters;
+  var items = useMemo(function() {
+    if (!batters || !batters.length) return [];
+    var chips = [];
+    // Top 3 HR leaders
+    var byHR = batters.slice().sort(function(a,b){return (b.home_runs||0)-(a.home_runs||0);});
+    for (var i=0; i<3 && i<byHR.length; i++) {
+      var p = byHR[i];
+      chips.push({type:'hr', id:p.player_id, name:p.full_name.split(' ').pop(), stat:(p.home_runs||0)+' HR', fire:true});
+    }
+    // Top hot hitter by BA
+    var byBA = batters.slice().filter(function(b){return b.ba != null && b.ba > 0;}).sort(function(a,b){return (b.ba||0)-(a.ba||0);});
+    if (byBA.length > 0) {
+      var hot = byBA[0];
+      chips.push({type:'hot', id:hot.player_id, name:hot.full_name.split(' ').pop(), stat:fmtBa(hot.ba)+' AVG', fire:false, emoji:'\uD83D\uDD25'});
+    }
+    // Top barrel rate
+    var byBrl = batters.slice().filter(function(b){return b.barrel_rate != null;}).sort(function(a,b){return (b.barrel_rate||0)-(a.barrel_rate||0);});
+    if (byBrl.length > 0) {
+      var topBrl = byBrl[0];
+      chips.push({type:'brl', id:topBrl.player_id, name:topBrl.full_name.split(' ').pop(), stat:(topBrl.barrel_rate||0).toFixed(1)+'% BRL', fire:false, emoji:'\uD83D\uDEE2\uFE0F'});
+    }
+    return chips;
+  }, [batters]);
+
+  if (!items.length) return null;
+
+  return h('div', {className:'trending-strip'},
+    h('div', {className:'trending-strip-inner'},
+      h('span', {className:'trending-strip-label'}, '\uD83D\uDCC8 TRENDING NOW'),
+      items.map(function(item, idx) {
+        return h(Fragment, {key:idx},
+          idx > 0 && idx % 3 === 0 ? h('div', {className:'trending-chip-divider'}) : null,
+          h('div', {className:'trending-chip', onClick: function(){ if(item.id) navigate('/player/'+item.id); }},
+            item.fire ? h('span', {className:'trending-chip-fire'}, '\uD83D\uDD25') : (item.emoji ? h('span', {className:'trending-chip-fire'}, item.emoji) : null),
+            h('span', null, item.name),
+            h('span', {className:'trending-chip-stat'}, item.stat)
+          )
+        );
+      })
+    )
+  );
+}
+
+// ===========================
+// LEADERBOARD PREVIEWS
+// ===========================
+function LeaderboardPreviews(props) {
+  var batters = props.batters;
+
+  var columns = useMemo(function() {
+    if (!batters || !batters.length) return [];
+    // HR Leaders
+    var byHR = batters.slice().sort(function(a,b){return (b.home_runs||0)-(a.home_runs||0);}).slice(0,5);
+    // Barrel Rate Leaders
+    var byBrl = batters.slice().filter(function(b){return b.barrel_rate != null;}).sort(function(a,b){return (b.barrel_rate||0)-(a.barrel_rate||0);}).slice(0,5);
+    // OPS Leaders
+    var byOPS = batters.slice().filter(function(b){return b.ops != null;}).sort(function(a,b){return (b.ops||0)-(a.ops||0);}).slice(0,5);
+    return [
+      {title:'HR Leaders', icon:'\uD83C\uDFE0', data:byHR, key:'home_runs', fmt:function(v){return v||0;}, route:'/leaderboard/hr'},
+      {title:'Barrel Rate', icon:'\uD83D\uDEE2\uFE0F', data:byBrl, key:'barrel_rate', fmt:function(v){return (v||0).toFixed(1)+'%';}, route:'/leaderboard/crude-barrels'},
+      {title:'OPS Leaders', icon:'\uD83D\uDCCA', data:byOPS, key:'ops', fmt:function(v){return (v||0).toFixed(3);}, route:'/players?sort=ops'}
+    ];
+  }, [batters]);
+
+  if (!columns.length) return null;
+
+  return h('div', {className:'lb-preview-grid'},
+    columns.map(function(col) {
+      return h('div', {className:'lb-preview', key:col.title},
+        h('div', {className:'lb-preview-title'},
+          h('span', {className:'lb-preview-title-icon'}, col.icon),
+          col.title
+        ),
+        col.data.map(function(p, idx) {
+          return h('div', {className:'lb-preview-row', key:p.player_id||idx, onClick: function(){ navigate('/player/'+p.player_id); }},
+            h('span', {className:'lb-preview-rank'}, idx+1),
+            h('span', {className:'lb-preview-name'}, p.full_name),
+            h('span', {className:'lb-preview-team'}, p.team),
+            h('span', {className:'lb-preview-val'}, col.fmt(p[col.key]))
+          );
+        }),
+        h('div', {className:'lb-preview-link', onClick: function(){ navigate(col.route); }}, 'See Full List \u2192')
+      );
+    })
+  );
+}
+
+// ===========================
+// FEATURED SECTION
+// ===========================
+function FeaturedSection(props) {
+  return h('section', {className:'featured-section'},
+    h('div', {className:'container'},
+      h('div', {className:'featured-section-grid'},
+        h('div', {className:'featured-article-card'},
+          h('div', {className:'featured-badge'}, 'FEATURED ARTICLE'),
+          h('div', {className:'featured-title'}, 'Understanding Barrel Rate: Why It Matters'),
+          h('div', {className:'featured-desc'}, 'Barrel rate measures how often a batter hits the ball at the optimal combination of exit velocity and launch angle. Learn why this Statcast metric is the best predictor of power production and how UpperDecky tracks it across every MLB hitter.'),
+          h('div', {className:'featured-link', onClick: function(){ navigate('/leaderboard/crude-barrels'); }}, 'Read More \u2192')
+        ),
+        h(LeaderboardPreviews, {batters: props.batters})
+      )
+    )
+  );
+}
+
+// ===========================
 // HOMEPAGE
 // ===========================
 function HomePage(props) {
   return h(Fragment, null,
-    h(HeroSection, {dashboard: props.dashboard}),
-    h(MercuryBanner),
-    h(DualTickers, {batters: props.batters}),
+    h(HeroSection, {dashboard: props.dashboard, batters: props.batters}),
     h(HitOrSpitBanner, {batters: props.batters, onPlay: props.onPlayHoS}),
-    h(LLHRTracker, {data: props.llhr}),
-    h(ExploreStats),
-    h(PressBox),
-    h(LiveGames),
-    h(FindYourTeam, {teams: props.teams, batters: props.batters}),
-    h(DugoutSection),
-    h(SpotlightSection, {batters: props.batters})
+    h(NavCardsGrid),
+    h(TrendingStrip, {batters: props.batters}),
+    h(MercuryBanner),
+    h(FeaturedSection, {batters: props.batters})
   );
 }
 
@@ -6756,6 +7511,11 @@ function App() {
     page = h(TeamPage, {abbrev: teamAbbr, batters: batters, key: teamAbbr});
   } else if (route === '/compare') {
     page = h(ComparePage, {batters: batters});
+  } else if (route === '/teams') {
+    page = h('div', {className:'container', style:{paddingTop:40}},
+      h('h1', {style:{fontFamily:"'Bebas Neue', sans-serif", fontSize:42, letterSpacing:2, marginBottom:8, color:'#fff'}}, 'ALL MLB TEAMS'),
+      h(FindYourTeam, {teams: teams, batters: batters})
+    );
   } else if (route.match(/^\/leaderboard\/([\w-]+)/)) {
     var lbType = route.match(/^\/leaderboard\/([\w-]+)/)[1];
     page = h(LeaderboardPage, {type: lbType, key: lbType, dashboard: dashboard});
