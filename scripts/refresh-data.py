@@ -1491,6 +1491,171 @@ def generate_mercury_retrograde(batters, barrel_events):
     compute_retrograde_stats(batters, barrel_events)
 
 # ============================================================
+# 11. ABS CHALLENGE TRACKER
+# ============================================================
+def scrape_abs_data(batters):
+    """Scrape ABS challenge data from Baseball Savant."""
+    print(f"\n{'=' * 40}")
+    print("ABS CHALLENGE TRACKER")
+    print(f"{'=' * 40}")
+    
+    import re
+    url = "https://baseballsavant.mlb.com/abs"
+    print("  Fetching ABS page...")
+    try:
+        req = Request(url, headers={"User-Agent": "UpperDecky/1.0"})
+        with urlopen(req, timeout=30) as resp:
+            html = resp.read().decode()
+    except Exception as e:
+        print(f"  Failed to fetch ABS page: {e}")
+        return
+    
+    # Extract all JSON arrays from the page
+    all_arrays = re.findall(r'(\[{[^;]{20,}?\])', html)
+    
+    # Identify each block by its keys
+    batter_leaders = []
+    catcher_leaders = []
+    team_batting = []
+    team_fielding = []
+    overall_summary = []
+    batter_summary = []
+    fielder_summary = []
+    challenge_details = []
+    
+    for block_str in all_arrays:
+        try:
+            data = json.loads(block_str)
+            if not data or not isinstance(data[0], dict):
+                continue
+            keys = set(data[0].keys())
+            
+            if "player_at_bat" in keys and len(data) > 50:
+                batter_leaders = data
+            elif "fielder_2" in keys:
+                catcher_leaders = data
+            elif "bat_team_id" in keys and "bat_for" not in keys:
+                team_batting = data
+            elif "fld_team_id" in keys and "bat_for" not in keys:
+                team_fielding = data
+            elif "bat_for" in keys:
+                # Team data with all 4 columns
+                team_data_full = data
+            elif "game_date" in keys and "rolling_overturn_rate_week" in keys:
+                if not overall_summary:
+                    overall_summary = data
+                elif not batter_summary:
+                    batter_summary = data
+                else:
+                    fielder_summary = data
+            elif "sz_challenge_prob" in keys:
+                challenge_details = data
+            elif "key" in keys and "challenges" in keys:
+                if not overall_summary:
+                    pass  # Inning/count/situation breakdowns
+        except:
+            continue
+    
+    print(f"  Batter leaders: {len(batter_leaders)}")
+    print(f"  Catcher leaders: {len(catcher_leaders)}")
+    print(f"  Challenge details: {len(challenge_details)}")
+    
+    # Compute overall stats
+    total_challenges = sum(1 for c in challenge_details)
+    total_overturns = sum(1 for c in challenge_details if c.get("is_challengeABS_overturned") == 1)
+    overturn_rate = round(total_overturns / total_challenges * 100, 1) if total_challenges > 0 else 0
+    
+    # Build leaderboard: combine batters with most successful overturns
+    abs_leaderboard = []
+    for p in batter_leaders:
+        pid = p.get("id") or p.get("player_at_bat")
+        challenges = safe_int(p.get("n_challenges", 0))
+        overturns = safe_int(p.get("n_overturns", 0))
+        fails = safe_int(p.get("n_fails", 0))
+        success_rate = round(overturns / challenges * 100, 1) if challenges > 0 else 0
+        
+        # Match to our batters data for headshot/team
+        batter_info = batters.get(pid, {})
+        
+        abs_leaderboard.append({
+            "batter_id": pid,
+            "full_name": p.get("player_name", batter_info.get("full_name", "Unknown")),
+            "team": p.get("player_team", batter_info.get("team", "")),
+            "headshot_url": batter_info.get("headshot_url", f"https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_213,q_auto:best/v1/people/{pid}/headshot/67/current"),
+            "challenges": challenges,
+            "overturns": overturns,
+            "fails": fails,
+            "success_rate": success_rate,
+            "role": "batter",
+        })
+    
+    # Add catchers
+    for p in catcher_leaders:
+        pid = p.get("id") or p.get("fielder_2")
+        challenges = safe_int(p.get("n_challenges", 0))
+        overturns = safe_int(p.get("n_overturns", 0))
+        fails = safe_int(p.get("n_fails", 0))
+        success_rate = round(overturns / challenges * 100, 1) if challenges > 0 else 0
+        
+        abs_leaderboard.append({
+            "batter_id": pid,
+            "full_name": p.get("player_name", "Unknown"),
+            "team": p.get("player_team", ""),
+            "headshot_url": f"https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_213,q_auto:best/v1/people/{pid}/headshot/67/current",
+            "challenges": challenges,
+            "overturns": overturns,
+            "fails": fails,
+            "success_rate": success_rate,
+            "role": "catcher",
+        })
+    
+    # Sort by overturns descending
+    abs_leaderboard.sort(key=lambda x: x["overturns"], reverse=True)
+    
+    # Write leaderboard
+    write_json("leaderboards/abs-challenges.json", abs_leaderboard[:75])
+    
+    # Write summary
+    write_json("abs-summary.json", {
+        "total_challenges": total_challenges,
+        "total_overturns": total_overturns,
+        "overturn_rate": overturn_rate,
+        "batter_challenges": len([c for c in challenge_details if c.get("original_isStrike_ump") == 1]),
+        "fielder_challenges": len([c for c in challenge_details if c.get("original_isStrike_ump") == 0]),
+        "updated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+    })
+    
+    # Add ABS data to individual player summaries
+    abs_by_player = {}
+    for p in abs_leaderboard:
+        pid = p["batter_id"]
+        if pid:
+            abs_by_player[pid] = p
+    
+    for pid, abs_data in abs_by_player.items():
+        summary_path = os.path.join(OUT_DIR, f"batters/{pid}/summary.json")
+        if os.path.exists(summary_path):
+            try:
+                with open(summary_path) as f:
+                    existing = json.load(f)
+                existing["abs_profile"] = {
+                    "challenges": abs_data["challenges"],
+                    "overturns": abs_data["overturns"],
+                    "fails": abs_data["fails"],
+                    "success_rate": abs_data["success_rate"],
+                    "role": abs_data["role"],
+                }
+                write_json(f"batters/{pid}/summary.json", existing)
+            except:
+                pass
+    
+    print(f"  Total challenges: {total_challenges} ({overturn_rate}% overturn rate)")
+    print(f"  Leaderboard: {len(abs_leaderboard)} players")
+    if abs_leaderboard:
+        top = abs_leaderboard[0]
+        print(f"  Top challenger: {top['full_name']} ({top['team']}) - {top['overturns']} overturns in {top['challenges']} challenges")
+
+# ============================================================
 # MAIN
 # ============================================================
 def main():
@@ -1518,6 +1683,7 @@ def main():
     generate_dugout_prompt(batters, teams)
     _oil_result, barrel_events = generate_crude_barrels(batters)
     generate_mercury_retrograde(batters, barrel_events)
+    scrape_abs_data(batters)
 
     print(f"\n{'=' * 60}")
     print(f"DONE — {total} batters, {len(teams)} teams")

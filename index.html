@@ -3951,7 +3951,8 @@ function setRouteSEO(route, context) {
       'hbp': {t: 'HBP Pain Index', d: 'Which MLB hitters get plunked the most? Hit-by-pitch leaders and the batters who wear it.'},
       'full-moon': {t: 'Full Moon Effect — Lunar Batting Average', d: 'Do MLB hitters really perform differently under a full moon? We ran the numbers.'},
       'crude-barrels': {t: 'Crude Barrels — Petro-Barrel Rate', d: 'We cross-referenced every Statcast barrel with WTI crude oil prices. Completely absurd. Completely real data.'},
-      'mercury-retrograde': {t: 'Mercury Retrograde Barrel Rate', d: 'Do MLB hitters barrel up differently during Mercury retrograde? We tracked every batted ball against astronomical data. Because science.'}
+      'mercury-retrograde': {t: 'Mercury Retrograde Barrel Rate', d: 'Do MLB hitters barrel up differently during Mercury retrograde? We tracked every batted ball against astronomical data. Because science.'},
+      'abs-challenges': {t: 'ABS Challenge Tracker \u2014 Robo-Ump Challenge Stats', d: 'Track every ABS challenge in MLB. Who is winning their challenges, which catchers game the system, and the overall overturn rate. Powered by Hawk-Eye.'}
     };
     var lbSlug = route.replace('/leaderboard/', '');
     var lb = lbNames[lbSlug] || {t: 'Leaderboard', d: 'Fun MLB leaderboards with unique Statcast analytics.'};
@@ -4036,6 +4037,7 @@ function Navbar(props) {
     {emoji:'📏', label:'Size vs Power', path:'/scatter'},
     {emoji:'🛢️', label:'Crude Barrels', path:'/leaderboard/crude-barrels'},
     {emoji:'\u263F', label:'Mercury Retro', path:'/leaderboard/mercury-retrograde'},
+    {emoji:'\u2696\uFE0F', label:'ABS Challenges', path:'/leaderboard/abs-challenges'},
   ];
 
   return h(Fragment, null,
@@ -4772,6 +4774,7 @@ function ExploreStats() {
     {emoji:'\uD83D\uDD04', label:'Compare', path:'/compare', desc:'Side by side'},
     {emoji:'\uD83D\uDEE2\uFE0F', label:'Crude Barrels', path:'/leaderboard/crude-barrels', desc:'Petro-Barrel Rate'},
     {emoji:'\u263F', label:'Mercury Retro', path:'/leaderboard/mercury-retrograde', desc:'Retrograde barrel splits'},
+    {emoji:'\u2696\uFE0F', label:'ABS Challenges', path:'/leaderboard/abs-challenges', desc:'Robo-ump challenge tracker'},
   ];
   return h('section', {className:'stats-grid-section section-gap', id:'stats'},
     h('div', {className:'container'},
@@ -5566,6 +5569,42 @@ function PlayerDetailPage(props) {
             })
           ) : null
         )
+      ) : null,
+      p.abs_profile ? h('div', null,
+        h('div', {className:'stats-section-title'}, 'ABS CHALLENGES \u2696\uFE0F'),
+        h('div', {style:{background:'linear-gradient(135deg, #0a1a0a 0%, #0a150a 100%)', border:'1.5px solid #22c55e44', borderRadius:12, padding:'16px 18px', marginBottom:8}},
+          h('div', {style:{display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:12}},
+            h('div', null,
+              h('div', {style:{fontFamily:'var(--font-heading)', fontSize:9, fontWeight:800, letterSpacing:3, textTransform:'uppercase', color:'#22c55e', marginBottom:2}}, 'Overturns Won'),
+              h('div', {style:{fontFamily:'var(--font-heading)', fontSize:42, fontWeight:900, color:'#22c55e', lineHeight:1, textShadow:'0 0 18px rgba(34,197,94,0.5)'}},
+                p.abs_profile.overturns
+              )
+            ),
+            h('div', {style:{textAlign:'right'}},
+              h('div', {style:{fontFamily:'var(--font-heading)', fontSize:9, fontWeight:700, letterSpacing:2, textTransform:'uppercase', color:'#888', marginBottom:4}}, 'Success Rate'),
+              h('div', {style:{fontFamily:'var(--font-heading)', fontSize:28, fontWeight:900, color: p.abs_profile.success_rate >= 70 ? '#22c55e' : p.abs_profile.success_rate >= 50 ? '#d4a843' : '#ef4444', lineHeight:1}},
+                p.abs_profile.success_rate + '%'
+              )
+            )
+          ),
+          h('div', {style:{display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:8, marginBottom:10}},
+            h('div', {style:{background:'rgba(0,0,0,0.4)', borderRadius:6, padding:'8px', textAlign:'center', border:'1px solid #22c55e33'}},
+              h('div', {style:{fontFamily:'var(--font-heading)', fontSize:18, color:'#fff', fontWeight:700}}, p.abs_profile.challenges),
+              h('div', {style:{fontFamily:'var(--font-heading)', fontSize:8, fontWeight:700, letterSpacing:2, textTransform:'uppercase', color:'#888'}}, 'Challenges')
+            ),
+            h('div', {style:{background:'rgba(0,0,0,0.4)', borderRadius:6, padding:'8px', textAlign:'center', border:'1px solid #22c55e33'}},
+              h('div', {style:{fontFamily:'var(--font-heading)', fontSize:18, color:'#22c55e', fontWeight:700}}, p.abs_profile.overturns),
+              h('div', {style:{fontFamily:'var(--font-heading)', fontSize:8, fontWeight:700, letterSpacing:2, textTransform:'uppercase', color:'#888'}}, 'Overturns')
+            ),
+            h('div', {style:{background:'rgba(0,0,0,0.4)', borderRadius:6, padding:'8px', textAlign:'center', border:'1px solid #ef444433'}},
+              h('div', {style:{fontFamily:'var(--font-heading)', fontSize:18, color:'#ef4444', fontWeight:700}}, p.abs_profile.fails),
+              h('div', {style:{fontFamily:'var(--font-heading)', fontSize:8, fontWeight:700, letterSpacing:2, textTransform:'uppercase', color:'#888'}}, 'Failed')
+            )
+          ),
+          h('div', {style:{textAlign:'center'}},
+            h('span', {style:{fontFamily:'var(--font-heading)', fontSize:9, fontWeight:800, letterSpacing:2, textTransform:'uppercase', padding:'3px 10px', borderRadius:3, background: p.abs_profile.role === 'catcher' ? '#38bdf822' : '#d4a84322', color: p.abs_profile.role === 'catcher' ? '#38bdf8' : '#d4a843', border:'1px solid ' + (p.abs_profile.role === 'catcher' ? '#38bdf844' : '#d4a84344')}}, p.abs_profile.role === 'catcher' ? 'CATCHER CHALLENGES' : 'BATTER CHALLENGES')
+          )
+        )
       ) : null
     )
   );
@@ -6052,6 +6091,40 @@ function LeaderboardPage(props) {
         );
       },
       filterFn: function(d) { return d.filter(function(r){ return (r.retro_batted_balls + r.direct_batted_balls) >= 5; }).sort(function(a,b){ return ((b.retro_barrel_rate||0) - (a.retro_barrel_rate||0)); }); }
+    },
+    'abs-challenges': {
+      title: 'ABS CHALLENGE TRACKER \u2696\uFE0F',
+      subtitle: 'The robot umps are here. Track every ABS challenge across MLB \u2014 who is winning their challenges, who is wasting them, and which catchers are gaming the system. Powered by Hawk-Eye data from Baseball Savant.',
+      columns: [
+        {key:'rank', label:'#'},
+        {key:'name', label:'Player'},
+        {key:'team', label:'Team'},
+        {key:'overturns', label:'Overturns'},
+        {key:'challenges', label:'Challenges'},
+        {key:'fails', label:'Failed'},
+        {key:'rate', label:'Success %'},
+        {key:'role', label:'Role'},
+      ],
+      renderRow: function(row, i) {
+        var rateColor = row.success_rate >= 70 ? '#22c55e' : row.success_rate >= 50 ? '#d4a843' : '#ef4444';
+        var roleBg = row.role === 'catcher' ? '#38bdf822' : '#d4a84322';
+        var roleColor = row.role === 'catcher' ? '#38bdf8' : '#d4a843';
+        var roleLabel = row.role === 'catcher' ? 'C' : 'BAT';
+        return h('tr', {key:row.batter_id||i, onClick: function(){navigate('/player/'+row.batter_id);}},
+          h('td', null, i + 1),
+          h('td', null, h('div', {className:'player-cell'},
+            h('img', {src:row.headshot_url, alt:row.full_name, loading:'lazy'}),
+            h('span', {className:'player-cell-name'}, row.full_name)
+          )),
+          h('td', null, row.team),
+          h('td', {style:{fontWeight:800, color:'#22c55e', fontSize:16}}, row.overturns),
+          h('td', null, row.challenges),
+          h('td', {style:{color:'#ef4444'}}, row.fails),
+          h('td', {style:{fontWeight:800, color:rateColor}}, row.success_rate + '%'),
+          h('td', null, h('span', {style:{fontSize:9, fontWeight:800, letterSpacing:1, padding:'2px 6px', borderRadius:3, background:roleBg, color:roleColor, border:'1px solid ' + roleColor + '44', textTransform:'uppercase'}}, roleLabel))
+        );
+      },
+      filterFn: function(d) { return d.filter(function(r){ return r.challenges >= 1; }).sort(function(a,b){ return b.overturns - a.overturns || b.success_rate - a.success_rate; }); }
     }
   };
 
