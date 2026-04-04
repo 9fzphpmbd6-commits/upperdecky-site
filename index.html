@@ -3461,8 +3461,8 @@ section + section { padding-top: 0; }
 }
 .nav-cards-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
 }
 .nav-card {
   background: #141c2e;
@@ -3809,7 +3809,7 @@ section + section { padding-top: 0; }
   }
   .new-hero-mascot { width: 160px; }
   .new-hero-headline { font-size: 44px; }
-  .nav-cards-grid { grid-template-columns: repeat(2, 1fr); }
+  .nav-cards-grid { grid-template-columns: repeat(3, 1fr); }
   .featured-section-grid { grid-template-columns: 1fr; }
   .lb-preview-grid { grid-template-columns: repeat(3, 1fr); }
   .new-footer-grid { grid-template-columns: repeat(2, 1fr); gap: 24px; }
@@ -5759,10 +5759,16 @@ function NavCardsGrid() {
   var cards = [
     {icon:'\u26BE', label:'PLAYERS', desc:'Browse every MLB hitter\'s stats', route:'/players', primary:true},
     {icon:'\uD83C\uDFDF\uFE0F', label:'TEAMS', desc:'Explore all 30 team rosters', route:'/teams'},
-    {icon:'\uD83C\uDFC6', label:'LEADERBOARDS', desc:'HR, OPS, EV and more leaders', route:'/players'},
-    {icon:'\u2696\uFE0F', label:'ABS CHALLENGES', desc:'Automated ball-strike calls reviewed', route:'/leaderboard/abs-challenges'},
+    {icon:'\u2696\uFE0F', label:'ABS CHALLENGES', desc:'Robo-ump challenge tracker', route:'/leaderboard/abs-challenges'},
     {icon:'\uD83D\uDEE2\uFE0F', label:'CRUDE BARRELS', desc:'Oil price vs barrel rate index', route:'/leaderboard/crude-barrels'},
-    {icon:'\uD83D\uDD2C', label:'RESEARCH', desc:'Deep dives into baseball data', route:'/leaderboard/crude-barrels'}
+    {icon:'\u263F', label:'MERCURY RETRO', desc:'Retrograde barrel splits', route:'/leaderboard/mercury-retrograde'},
+    {icon:'\uD83D\uDEE2\uFE0F', label:'BARREL DROUGHT', desc:'Barreling up but no dingers', route:'/leaderboard/due-for'},
+    {icon:'\uD83C\uDF54', label:'THICC BOY INDEX', desc:'Power per pound rankings', route:'/leaderboard/thicc-boy'},
+    {icon:'\uD83D\uDC40', label:'PLATE DISCIPLINE', desc:'Best plate eyes in the game', route:'/leaderboard/plate-discipline'},
+    {icon:'\uD83E\uDD15', label:'HBP PAIN INDEX', desc:'Most hit batters in MLB', route:'/leaderboard/hbp'},
+    {icon:'\uD83C\uDF15', label:'FULL MOON EFFECT', desc:'Lunar batting averages', route:'/leaderboard/full-moon'},
+    {icon:'\uD83D\uDCCF', label:'SIZE VS POWER', desc:'Height/weight scatter plot', route:'/scatter'},
+    {icon:'\uD83D\uDD04', label:'COMPARE', desc:'Side-by-side player matchup', route:'/compare'}
   ];
   return h('section', {className:'nav-cards-section'},
     h('div', {className:'container'},
