@@ -37,12 +37,12 @@ def fetch_json(url, retries=3):
     for attempt in range(retries):
         try:
             req = Request(url, headers={"User-Agent": "UpperDecky/1.0"})
-            with urlopen(req, timeout=30) as resp:
+            with urlopen(req, timeout=60) as resp:
                 return json.loads(resp.read().decode())
-        except (URLError, HTTPError) as e:
+        except Exception as e:
             print(f"  Attempt {attempt+1}/{retries} failed for {url}: {e}")
             if attempt < retries - 1:
-                time.sleep(2 ** attempt)
+                time.sleep(3 ** attempt)
     print(f"  FAILED: {url}")
     return None
 
@@ -51,14 +51,14 @@ def fetch_csv(url, retries=3):
     for attempt in range(retries):
         try:
             req = Request(url, headers={"User-Agent": "UpperDecky/1.0"})
-            with urlopen(req, timeout=30) as resp:
+            with urlopen(req, timeout=120) as resp:
                 text = resp.read().decode("utf-8-sig")
                 reader = csv.DictReader(io.StringIO(text))
                 return list(reader)
-        except (URLError, HTTPError) as e:
+        except Exception as e:
             print(f"  Attempt {attempt+1}/{retries} failed for {url}: {e}")
             if attempt < retries - 1:
-                time.sleep(2 ** attempt)
+                time.sleep(3 ** attempt)
     print(f"  FAILED: {url}")
     return []
 
@@ -1504,7 +1504,7 @@ def scrape_abs_data(batters):
     print("  Fetching ABS page...")
     try:
         req = Request(url, headers={"User-Agent": "UpperDecky/1.0"})
-        with urlopen(req, timeout=30) as resp:
+        with urlopen(req, timeout=60) as resp:
             html = resp.read().decode()
     except Exception as e:
         print(f"  Failed to fetch ABS page: {e}")
