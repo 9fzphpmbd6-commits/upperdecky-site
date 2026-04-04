@@ -4581,7 +4581,7 @@ function Navbar(props) {
           'UPPER', h('span', null, 'DECKY')
         ),
         h('div', {className:'navbar-links'},
-          h('a', {className:'nav-link nav-scores-pill', onClick: function(){navigate('/leaderboard/hr');}}, 'Scores'),
+          h('a', {className:'nav-link nav-scores-pill', onClick: function(){navigate('/players');}}, 'Scores'),
           h('div', {className:'nav-dropdown', ref: dropRef},
             h('a', {className:'nav-link' + (statsOpen ? ' active' : ''), onClick: function(e){e.stopPropagation();setStatsOpen(!statsOpen);}}, 'Stats \u25BE'),
             statsOpen && h('div', {className:'nav-dropdown-menu'},
@@ -4651,7 +4651,7 @@ function Footer() {
           h('div', {className:'new-footer-col-title'}, 'STATS'),
           h('a', {href:'/#/players', onClick: function(e){e.preventDefault();navigate('/players');}}, 'Players'),
           h('a', {href:'/#/teams', onClick: function(e){e.preventDefault();navigate('/teams');}}, 'Teams'),
-          h('a', {href:'/#/leaderboard/hr', onClick: function(e){e.preventDefault();navigate('/leaderboard/hr');}}, 'Leaderboards'),
+          h('a', {href:'/#/players', onClick: function(e){e.preventDefault();navigate('/players');}}, 'Leaderboards'),
           h('a', {href:'/#/compare', onClick: function(e){e.preventDefault();navigate('/compare');}}, 'Compare')
         ),
         // Tools column
@@ -4857,7 +4857,7 @@ function HeroSection(props) {
   function handleSelect(player) {
     setQuery('');
     setFocused(false);
-    navigate('/player/' + player.player_id);
+    navigate('/player/' + (player.batter_id || player.player_id));
   }
 
   function handleSearchBtn() {
@@ -4894,7 +4894,7 @@ function HeroSection(props) {
             ),
             showDropdown && h('div', {className:'hero-search-dropdown'},
               filtered.map(function(p) {
-                return h('div', {className:'hero-search-item', key: p.player_id, onClick: function(){ handleSelect(p); }},
+                return h('div', {className:'hero-search-item', key: p.batter_id || p.player_id, onClick: function(){ handleSelect(p); }},
                   p.headshot_url ? h('img', {src: p.headshot_url, alt: p.full_name, loading:'lazy'}) : null,
                   h('span', {className:'hero-search-item-name'}, p.full_name),
                   h('span', {className:'hero-search-item-team'}, p.team)
@@ -5759,10 +5759,10 @@ function NavCardsGrid() {
   var cards = [
     {icon:'\u26BE', label:'PLAYERS', desc:'Browse every MLB hitter\'s stats', route:'/players', primary:true},
     {icon:'\uD83C\uDFDF\uFE0F', label:'TEAMS', desc:'Explore all 30 team rosters', route:'/teams'},
-    {icon:'\uD83C\uDFC6', label:'LEADERBOARDS', desc:'HR, OPS, EV and more leaders', route:'/leaderboard/hr'},
+    {icon:'\uD83C\uDFC6', label:'LEADERBOARDS', desc:'HR, OPS, EV and more leaders', route:'/players'},
     {icon:'\u2696\uFE0F', label:'ABS CHALLENGES', desc:'Automated ball-strike calls reviewed', route:'/leaderboard/abs-challenges'},
     {icon:'\uD83D\uDEE2\uFE0F', label:'CRUDE BARRELS', desc:'Oil price vs barrel rate index', route:'/leaderboard/crude-barrels'},
-    {icon:'\uD83D\uDD2C', label:'RESEARCH', desc:'Deep dives into baseball data', route:null}
+    {icon:'\uD83D\uDD2C', label:'RESEARCH', desc:'Deep dives into baseball data', route:'/leaderboard/crude-barrels'}
   ];
   return h('section', {className:'nav-cards-section'},
     h('div', {className:'container'},
@@ -5849,7 +5849,7 @@ function LeaderboardPreviews(props) {
     // OPS Leaders
     var byOPS = batters.slice().filter(function(b){return b.ops != null;}).sort(function(a,b){return (b.ops||0)-(a.ops||0);}).slice(0,5);
     return [
-      {title:'HR Leaders', icon:'\uD83C\uDFE0', data:byHR, key:'home_runs', fmt:function(v){return v||0;}, route:'/leaderboard/hr'},
+      {title:'HR Leaders', icon:'\uD83C\uDFE0', data:byHR, key:'home_runs', fmt:function(v){return v||0;}, route:'/players'},
       {title:'Barrel Rate', icon:'\uD83D\uDEE2\uFE0F', data:byBrl, key:'barrel_rate', fmt:function(v){return (v||0).toFixed(1)+'%';}, route:'/leaderboard/crude-barrels'},
       {title:'OPS Leaders', icon:'\uD83D\uDCCA', data:byOPS, key:'ops', fmt:function(v){return (v||0).toFixed(3);}, route:'/players?sort=ops'}
     ];
