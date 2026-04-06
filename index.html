@@ -6532,14 +6532,14 @@ function ABSChallengePage(props) {
     setBallReveal('');
     setShowZone(false);
     setPitchPhase('pitching');
-    setBallX('38%');
+    setBallX('28%');
     setBallY('-8%');
     setBallW(12);
     
-    // Zone centered on catcher's glove (38% left, 68% top of 440x360 scene)
-    var ZONE_LEFT_PCT = 26;
+    // Zone centered on catcher's glove (~28% left, 56% top of 440x360 scene)
+    var ZONE_LEFT_PCT = 16;
     var ZONE_W_PCT = 24;
-    var ZONE_TOP_PCT = 48;
+    var ZONE_TOP_PCT = 36;
     var ZONE_H_PCT = 40;
     
     var finalX = (ZONE_LEFT_PCT + currentPitch.x * ZONE_W_PCT).toFixed(2) + '%';
@@ -6801,8 +6801,8 @@ function ABSChallengePage(props) {
       h('div', {
         className:'abs-scene-zone' + (showZone ? ' zone-visible' : ''),
         style:{
-          left:'26%',
-          top:'48%',
+          left:'16%',
+          top:'36%',
           width:'24%',
           height:'40%'
         }
