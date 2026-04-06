@@ -4371,13 +4371,12 @@ section + section { padding-top: 0; }
 .abs-scene {
   width: calc(100% - 40px);
   max-width: 440px;
-  height: 290px;
+  height: 360px;
   position: relative;
   overflow: hidden;
   background:
-    radial-gradient(ellipse at 15% 18%, rgba(255,220,80,0.07) 0%, transparent 38%),
-    radial-gradient(ellipse at 85% 18%, rgba(255,220,80,0.07) 0%, transparent 38%),
-    linear-gradient(180deg, #080d18 0%, #0c1422 45%, #150d04 72%, #1e1205 100%);
+    linear-gradient(rgba(0,0,0,0.28) 0%, rgba(0,0,0,0.12) 50%, rgba(0,0,0,0.32) 100%),
+    url('/game-bg.jpg') center 38% / cover;
   border-radius: 12px;
   border: 1px solid #1e2a44;
   margin: 0 20px 8px;
@@ -6537,16 +6536,12 @@ function ABSChallengePage(props) {
     setBallY('-8%');
     setBallW(12);
     
-    // Scene layout constants (percentages of scene 440x290):
-    // Zone: 118px wide, 148px tall, centered horizontally, top at 38px
-    // Zone left fraction: (440-118)/2 / 440 = 161/440 = 36.6%
-    // Zone width fraction: 118/440 = 26.8%
-    // Zone top fraction: 38/290 = 13.1%
-    // Zone height fraction: 148/290 = 51.0%
-    var ZONE_LEFT_PCT = 36.6;
-    var ZONE_W_PCT = 26.8;
-    var ZONE_TOP_PCT = 13.1;
-    var ZONE_H_PCT = 51.0;
+    // Zone overlays the batter's body on the right side of the photo (440x360 scene)
+    // Batter stands in the right portion of image; zone centered at ~66% horizontally
+    var ZONE_LEFT_PCT = 54;
+    var ZONE_W_PCT = 24;
+    var ZONE_TOP_PCT = 16;
+    var ZONE_H_PCT = 50;
     
     var finalX = (ZONE_LEFT_PCT + currentPitch.x * ZONE_W_PCT).toFixed(2) + '%';
     var finalY = (ZONE_TOP_PCT + currentPitch.y * ZONE_H_PCT).toFixed(2) + '%';
@@ -6801,43 +6796,16 @@ function ABSChallengePage(props) {
         pitch.difficulty === 'borderline' ? 'BORDERLINE PITCH' : pitch.difficulty === 'edge' ? 'EDGE PITCH' : 'INCOMING PITCH'
       ),
       
-      // AI Cartoon Batter (left side)
-      h('div', {className:'abs-scene-batter'},
-        h('img', {
-          src: '/batter.jpg',
-          alt: 'batter',
-          style: {
-            width: '76px',
-            height: 'auto',
-            display: 'block',
-            mixBlendMode: 'screen',
-            imageRendering: 'auto'
-          }
-        })
-      ),
+      // Photo background has the batter, catcher, umpire, and home plate built-in
       
-      // Umpire (right side)
-      h('div', {className:'abs-scene-ump'},
-        reveal === 'overturn' || reveal === 'correct-stand' ? '\uD83D\uDE33' :
-        reveal === 'confirmed' || reveal === 'missed' ? '\uD83E\uDD71' :
-        pitch.umpStrike ? '\uD83D\uDCAA' : '\uD83D\uDE45'
-      ),
-      
-      // Home plate
-      h('svg', {className:'abs-scene-plate', viewBox:'0 0 60 34', width:60, height:34, fill:'none'},
-        h('polygon', {points:'5,0 55,0 55,21 30,34 5,21', fill:'rgba(255,255,255,0.18)', stroke:'rgba(255,255,255,0.45)', strokeWidth:2})
-      ),
-      
-      // Strike zone (appears after pitch)
+      // Strike zone (reveals only after user decides)
       h('div', {
         className:'abs-scene-zone' + (showZone ? ' zone-visible' : ''),
         style:{
-          left:'36.6%',
-          top:'13.1%',
-          width:'26.8%',
-          height:'51%',
-          transform:'translateX(-50%)',
-          marginLeft:'13.4%'
+          left:'54%',
+          top:'16%',
+          width:'24%',
+          height:'50%'
         }
       },
         h('div', {className:'abs-zone-line-h1'}),
