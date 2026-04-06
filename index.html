@@ -4366,6 +4366,115 @@ section + section { padding-top: 0; }
   .abs-featured-stats { display: none; }
   .abs-featured-title { font-size: 18px; }
 }
+
+/* ABS Scene redesign */
+.abs-scene {
+  width: calc(100% - 40px);
+  max-width: 440px;
+  height: 290px;
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 15% 18%, rgba(255,220,80,0.07) 0%, transparent 38%),
+    radial-gradient(ellipse at 85% 18%, rgba(255,220,80,0.07) 0%, transparent 38%),
+    linear-gradient(180deg, #080d18 0%, #0c1422 45%, #150d04 72%, #1e1205 100%);
+  border-radius: 12px;
+  border: 1px solid #1e2a44;
+  margin: 0 20px 8px;
+  flex-shrink: 0;
+}
+.abs-scene-plate {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  opacity: 0.75;
+}
+.abs-scene-batter {
+  position: absolute;
+  bottom: 30px;
+  left: 6px;
+  z-index: 3;
+}
+.abs-scene-ump {
+  position: absolute;
+  bottom: 30px;
+  right: 10px;
+  z-index: 3;
+  font-size: 46px;
+  line-height: 1;
+  transition: transform 0.3s;
+}
+.abs-scene-zone {
+  position: absolute;
+  /* positioned by JS inline style - centered in scene */
+  border: 3.5px solid rgba(240,228,195,0.88);
+  border-radius: 3px;
+  box-sizing: border-box;
+  z-index: 2;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  background: rgba(255,255,255,0.015);
+}
+.abs-scene-zone.zone-visible { opacity: 1; }
+.abs-zone-line-h1 { position:absolute; left:0; right:0; top:33.33%; height:1px; background:rgba(240,228,195,0.2); }
+.abs-zone-line-h2 { position:absolute; left:0; right:0; top:66.66%; height:1px; background:rgba(240,228,195,0.2); }
+.abs-zone-line-v1 { position:absolute; top:0; bottom:0; left:33.33%; width:1px; background:rgba(240,228,195,0.2); }
+.abs-zone-line-v2 { position:absolute; top:0; bottom:0; left:66.66%; width:1px; background:rgba(240,228,195,0.2); }
+
+.abs-pitch-ball {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 32%, #ffffff 0%, #f5f5ee 45%, #e0ddd8 80%, #ccc 100%);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.65), inset 0 -2px 4px rgba(0,0,0,0.15);
+  z-index: 5;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+.abs-pitch-ball::after {
+  content: '';
+  position: absolute;
+  inset: 20%;
+  border-radius: 50%;
+  border: 1.5px solid rgba(180,50,50,0.55);
+  border-left-color: transparent;
+  border-right-color: transparent;
+  transform: rotate(30deg);
+}
+.abs-pitch-ball.ball-animating {
+  transition: left 0.68s cubic-bezier(0.18, 0.78, 0.38, 1.0),
+              top 0.68s cubic-bezier(0.18, 0.78, 0.38, 1.0),
+              width 0.5s ease,
+              height 0.5s ease;
+}
+.abs-pitch-ball.ball-strike-reveal {
+  box-shadow: 0 0 16px rgba(34,197,94,0.8), 0 3px 10px rgba(0,0,0,0.5);
+  border: 2px solid #22c55e;
+}
+.abs-pitch-ball.ball-ball-reveal {
+  box-shadow: 0 0 16px rgba(239,68,68,0.8), 0 3px 10px rgba(0,0,0,0.5);
+  border: 2px solid #ef4444;
+}
+.abs-pitch-label {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-heading);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: rgba(255,255,255,0.35);
+  white-space: nowrap;
+  z-index: 6;
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.abs-pitch-label.label-visible { opacity: 1; }
 </style>
 </head>
 <body>
@@ -6330,8 +6439,11 @@ function generatePitches(seed) {
       y = rng(i*10+5);
     }
     
-    // True call: strictly inside zone (0-1 range)
-    var trueStrike = x >= 0 && x <= 1 && y >= 0 && y <= 1;
+    // Ball has radius ~0.117 zone units wide, ~0.093 zone units tall
+    // Any part of ball touching zone = strike
+    var BALL_R_X = 0.117;
+    var BALL_R_Y = 0.093;
+    var trueStrike = x >= -BALL_R_X && x <= 1 + BALL_R_X && y >= -BALL_R_Y && y <= 1 + BALL_R_Y;
     
     // Umpire: mostly correct, wrong 35% of the time on borderline pitches
     var isBorderline = Math.min(x, 1-x, y, 1-y) < 0.15;
@@ -6380,6 +6492,15 @@ function ABSChallengePage(props) {
   var _reveal = useState(null), reveal = _reveal[0], setReveal = _reveal[1];
   var _animScore = useState(0), animScore = _animScore[0], setAnimScore = _animScore[1];
   var _displayScore = useState(0), displayScore = _displayScore[0], setDisplayScore = _displayScore[1];
+  var _pitchPhase = useState('pitching'), pitchPhase = _pitchPhase[0], setPitchPhase = _pitchPhase[1];
+  var _showZone = useState(false), showZone = _showZone[0], setShowZone = _showZone[1];
+  var _ballX = useState('50%'), ballX = _ballX[0], setBallX = _ballX[1];
+  var _ballY = useState('-10%'), ballY = _ballY[0], setBallY = _ballY[1];
+  var _ballW = useState(14), ballW = _ballW[0], setBallW = _ballW[1];
+  var _ballAnim = useState(false), ballAnim = _ballAnim[0], setBallAnim = _ballAnim[1];
+  var _ballReveal = useState(''), ballRevealClass = _ballReveal[0], setBallReveal = _ballReveal[1];
+  var animRafRef = useRef(null);
+  var animTimerRef = useRef(null);
   
   var seed = getDailySeed();
   var pitches = useMemo(function() { return generatePitches(seed); }, [seed]);
@@ -6397,6 +6518,60 @@ function ABSChallengePage(props) {
     }, 30);
     return function() { clearTimeout(timer); };
   }, [score, displayScore]);
+  
+  // Pitch animation effect
+  useEffect(function() {
+    var currentPitch = pitches[pitchIdx];
+    if (!currentPitch) return;
+    
+    // Cancel any pending animations
+    if (animRafRef.current) cancelAnimationFrame(animRafRef.current);
+    if (animTimerRef.current) clearTimeout(animTimerRef.current);
+    
+    // Reset ball to start (above scene, no transition)
+    setBallAnim(false);
+    setBallReveal('');
+    setShowZone(false);
+    setPitchPhase('pitching');
+    setBallX('50%');
+    setBallY('-8%');
+    setBallW(12);
+    
+    // Scene layout constants (percentages of scene 440x290):
+    // Zone: 118px wide, 148px tall, centered horizontally, top at 38px
+    // Zone left fraction: (440-118)/2 / 440 = 161/440 = 36.6%
+    // Zone width fraction: 118/440 = 26.8%
+    // Zone top fraction: 38/290 = 13.1%
+    // Zone height fraction: 148/290 = 51.0%
+    var ZONE_LEFT_PCT = 36.6;
+    var ZONE_W_PCT = 26.8;
+    var ZONE_TOP_PCT = 13.1;
+    var ZONE_H_PCT = 51.0;
+    
+    var finalX = (ZONE_LEFT_PCT + currentPitch.x * ZONE_W_PCT).toFixed(2) + '%';
+    var finalY = (ZONE_TOP_PCT + currentPitch.y * ZONE_H_PCT).toFixed(2) + '%';
+    
+    // Double RAF to ensure initial position renders before transition
+    animRafRef.current = requestAnimationFrame(function() {
+      animRafRef.current = requestAnimationFrame(function() {
+        setBallAnim(true);
+        setBallX(finalX);
+        setBallY(finalY);
+        setBallW(28);
+      });
+    });
+    
+    // After ball arrives: show zone + reveal ump call
+    animTimerRef.current = setTimeout(function() {
+      setShowZone(true);
+      setPitchPhase('decision');
+    }, 950);
+    
+    return function() {
+      if (animRafRef.current) cancelAnimationFrame(animRafRef.current);
+      if (animTimerRef.current) clearTimeout(animTimerRef.current);
+    };
+  }, [pitchIdx]);
   
   function getUmpireEmoji(revealState, umpStrike) {
     if (!revealState) return umpStrike ? '\uD83D\uDCAA' : '\uD83D\uDE45';
@@ -6468,6 +6643,7 @@ function ABSChallengePage(props) {
     var newScore = Math.max(0, score + scoreChange);
     
     setReveal(revealType);
+    setBallReveal(pitch.trueStrike ? 'ball-strike-reveal' : 'ball-ball-reveal');
     setChallenges(newChallenges);
     setScore(newScore);
     setStreak(newStreak);
@@ -6477,6 +6653,7 @@ function ABSChallengePage(props) {
   
   function nextPitch() {
     setReveal(null);
+    setBallReveal('');
     if (pitchIdx >= 9) {
       setPhase('summary');
     } else {
@@ -6617,44 +6794,94 @@ function ABSChallengePage(props) {
       )
     ),
     
-    // Arena
-    h('div', {className:'abs-arena'},
-      h('div', {className:'abs-characters'},
-        // Umpire
-        h('div', {className:'abs-umpire'},
-          h('span', {style:{fontSize:56, lineHeight:1}}, getUmpireEmoji(reveal, pitch.umpStrike))
-        ),
-        // Strike zone
-        h('div', {className:'abs-zone-wrap'},
-          h('div', {className:'abs-zone'},
-            h('div', {className:'abs-zone-grid-h'}),
-            h('div', {className:'abs-zone-grid-h2'}),
-            h('div', {className:'abs-zone-grid-v'}),
-            h('div', {className:'abs-zone-grid-v2'}),
-            h('div', {
-              className:'abs-baseball' + (reveal ? (' abs-ball-reveal ' + (pitch.trueStrike ? 'abs-ball-correct' : 'abs-ball-wrong')) : ''),
-              style:{left: ballLeft, top: ballTop}
-            }, '\u26BE')
-          ),
-          h('svg', {className:'abs-home-plate', viewBox:'0 0 70 40', fill:'none'},
-            h('polygon', {points:'5,0 65,0 65,28 35,40 5,28', fill:'rgba(255,255,255,0.15)', stroke:'rgba(255,255,255,0.4)', strokeWidth:'2'})
-          )
-        ),
-        // Batter
-        h('div', {className:'abs-batter'},
-          h('span', {style:{fontSize:56, lineHeight:1}}, getBatterEmoji(reveal))
+    // Main scene
+    h('div', {className:'abs-scene'},
+      // Pitch label
+      h('div', {className:'abs-pitch-label' + (pitchPhase === 'pitching' ? ' label-visible' : '')},
+        pitch.difficulty === 'borderline' ? 'BORDERLINE PITCH' : pitch.difficulty === 'edge' ? 'EDGE PITCH' : 'INCOMING PITCH'
+      ),
+      
+      // SVG Cartoon Batter (left side)
+      h('div', {className:'abs-scene-batter'},
+        h('svg', {viewBox:'0 0 80 130', width:58, height:95, fill:'none'},
+          // Legs
+          h('rect', {x:24,y:88,width:14,height:40,rx:7,fill:'#1a1a2e'}),
+          h('rect', {x:42,y:88,width:14,height:40,rx:7,fill:'#1a1a2e'}),
+          h('ellipse', {cx:31,cy:128,rx:12,ry:5,fill:'#111'}),
+          h('ellipse', {cx:49,cy:128,rx:12,ry:5,fill:'#111'}),
+          // Body
+          h('rect', {x:16,y:46,width:48,height:46,rx:9,fill:'#f0f0f0'}),
+          h('text', {x:40,y:77,textAnchor:'middle',fontSize:16,fill:'#1a1a2e',fontWeight:'900',fontFamily:'sans-serif'}, 'P'),
+          h('rect', {x:16,y:88,width:48,height:7,rx:0,fill:'#111'}),
+          // Bat
+          h('rect', {x:4,y:8,width:8,height:46,rx:4,fill:'#6B3410',transform:'rotate(-18 8 30)'}),
+          h('ellipse', {cx:6,cy:10,rx:7,ry:8,fill:'#6B3410',transform:'rotate(-18 6 10)'}),
+          // Gloves/hands holding bat
+          h('circle', {cx:14,cy:50,r:7,fill:'#8B4513'}),
+          h('circle', {cx:20,cy:44,r:7,fill:'#8B4513'}),
+          // Right arm
+          h('rect', {x:58,y:52,width:12,height:32,rx:6,fill:'#f5d0a0',transform:'rotate(-10 64 60)'}),
+          // Head
+          h('circle', {cx:40,cy:26,r:20,fill:'#f5d0a0'}),
+          // Helmet
+          h('path', {d:'M20,26 Q20,6 40,6 Q60,6 60,26 Q60,36 40,36 Q24,34 20,26',fill:'#1a1a2e'}),
+          h('rect', {x:10,y:24,width:18,height:7,rx:3,fill:'#1a1a2e'}),
+          // Eye
+          h('circle', {cx:48,cy:28,r:3,fill:'#222'}),
+          h('circle', {cx:49,cy:27,r:1.2,fill:'#fff'})
         )
-      )
+      ),
+      
+      // Umpire (right side)
+      h('div', {className:'abs-scene-ump'},
+        reveal === 'overturn' || reveal === 'correct-stand' ? '\uD83D\uDE33' :
+        reveal === 'confirmed' || reveal === 'missed' ? '\uD83E\uDD71' :
+        pitch.umpStrike ? '\uD83D\uDCAA' : '\uD83D\uDE45'
+      ),
+      
+      // Home plate
+      h('svg', {className:'abs-scene-plate', viewBox:'0 0 60 34', width:60, height:34, fill:'none'},
+        h('polygon', {points:'5,0 55,0 55,21 30,34 5,21', fill:'rgba(255,255,255,0.18)', stroke:'rgba(255,255,255,0.45)', strokeWidth:2})
+      ),
+      
+      // Strike zone (appears after pitch)
+      h('div', {
+        className:'abs-scene-zone' + (showZone ? ' zone-visible' : ''),
+        style:{
+          left:'36.6%',
+          top:'13.1%',
+          width:'26.8%',
+          height:'51%',
+          transform:'translateX(-50%)',
+          marginLeft:'13.4%'
+        }
+      },
+        h('div', {className:'abs-zone-line-h1'}),
+        h('div', {className:'abs-zone-line-h2'}),
+        h('div', {className:'abs-zone-line-v1'}),
+        h('div', {className:'abs-zone-line-v2'})
+      ),
+      
+      // Baseball (always in scene, animates to position)
+      h('div', {
+        className:'abs-pitch-ball' + (ballAnim ? ' ball-animating' : '') + (ballRevealClass ? ' ' + ballRevealClass : ''),
+        style:{
+          left: ballX,
+          top: ballY,
+          width: ballW + 'px',
+          height: ballW + 'px'
+        }
+      })
     ),
     
     // Umpire call banner
-    !reveal && h('div', {className:'abs-call-banner call-' + (pitch.umpStrike ? 'strike' : 'ball')},
+    !reveal && pitchPhase === 'decision' && h('div', {className:'abs-call-banner call-' + (pitch.umpStrike ? 'strike' : 'ball')},
       'UMPIRE CALLED: ',
       h('span', {className:'call-label'}, pitch.umpStrike ? 'STRIKE' : 'BALL')
     ),
     
     // Decision buttons OR reveal
-    !reveal ? h('div', {className:'abs-buttons'},
+    !reveal && pitchPhase !== 'decision' ? null : !reveal ? h('div', {className:'abs-buttons'},
       h('button', {
         className:'abs-btn abs-btn-challenge',
         onClick: function() { makeDecision(true); },
