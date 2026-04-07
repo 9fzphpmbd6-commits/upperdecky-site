@@ -4265,6 +4265,33 @@ section + section { padding-top: 0; }
 }
 .abs-leaderboard-link:hover { color: #7dd3fc; }
 
+/* ABS game — desktop responsive */
+@media (min-width: 768px) {
+  .abs-game-header,
+  .abs-call-banner,
+  .abs-buttons,
+  .abs-reveal,
+  .abs-summary,
+  .abs-next-btn,
+  .abs-flavor-text,
+  .abs-leaderboard-link {
+    max-width: 680px;
+  }
+  .abs-scene {
+    max-width: 640px;
+    height: 460px;
+    margin: 0 20px 10px;
+  }
+  .abs-game-title { font-size: 22px; }
+  .abs-hud-score { font-size: 26px; }
+  .abs-btn { font-size: 18px; min-height: 84px; padding: 18px; }
+  .abs-btn-icon { font-size: 28px; }
+  .abs-summary-grid { grid-template-columns: repeat(4, 1fr); }
+  .abs-summary-title { font-size: 28px; }
+  .abs-summary-score { font-size: 56px; }
+  .abs-play-again, .abs-share-btn { font-size: 16px; padding: 14px 32px; }
+}
+
 /* Homepage featured card */
 .abs-featured-card {
   width: 100%;
