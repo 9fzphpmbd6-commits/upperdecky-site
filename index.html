@@ -4322,6 +4322,7 @@ section + section { padding-top: 0; }
 .pong-badge { position: absolute; bottom: 12px; left: 12px; z-index: 20; background: rgba(11,17,32,0.75); padding: 5px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08); font-size: 11px; color: #94a3b8; pointer-events: none; }
 .pong-badge strong { color: #fff; }
 .pong-info { text-align: center; padding: 8px 0 0; color: #475569; font-size: 12px; }
+.pong-container { touch-action: none; }
 .pong-info kbd { background: #1e293b; padding: 2px 6px; border-radius: 4px; font-size: 11px; border: 1px solid #334155; color: #94a3b8; font-family: inherit; }
 
 /* ========== GAMES SECTION ========== */
@@ -7257,7 +7258,7 @@ function PongGame() {
       if (state.keys['ArrowDown'] || state.keys['s'] || state.keys['S']) state.playerY += 6;
       if (state.touchY !== null) {
         var tgt = state.touchY * (H / canvas.clientHeight) - state.paddleH/2;
-        state.playerY += (tgt - state.playerY) * 0.15;
+        state.playerY += (tgt - state.playerY) * 0.25;
       }
       state.playerY = Math.max(0, Math.min(H - state.paddleH, state.playerY));
       // CPU AI — dumber, occasional misreads
@@ -7289,10 +7290,15 @@ function PongGame() {
     function onKU(e) { state.keys[e.key] = false; }
     document.addEventListener('keydown', onKD);
     document.addEventListener('keyup', onKU);
-    function onT(e) { var r = canvas.getBoundingClientRect(); var t = e.touches ? e.touches[0] : e; state.touchY = t.clientY - r.top; }
+    function onT(e) {
+      e.preventDefault();
+      var r = canvas.getBoundingClientRect();
+      var t = e.touches ? e.touches[0] : e;
+      state.touchY = t.clientY - r.top;
+    }
     function onTE() { state.touchY = null; }
-    canvas.addEventListener('touchstart', onT, {passive:true});
-    canvas.addEventListener('touchmove', onT, {passive:true});
+    canvas.addEventListener('touchstart', onT, {passive:false});
+    canvas.addEventListener('touchmove', onT, {passive:false});
     canvas.addEventListener('touchend', onTE);
     function onClick() {
       if (state.over) { state.over = false; state.pScore = 0; state.cScore = 0; resetBall(); loop(); }
