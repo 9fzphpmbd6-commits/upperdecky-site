@@ -7273,10 +7273,12 @@ function PongGame() {
       if (state.ballX - state.ballR < 54 && state.ballX > 40 && state.ballY > state.computerY && state.ballY < state.computerY + state.paddleH) {
         state.bsx = Math.min(Math.abs(state.bsx) * 1.05, state.maxSpd);
         state.bsy = ((state.ballY - state.computerY) / state.paddleH - 0.5) * 8;
+        playCrack();
       }
       if (state.ballX + state.ballR > W - 54 && state.ballX < W - 40 && state.ballY > state.playerY && state.ballY < state.playerY + state.paddleH) {
         state.bsx = -Math.min(Math.abs(state.bsx) * 1.05, state.maxSpd);
         state.bsy = ((state.ballY - state.playerY) / state.paddleH - 0.5) * 8;
+        playCrack();
       }
       if (state.ballX < 0) { state.pScore++; resetBall(); }
       if (state.ballX > W) { state.cScore++; resetBall(); }
@@ -7306,6 +7308,14 @@ function PongGame() {
     canvas.addEventListener('click', onClick);
     if (videoRef.current) videoRef.current.play().catch(function(){});
     // 8-bit baseball music — starts on first interaction, loops during gameplay
+    // Preload bat crack sound
+    var crackSfx = new Audio('bat-crack.mp3');
+    crackSfx.volume = 0.6;
+    function playCrack() {
+      var s = crackSfx.cloneNode();
+      s.volume = 0.6;
+      s.play().catch(function(){});
+    }
     var musicStarted = false;
     var bgMusic = new Audio('game-music.mp3');
     bgMusic.loop = true;
