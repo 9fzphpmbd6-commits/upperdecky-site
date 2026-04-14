@@ -4327,7 +4327,7 @@ section + section { padding-top: 0; }
 /* ========== GAMES SECTION ========== */
 .games-section { max-width: 1200px; margin: 0 auto; padding: 20px 20px 0; }
 .section-heading { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 3px; color: #64748b; margin-bottom: 12px; }
-.games-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.games-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 900px; }
 .game-card {
   position: relative; display: block; border-radius: 14px; overflow: hidden;
   height: 180px; cursor: pointer; text-decoration: none; color: #fff;
@@ -7299,6 +7299,21 @@ function PongGame() {
     }
     canvas.addEventListener('click', onClick);
     if (videoRef.current) videoRef.current.play().catch(function(){});
+    // Play "PLAY BALL!" audio on first user interaction
+    var playballPlayed = false;
+    function playPlayball() {
+      if (playballPlayed) return;
+      playballPlayed = true;
+      var audio = new Audio('playball.mp3');
+      audio.volume = 0.8;
+      audio.play().catch(function(){});
+      document.removeEventListener('click', playPlayball);
+      document.removeEventListener('keydown', playPlayball);
+      document.removeEventListener('touchstart', playPlayball);
+    }
+    document.addEventListener('click', playPlayball, {once: false});
+    document.addEventListener('keydown', playPlayball, {once: false});
+    document.addEventListener('touchstart', playPlayball, {once: false});
     resetBall(); loop();
 
     return function() {
