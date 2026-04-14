@@ -7305,21 +7305,22 @@ function PongGame() {
     }
     canvas.addEventListener('click', onClick);
     if (videoRef.current) videoRef.current.play().catch(function(){});
-    // Play "PLAY BALL!" audio on first user interaction
-    var playballPlayed = false;
-    function playPlayball() {
-      if (playballPlayed) return;
-      playballPlayed = true;
-      var audio = new Audio('playball.mp3');
-      audio.volume = 0.8;
-      audio.play().catch(function(){});
-      document.removeEventListener('click', playPlayball);
-      document.removeEventListener('keydown', playPlayball);
-      document.removeEventListener('touchstart', playPlayball);
+    // 8-bit baseball music — starts on first interaction, loops during gameplay
+    var musicStarted = false;
+    var bgMusic = new Audio('game-music.mp3');
+    bgMusic.loop = true;
+    bgMusic.volume = 0.3;
+    function startMusic() {
+      if (musicStarted) return;
+      musicStarted = true;
+      bgMusic.play().catch(function(){});
+      document.removeEventListener('click', startMusic);
+      document.removeEventListener('keydown', startMusic);
+      document.removeEventListener('touchstart', startMusic);
     }
-    document.addEventListener('click', playPlayball, {once: false});
-    document.addEventListener('keydown', playPlayball, {once: false});
-    document.addEventListener('touchstart', playPlayball, {once: false});
+    document.addEventListener('click', startMusic, {once: false});
+    document.addEventListener('keydown', startMusic, {once: false});
+    document.addEventListener('touchstart', startMusic, {once: false});
     resetBall(); loop();
 
     return function() {
@@ -7330,6 +7331,10 @@ function PongGame() {
       canvas.removeEventListener('touchmove', onT);
       canvas.removeEventListener('touchend', onTE);
       canvas.removeEventListener('click', onClick);
+      document.removeEventListener('click', startMusic);
+      document.removeEventListener('keydown', startMusic);
+      document.removeEventListener('touchstart', startMusic);
+      bgMusic.pause(); bgMusic.currentTime = 0;
     };
   }, []);
 
