@@ -4327,15 +4327,33 @@ section + section { padding-top: 0; }
 /* ========== GAMES SECTION ========== */
 .games-section { max-width: 1200px; margin: 0 auto; padding: 20px 20px 0; }
 .section-heading { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 3px; color: #64748b; margin-bottom: 12px; }
-.games-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.game-card { display: flex; align-items: center; gap: 14px; padding: 18px; background: #1e293b; border-radius: 12px; border: 1px solid rgba(255,255,255,0.06); border-left: 3px solid #dc2626; cursor: pointer; text-decoration: none; color: inherit; transition: all 0.2s; }
-.game-card:hover { border-color: rgba(255,255,255,0.12); border-left-color: #ef4444; transform: translateY(-2px); box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
-.game-card-icon { font-size: 28px; flex-shrink: 0; }
-.game-card-content { flex: 1; }
+.games-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.game-card {
+  position: relative; display: block; border-radius: 14px; overflow: hidden;
+  height: 180px; cursor: pointer; text-decoration: none; color: #fff;
+  border: 1px solid rgba(255,255,255,0.08); transition: all 0.2s;
+}
+.game-card:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,0,0,0.4); border-color: rgba(255,255,255,0.15); }
+.game-card-bg {
+  position: absolute; inset: 0; background-size: cover; background-position: center;
+  z-index: 1;
+}
+.game-card-bg::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(11,17,32,0.85) 0%, rgba(11,17,32,0.5) 100%);
+}
+.game-card-inner {
+  position: relative; z-index: 2; height: 100%; display: flex;
+  flex-direction: column; justify-content: flex-end; padding: 18px;
+}
 .game-card-badge { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #dc2626; margin-bottom: 4px; }
-.game-card-title { font-size: 16px; font-weight: 800; color: #fff; }
-.game-card-desc { font-size: 12px; color: #64748b; margin-top: 3px; line-height: 1.4; }
-.game-card-arrow { color: #475569; font-size: 18px; font-weight: 700; }
+.game-card-title { font-size: 22px; font-weight: 900; color: #fff; margin-bottom: 4px; }
+.game-card-desc { font-size: 12px; color: #94a3b8; line-height: 1.4; }
+.game-card-play {
+  position: absolute; top: 16px; right: 16px; z-index: 3;
+  background: #dc2626; color: #fff; font-size: 11px; font-weight: 700;
+  padding: 6px 14px; border-radius: 20px; letter-spacing: 1px;
+}
 
 /* ========== TOOLS ROW ========== */
 .tools-row { max-width: 1200px; margin: 0 auto; padding: 12px 20px 0; }
@@ -7242,10 +7260,15 @@ function PongGame() {
         state.playerY += (tgt - state.playerY) * 0.15;
       }
       state.playerY = Math.max(0, Math.min(H - state.paddleH, state.playerY));
-      state.computerY += (state.ballY - state.paddleH/2 - state.computerY) * 0.07;
+      // CPU AI — dumber, occasional misreads
+      var cpuTarget = state.ballY - state.paddleH/2;
+      if (Math.random() < 0.03) cpuTarget += (Math.random() - 0.5) * 120; // random whiff
+      state.computerY += (cpuTarget - state.computerY) * 0.04;
       state.computerY = Math.max(0, Math.min(H - state.paddleH, state.computerY));
       state.ballX += state.bsx; state.ballY += state.bsy;
-      if (state.ballY < state.ballR || state.ballY > H - state.ballR) state.bsy = -state.bsy;
+      if (state.ballY < state.ballR || state.ballY > H - state.ballR) {
+        state.bsy = -state.bsy + (Math.random() - 0.5) * 1.5; // chaotic bounce
+      }
       if (state.ballX - state.ballR < 54 && state.ballX > 40 && state.ballY > state.computerY && state.ballY < state.computerY + state.paddleH) {
         state.bsx = Math.min(Math.abs(state.bsx) * 1.05, state.maxSpd);
         state.bsy = ((state.ballY - state.computerY) / state.paddleH - 0.5) * 8;
@@ -7310,22 +7333,22 @@ function GamesSection(props) {
     h('h2', {className:'section-heading'}, 'GAMES'),
     h('div', {className:'games-grid'},
       h('a', {className:'game-card', href:'javascript:void(0)', onClick: function(e) { e.preventDefault(); navigate('/abs-game'); }},
-        h('div', {className:'game-card-icon'}, '\u2696\uFE0F'),
-        h('div', {className:'game-card-content'},
+        h('div', {className:'game-card-bg', style:{backgroundImage:'url(game-bg.jpg)'}}),
+        h('div', {className:'game-card-play'}, 'PLAY NOW'),
+        h('div', {className:'game-card-inner'},
           h('div', {className:'game-card-badge'}, 'DAILY CHALLENGE'),
-          h('div', {className:'game-card-title'}, 'ABS Challenge'),
-          h('div', {className:'game-card-desc'}, 'The ump made his call. You have 2 challenges. 10 pitches. Beat the robot.')
-        ),
-        h('div', {className:'game-card-arrow'}, '\u2192')
+          h('div', {className:'game-card-title'}, '\u2696\uFE0F ABS Challenge'),
+          h('div', {className:'game-card-desc'}, '10 pitches. 2 challenges. Beat the robo-ump.')
+        )
       ),
       h('a', {className:'game-card', href:'javascript:void(0)', onClick: function(e) { e.preventDefault(); if (props.onPlayHoS) props.onPlayHoS(); }},
-        h('div', {className:'game-card-icon'}, '\uD83D\uDD25'),
-        h('div', {className:'game-card-content'},
+        h('div', {className:'game-card-bg', style:{backgroundImage:'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)'}}),
+        h('div', {className:'game-card-play'}, 'PLAY NOW'),
+        h('div', {className:'game-card-inner'},
           h('div', {className:'game-card-badge'}, 'DAILY GAME'),
-          h('div', {className:'game-card-title'}, 'Hit or Spit'),
-          h('div', {className:'game-card-desc'}, "Swipe through today's lineup. Will they go yard?")
-        ),
-        h('div', {className:'game-card-arrow'}, '\u2192')
+          h('div', {className:'game-card-title'}, '\uD83D\uDD25 Hit or Spit'),
+          h('div', {className:'game-card-desc'}, "Today's lineup. Will they go yard or strike out?")
+        )
       )
     )
   );
