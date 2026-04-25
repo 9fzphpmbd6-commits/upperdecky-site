@@ -4411,6 +4411,12 @@ section + section { padding-top: 0; }
   width: 50px; height: 60px; border-radius: 50% 50% 40% 40%;
   background: rgba(255,255,255,0.12);
 }
+.hos-card-mock .hos-real-img {
+  position: absolute; left: 50%; bottom: -4px; transform: translateX(-50%);
+  width: 100%; max-width: 130px; height: auto; z-index: 2; pointer-events: none;
+}
+.hos-card-mock .hos-real-img + .hos-card-photo::after { display: none; }
+.hos-card-mock:has(.hos-real-img) .hos-card-photo::after { display: none; }
 .hos-card-name { height: 8px; background: rgba(255,255,255,0.4); border-radius: 2px; margin-bottom: 6px; width: 70%; }
 .hos-card-stat { height: 5px; background: rgba(255,255,255,0.18); border-radius: 2px; margin-bottom: 4px; }
 .hos-card-stat:nth-child(4) { width: 90%; }
@@ -7532,6 +7538,32 @@ function ToolsRow(props) {
 }
 
 function HeroTriple(props) {
+  // Pick 3 random batters with valid headshots, memoized so they don't shuffle on every re-render
+  var hosBatters = useMemo(function() {
+    var pool = (props.batters || []).filter(function(b) { return b && b.headshot_url; });
+    if (pool.length < 3) return [];
+    var picks = [];
+    var used = {};
+    var attempts = 0;
+    while (picks.length < 3 && attempts < 30) {
+      var idx = Math.floor(Math.random() * pool.length);
+      if (!used[idx]) { used[idx] = 1; picks.push(pool[idx]); }
+      attempts++;
+    }
+    return picks;
+  }, [props.batters]);
+
+  function makeCardMock(cls, batter) {
+    return h('div', {className:'hos-card-mock ' + cls},
+      h('div', {className:'hos-card-photo'},
+        batter ? h('img', {className:'hos-real-img', src: batter.headshot_url, alt: batter.full_name, loading:'lazy'}) : null
+      ),
+      h('div', {className:'hos-card-name'}),
+      h('div', {className:'hos-card-stat'}),
+      h('div', {className:'hos-card-stat'})
+    );
+  }
+
   return h('div', {className:'hero-triple'},
     h('a', {className:'hero-side-card', href:'javascript:void(0)', onClick: function(e) { e.preventDefault(); navigate('/abs-game'); }},
       h('div', {className:'hero-side-bg', style:{backgroundImage:'url(game-bg.jpg)'}}),
@@ -7548,24 +7580,9 @@ function HeroTriple(props) {
       h('div', {className:'hos-visual'},
         h('span', {className:'hos-tag hit'}, '\uD83D\uDD25 HIT'),
         h('div', {className:'hos-stack'},
-          h('div', {className:'hos-card-mock c1'},
-            h('div', {className:'hos-card-photo'}),
-            h('div', {className:'hos-card-name'}),
-            h('div', {className:'hos-card-stat'}),
-            h('div', {className:'hos-card-stat'})
-          ),
-          h('div', {className:'hos-card-mock c2'},
-            h('div', {className:'hos-card-photo'}),
-            h('div', {className:'hos-card-name'}),
-            h('div', {className:'hos-card-stat'}),
-            h('div', {className:'hos-card-stat'})
-          ),
-          h('div', {className:'hos-card-mock c3'},
-            h('div', {className:'hos-card-photo'}),
-            h('div', {className:'hos-card-name'}),
-            h('div', {className:'hos-card-stat'}),
-            h('div', {className:'hos-card-stat'})
-          )
+          makeCardMock('c1', hosBatters[0]),
+          makeCardMock('c2', hosBatters[1]),
+          makeCardMock('c3', hosBatters[2])
         ),
         h('span', {className:'hos-tag spit'}, '\uD83D\uDC80 SPIT')
       ),
@@ -7581,7 +7598,7 @@ function HeroTriple(props) {
 
 function HomePage(props) {
   return h(Fragment, null,
-    h(HeroTriple, {onPlayHoS: props.onPlayHoS}),
+    h(HeroTriple, {onPlayHoS: props.onPlayHoS, batters: props.batters}),
     h('div', {className:'ad-strip'},
       h('div', {className:'ad-strip-inner'},
         '\uD83D\uDCE2 ',
