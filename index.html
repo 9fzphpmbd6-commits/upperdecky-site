@@ -4368,6 +4368,28 @@ section + section { padding-top: 0; }
 .games-section { max-width: 1200px; margin: 0 auto; padding: 20px 20px 0; }
 .section-heading { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 3px; color: #64748b; margin-bottom: 12px; }
 .games-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 900px; }
+
+/* ========== HERO TRIPLE LAYOUT (game card | Wordle | game card) ========== */
+.hero-triple { max-width: 1280px; margin: 0 auto; padding: 20px 20px 0; display: grid; grid-template-columns: 1fr minmax(420px, 540px) 1fr; gap: 16px; align-items: stretch; }
+.hero-triple > .wordle-hero { padding: 0; max-width: 100%; }
+.hero-side-card {
+  position: relative; display: flex; flex-direction: column; justify-content: flex-end;
+  border-radius: 14px; overflow: hidden; cursor: pointer; text-decoration: none; color: #fff;
+  border: 1px solid rgba(255,255,255,0.08); transition: all 0.2s; min-height: 400px;
+}
+.hero-side-card:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,0,0,0.4); border-color: rgba(255,255,255,0.15); }
+.hero-side-bg { position: absolute; inset: 0; background-size: cover; background-position: center; z-index: 1; }
+.hero-side-bg::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(11,17,32,0.4) 0%, rgba(11,17,32,0.85) 60%, rgba(11,17,32,0.95) 100%); }
+.hero-side-play { position: absolute; top: 14px; right: 14px; z-index: 3; background: #dc2626; color: #fff; font-size: 10px; font-weight: 700; padding: 5px 12px; border-radius: 20px; letter-spacing: 1px; }
+.hero-side-inner { position: relative; z-index: 2; padding: 18px; }
+.hero-side-badge { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #dc2626; margin-bottom: 4px; }
+.hero-side-title { font-size: 22px; font-weight: 900; color: #fff; margin-bottom: 6px; letter-spacing: 0.5px; }
+.hero-side-desc { font-size: 13px; color: #cbd5e1; line-height: 1.45; }
+@media (max-width: 960px) {
+  .hero-triple { grid-template-columns: 1fr; gap: 12px; }
+  .hero-side-card { min-height: 160px; }
+}
+
 .game-card {
   position: relative; display: block; border-radius: 14px; overflow: hidden;
   height: 180px; cursor: pointer; text-decoration: none; color: #fff;
@@ -7476,9 +7498,33 @@ function ToolsRow(props) {
   );
 }
 
+function HeroTriple(props) {
+  return h('div', {className:'hero-triple'},
+    h('a', {className:'hero-side-card', href:'javascript:void(0)', onClick: function(e) { e.preventDefault(); navigate('/abs-game'); }},
+      h('div', {className:'hero-side-bg', style:{backgroundImage:'url(game-bg.jpg)'}}),
+      h('div', {className:'hero-side-play'}, 'PLAY NOW'),
+      h('div', {className:'hero-side-inner'},
+        h('div', {className:'hero-side-badge'}, 'DAILY CHALLENGE'),
+        h('div', {className:'hero-side-title'}, '\u2696\uFE0F ABS Challenge'),
+        h('div', {className:'hero-side-desc'}, '10 pitches. 2 challenges. Beat the robo-ump and call every close one.')
+      )
+    ),
+    h(WordleGame),
+    h('a', {className:'hero-side-card', href:'javascript:void(0)', onClick: function(e) { e.preventDefault(); if (props.onPlayHoS) props.onPlayHoS(); }},
+      h('div', {className:'hero-side-bg', style:{backgroundImage:'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)'}}),
+      h('div', {className:'hero-side-play'}, 'PLAY NOW'),
+      h('div', {className:'hero-side-inner'},
+        h('div', {className:'hero-side-badge'}, 'DAILY GAME'),
+        h('div', {className:'hero-side-title'}, '\uD83D\uDD25 Hit or Spit'),
+        h('div', {className:'hero-side-desc'}, "Swipe through today's lineup. Will they go yard or strike out?")
+      )
+    )
+  );
+}
+
 function HomePage(props) {
   return h(Fragment, null,
-    h(WordleGame),
+    h(HeroTriple, {onPlayHoS: props.onPlayHoS}),
     h('div', {className:'ad-strip'},
       h('div', {className:'ad-strip-inner'},
         '\uD83D\uDCE2 ',
@@ -7487,7 +7533,6 @@ function HomePage(props) {
         h('a', {href:'mailto:upperdecky15@gmail.com'}, 'Email us \u2192')
       )
     ),
-    h(GamesSection, {onPlayHoS: props.onPlayHoS}),
     h(ToolsRow, {batters: props.batters}),
     h(NavCardsGrid),
     h(TrendingStrip, {batters: props.batters}),
