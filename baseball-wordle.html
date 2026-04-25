@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diamond Wordle — UpperDecky</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="baseball-wordle.css">
+</head>
+<body>
+  <main class="bw-page">
+    <section id="baseball-wordle" class="bw-card" aria-live="polite">
+      <header class="bw-header">
+        <h1 class="bw-title">DIAMOND <span class="bw-accent">WORDLE</span></h1>
+        <p class="bw-sub">Baseball edition · 6 guesses · 5 letters</p>
+      </header>
+      <div id="bw-board" class="bw-board"></div>
+      <div id="bw-status" class="bw-status" role="status">&nbsp;</div>
+      <div id="bw-keyboard" class="bw-keyboard"></div>
+      <button id="bw-replay" class="bw-replay" hidden>Play Again</button>
+    </section>
+  </main>
+  <script src="baseball-wordle.js"></script>
+</body>
+</html>

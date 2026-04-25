@@ -1,0 +1,87 @@
+/* Diamond Wordle — UpperDecky
+   Palette matches upperrdecky.com: dark navy bg, red accent, slate grays
+   -------- EDIT COLORS HERE -------- */
+:root {
+  --bw-bg: #0b1120;
+  --bw-card: #1e293b;
+  --bw-text: #e2e8f0;
+  --bw-muted: #64748b;
+  --bw-border: rgba(255,255,255,0.06);
+  --bw-accent: #dc2626;        /* brand red */
+  --bw-accent-hover: #ef4444;
+  --bw-tile-empty: #334155;
+  --bw-correct: #16a34a;       /* Wordle green */
+  --bw-present: #d97706;       /* amber (not yellow) */
+  --bw-absent: #334155;
+  --bw-key-bg: #334155;
+  --bw-key-hover: #475569;
+}
+/* ---------------------------------- */
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bw-bg);
+  color: var(--bw-text);
+  font-family: 'Inter', -apple-system, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+.bw-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px 16px; }
+.bw-card {
+  width: 100%; max-width: 540px;
+  background: var(--bw-card); border: 1px solid var(--bw-border);
+  border-radius: 14px; padding: 20px 18px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+}
+.bw-header { text-align: center; margin-bottom: 16px; padding-bottom: 14px; border-bottom: 1px solid var(--bw-border); }
+.bw-title { font-size: 22px; font-weight: 900; color: #fff; letter-spacing: 1px; margin: 0 0 4px; }
+.bw-accent { color: var(--bw-accent); }
+.bw-sub { font-size: 12px; color: var(--bw-muted); font-weight: 500; margin: 0; }
+
+.bw-board { display: grid; gap: 6px; justify-content: center; margin: 0 auto 12px; }
+.bw-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; max-width: 300px; margin: 0 auto; }
+.bw-tile {
+  aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center;
+  font-size: 22px; font-weight: 800; color: #fff; text-transform: uppercase;
+  background: transparent; border: 2px solid var(--bw-tile-empty); border-radius: 4px;
+  transition: background 0.2s, border-color 0.2s; user-select: none;
+}
+.bw-tile.filled { border-color: var(--bw-muted); }
+.bw-tile.correct { background: var(--bw-correct); border-color: var(--bw-correct); }
+.bw-tile.present { background: var(--bw-present); border-color: var(--bw-present); }
+.bw-tile.absent  { background: var(--bw-absent);  border-color: var(--bw-absent); color: #94a3b8; }
+
+.bw-status { text-align: center; min-height: 22px; margin: 8px 0 12px; font-size: 13px; font-weight: 600; color: var(--bw-text); }
+.bw-status.err  { color: #f87171; }
+.bw-status.win  { color: #22c55e; }
+.bw-status.loss { color: #f87171; }
+
+.bw-keyboard { display: flex; flex-direction: column; gap: 5px; margin-top: 8px; }
+.bw-kbrow { display: flex; justify-content: center; gap: 4px; }
+.bw-key {
+  flex: 1; min-width: 22px; max-width: 38px; height: 44px; padding: 0 4px;
+  background: var(--bw-key-bg); border: none; border-radius: 4px; color: #fff;
+  font-size: 13px; font-weight: 700; cursor: pointer; text-transform: uppercase;
+  font-family: inherit; transition: background 0.15s;
+}
+.bw-key:hover  { background: var(--bw-key-hover); }
+.bw-key:focus-visible { outline: 2px solid var(--bw-accent); outline-offset: 2px; }
+.bw-key.wide { flex: 1.6; max-width: 58px; font-size: 11px; }
+.bw-key.correct { background: var(--bw-correct); }
+.bw-key.present { background: var(--bw-present); }
+.bw-key.absent  { background: #1e293b; color: var(--bw-muted); }
+
+.bw-replay {
+  display: block; margin: 12px auto 0;
+  background: var(--bw-accent); color: #fff; border: none;
+  padding: 10px 24px; border-radius: 8px;
+  font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit;
+  transition: background 0.15s;
+}
+.bw-replay:hover { background: var(--bw-accent-hover); }
+
+@media (max-width: 420px) {
+  .bw-key { height: 40px; font-size: 12px; }
+  .bw-key.wide { font-size: 10px; }
+  .bw-tile { font-size: 20px; }
+}

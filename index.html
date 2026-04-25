@@ -4314,16 +4314,50 @@ section + section { padding-top: 0; }
   .abs-play-again, .abs-share-btn { font-size: 16px; padding: 14px 32px; }
 }
 
-/* ========== PONG GAME ========== */
-.pong-hero { max-width: 1200px; margin: 0 auto; padding: 16px 20px 0; }
-.pong-container { position: relative; width: 100%; aspect-ratio: 2/1; border-radius: 14px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 4px 40px rgba(0,0,0,0.5); background: #0a1a12; }
-.pong-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
-.pong-canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 10; cursor: crosshair; }
-.pong-badge { position: absolute; bottom: 12px; left: 12px; z-index: 20; background: rgba(11,17,32,0.75); padding: 5px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08); font-size: 11px; color: #94a3b8; pointer-events: none; }
-.pong-badge strong { color: #fff; }
-.pong-info { text-align: center; padding: 8px 0 0; color: #475569; font-size: 12px; }
-.pong-container { touch-action: none; }
-.pong-info kbd { background: #1e293b; padding: 2px 6px; border-radius: 4px; font-size: 11px; border: 1px solid #334155; color: #94a3b8; font-family: inherit; }
+/* ========== BASEBALL WORDLE ========== */
+.wordle-hero { max-width: 540px; margin: 0 auto; padding: 20px 16px 0; }
+.wordle-card { background: #1e293b; border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 20px 18px; box-shadow: 0 4px 24px rgba(0,0,0,0.3); }
+.wordle-header { text-align: center; margin-bottom: 16px; padding-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+.wordle-title { font-size: 22px; font-weight: 900; color: #fff; letter-spacing: 1px; margin: 0 0 4px; }
+.wordle-title .tred { color: #dc2626; }
+.wordle-sub { font-size: 12px; color: #64748b; font-weight: 500; }
+.wordle-board { display: grid; gap: 6px; justify-content: center; margin: 0 auto 14px; }
+.wordle-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; max-width: 300px; margin: 0 auto; }
+.wordle-tile {
+  aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center;
+  font-size: 22px; font-weight: 800; color: #fff; text-transform: uppercase;
+  background: transparent; border: 2px solid #334155; border-radius: 4px;
+  transition: all 0.2s; user-select: none;
+}
+.wordle-tile.filled { border-color: #64748b; }
+.wordle-tile.correct { background: #16a34a; border-color: #16a34a; color: #fff; }
+.wordle-tile.present { background: #d97706; border-color: #d97706; color: #fff; }
+.wordle-tile.absent { background: #334155; border-color: #334155; color: #94a3b8; }
+.wordle-status { text-align: center; min-height: 22px; margin: 8px 0 12px; font-size: 13px; font-weight: 600; color: #e2e8f0; }
+.wordle-status.err { color: #f87171; }
+.wordle-status.win { color: #22c55e; }
+.wordle-status.loss { color: #f87171; }
+.wordle-keyboard { display: flex; flex-direction: column; gap: 5px; margin-top: 8px; }
+.wordle-kbrow { display: flex; justify-content: center; gap: 4px; }
+.wordle-key {
+  flex: 1; min-width: 22px; max-width: 38px; height: 44px; padding: 0 4px;
+  background: #334155; border: none; border-radius: 4px; color: #fff;
+  font-size: 13px; font-weight: 700; cursor: pointer; text-transform: uppercase;
+  font-family: inherit; transition: all 0.15s;
+}
+.wordle-key:hover { background: #475569; }
+.wordle-key.wide { flex: 1.6; max-width: 58px; font-size: 11px; }
+.wordle-key.correct { background: #16a34a; }
+.wordle-key.present { background: #d97706; }
+.wordle-key.absent { background: #1e293b; color: #64748b; }
+.wordle-replay { display: block; margin: 12px auto 0; background: #dc2626; color: #fff; border: none; padding: 10px 24px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+.wordle-replay:hover { background: #ef4444; }
+.wordle-replay:disabled { opacity: 0.4; cursor: not-allowed; }
+@media (max-width: 420px) {
+  .wordle-key { height: 40px; font-size: 12px; }
+  .wordle-key.wide { font-size: 10px; }
+  .wordle-tile { font-size: 20px; }
+}
 .ad-strip { max-width: 1200px; margin: 10px auto 0; padding: 0 20px; }
 .ad-strip-inner { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px 16px; background: rgba(30,41,59,0.6); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; font-size: 12px; color: #64748b; }
 .ad-strip-inner strong { color: #94a3b8; }
@@ -7154,202 +7188,200 @@ function FeaturedSection(props) {
 // ===========================
 // HOMEPAGE
 // ===========================
+// WORDLE
 // ===========================
-// PONG GAME
-// ===========================
-function PongGame() {
-  var canvasRef = useRef(null);
-  var videoRef = useRef(null);
-  var gameState = useRef(null);
+var WORDLE_WORDS = [
+  "PITCH","SWING","CATCH","FIELD","PLATE","MOUND","BASES","CURVE","GLOVE","SPIKE",
+  "CLEAT","CHALK","FENCE","GRASS","TRACK","HOMER","STEAL","SLIDE","SCORE","FORCE",
+  "FOULS","BUNTS","BLAST","SMACK","CRACK","LINER","FLARE","DRIVE","POPUP","CHASE",
+  "WHIFF","PAINT","BRUSH","FRAME","STUCK","OUTED","TAGED","RELAY","RALLY","SHORT",
+  "THIRD","FIRST","COACH","SCOUT","CLOSR","SETUP","ROOKY","UTILY","SINKR","SLIDR",
+  "SPLIT","KNUCK","CUTTR","HEATR","FORKN","CHNGE","STICK","LUMBR","MITTS","STRAP",
+  "CHEST","HELMT","ROSIN","LACES","ALLEY","GAPER","TUNNL","STAND","DUGOT","RUBBR",
+  "SLABS","INDEX","SPEED","ANGLE","RATIO","GRAPH","STATS","GRADE","LEVEL","PARKS",
+  "TREND","RANGE","ERROR","CLEAN","SOLID","POWER","STREK","LATER","EARLY","DRAFT",
+  "CHECK","JUMPS","LEAPS","TURNS","LUNGE","LIFTS","SHIFT","CROWD","CHANT","SWEEP",
+  "TRADE","FUEGO","SMITE","FIRES","COUNT","BATCH","CARDS","PICKS","MATCH","TIMED",
+  "READY","LOADS","READS","CARES","CLUBS","SQUAD","LEAGU","ROADS","HOMES","GUEST",
+  "VISIT","LEADS","BEATS","TITLE","CHAMP","FINAL","MEDAL","TROPH","ROUTE","ROUND",
+  "DROPS","LOSES","GAMES","ORBIT","BOUND","BRAVO","HEROS","ICING","KINGS","LASER",
+  "MIGHT","NOBLY","OMEGA","PRIMA","QUOTA","RADAR","SPARK","THROW","UNITY","VIGOR",
+  "WORKS","YELLS","ZEBRA","COBRA","FOXES","EAGLE","HAWKS","PUMAS","PANDA","RHINO",
+  "SHARK","STAGS","TITAN","SWIFT","ROYAL","PIRAT","NOBLE","REBEL","SAVOR","RIVER",
+  "SPORT","ARENA","BLOWS","BURNS","CLIMB","CUTTS","DANCE","DARTS","FAKED","FLOPS",
+  "FRESH","GLIDE","GRIPS","GROWL","HOIST","HOMEY","HOPED","HOVER","HURLS","KICKS",
+  "LAUNA","NOTCH","POISE","POINT","PRIDE","PROUD","PROVE","PULSE","RAPID","REACH"
+];
+// dedupe to only valid 5-letter, uppercase A-Z entries (best-effort), ensure at least some words
+var WORDLE_WORDS_CLEAN = (function() {
+  var seen = {}, out = [];
+  for (var i = 0; i < WORDLE_WORDS.length; i++) {
+    var w = String(WORDLE_WORDS[i]).toUpperCase();
+    if (w.length === 5 && /^[A-Z]+$/.test(w) && !seen[w]) {
+      seen[w] = 1;
+      out.push(w);
+    }
+  }
+  // safety: if somehow empty, fallback single word
+  if (!out.length) out = ["BATTER"];
+  return out;
+})();
+
+function WordleGame() {
+  var rowCount = 6, colCount = 5;
+  var _tgt = useState(function() { return WORDLE_WORDS_CLEAN[Math.floor(Math.random() * WORDLE_WORDS_CLEAN.length)]; });
+  var target = _tgt[0], setTarget = _tgt[1];
+  var _guesses = useState([]), guesses = _guesses[0], setGuesses = _guesses[1];
+  var _current = useState(''), current = _current[0], setCurrent = _current[1];
+  var _status = useState({text:'', cls:''}), status = _status[0], setStatus = _status[1];
+  var _over = useState(false), over = _over[0], setOver = _over[1];
+  var _won = useState(false), won = _won[0], setWon = _won[1];
+
+  // compute per-key color state (best state wins: correct > present > absent)
+  var keyStates = useMemo(function() {
+    var map = {};
+    for (var i = 0; i < guesses.length; i++) {
+      var g = guesses[i];
+      for (var j = 0; j < g.length; j++) {
+        var letter = g[j];
+        var st;
+        if (target[j] === letter) st = 'correct';
+        else if (target.indexOf(letter) >= 0) st = 'present';
+        else st = 'absent';
+        var cur = map[letter];
+        if (!cur || (cur === 'absent') || (cur === 'present' && st === 'correct')) {
+          map[letter] = st;
+        }
+      }
+    }
+    return map;
+  }, [guesses, target]);
+
+  // evaluate a guess with repeat-letter handling
+  function evaluateGuess(guess) {
+    var result = new Array(colCount).fill('absent');
+    var targetCounts = {};
+    // first pass: greens + count remaining letters
+    for (var i = 0; i < colCount; i++) {
+      if (guess[i] === target[i]) {
+        result[i] = 'correct';
+      } else {
+        targetCounts[target[i]] = (targetCounts[target[i]] || 0) + 1;
+      }
+    }
+    // second pass: yellows using remaining counts
+    for (var j = 0; j < colCount; j++) {
+      if (result[j] !== 'correct' && targetCounts[guess[j]]) {
+        result[j] = 'present';
+        targetCounts[guess[j]]--;
+      }
+    }
+    return result;
+  }
+
+  function submitGuess() {
+    if (over) return;
+    if (current.length !== colCount) {
+      setStatus({text:'Need 5 letters.', cls:'err'});
+      return;
+    }
+    var upper = current.toUpperCase();
+    var newGuesses = guesses.concat([upper]);
+    setGuesses(newGuesses);
+    setCurrent('');
+    if (upper === target) {
+      setStatus({text:'⚾ Nice swing! You got it.', cls:'win'});
+      setWon(true); setOver(true);
+    } else if (newGuesses.length >= rowCount) {
+      setStatus({text:'Struck out. Word was ' + target, cls:'loss'});
+      setOver(true);
+    } else {
+      setStatus({text:'', cls:''});
+    }
+  }
+
+  function handleKey(key) {
+    if (over) return;
+    if (key === 'ENTER') { submitGuess(); return; }
+    if (key === 'BACK') { setCurrent(current.slice(0, -1)); setStatus({text:'', cls:''}); return; }
+    if (/^[A-Z]$/.test(key) && current.length < colCount) {
+      setCurrent(current + key);
+      setStatus({text:'', cls:''});
+    }
+  }
 
   useEffect(function() {
-    var canvas = canvasRef.current;
-    if (!canvas) return;
-    var ctx = canvas.getContext('2d');
-    var W = 800, H = 400;
-    canvas.width = W; canvas.height = H;
-
-    var state = {
-      playerY: H/2 - 44, computerY: H/2 - 44,
-      ballX: W/2, ballY: H/2,
-      bsx: -5, bsy: 3,
-      pScore: 0, cScore: 0,
-      paddleH: 88, paddleW: 14, ballR: 12,
-      over: false, maxSpd: 12,
-      keys: {}, touchY: null, animId: null
-    };
-    gameState.current = state;
-
-    function drawPaddle(x, y) {
-      ctx.fillStyle = 'rgba(255,255,255,0.88)';
-      ctx.shadowColor = 'rgba(255,255,255,0.3)';
-      ctx.shadowBlur = 6;
-      ctx.fillRect(x, y, state.paddleW, state.paddleH);
-      ctx.shadowBlur = 0;
-    }
-
-    function drawBaseball(x, y) {
-      ctx.fillStyle = '#fff';
-      ctx.beginPath();
-      ctx.arc(x, y, state.ballR, 0, Math.PI*2);
-      ctx.fill();
-      ctx.strokeStyle = '#cc0000';
-      ctx.lineWidth = 1.8;
-      ctx.beginPath();
-      ctx.arc(x - 3, y, state.ballR * 0.65, -0.9, 0.9);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.arc(x + 3, y, state.ballR * 0.65, Math.PI - 0.9, Math.PI + 0.9);
-      ctx.stroke();
-    }
-
-    function drawScore() {
-      ctx.fillStyle = 'rgba(11,17,32,0.8)';
-      var sw = 220, sh = 36, rx = W/2 - sw/2, ry = 10;
-      ctx.beginPath();
-      ctx.moveTo(rx+18, ry); ctx.lineTo(rx+sw-18, ry);
-      ctx.quadraticCurveTo(rx+sw, ry, rx+sw, ry+18);
-      ctx.quadraticCurveTo(rx+sw, ry+sh, rx+sw-18, ry+sh);
-      ctx.lineTo(rx+18, ry+sh);
-      ctx.quadraticCurveTo(rx, ry+sh, rx, ry+18);
-      ctx.quadraticCurveTo(rx, ry, rx+18, ry);
-      ctx.fill();
-      ctx.strokeStyle = 'rgba(255,255,255,0.1)';
-      ctx.lineWidth = 1;
-      ctx.stroke();
-      ctx.font = '700 15px Inter, sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillStyle = '#22c55e';
-      ctx.fillText('YOU ' + state.pScore, W/2 - 44, 33);
-      ctx.fillStyle = '#64748b';
-      ctx.fillText('\u2014', W/2, 33);
-      ctx.fillStyle = '#dc2626';
-      ctx.fillText('CPU ' + state.cScore, W/2 + 44, 33);
-    }
-
-    function drawCenter() {
-      ctx.setLineDash([8, 8]);
-      ctx.strokeStyle = 'rgba(255,255,255,0.08)';
-      ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.moveTo(W/2, 20); ctx.lineTo(W/2, H-20); ctx.stroke();
-      ctx.setLineDash([]);
-    }
-
-    function resetBall() {
-      state.ballX = W/2; state.ballY = H/2 + (Math.random()*80 - 40);
-      state.bsx = (Math.random() > 0.5 ? 5 : -5);
-      state.bsy = (Math.random()*4) - 2;
-    }
-
-    function showEnd(text, color) {
-      ctx.font = '800 42px Inter, sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillStyle = color; ctx.shadowColor = color; ctx.shadowBlur = 20;
-      ctx.fillText(text, W/2, H/2 + 8);
-      ctx.shadowBlur = 0;
-      ctx.font = '500 14px Inter, sans-serif';
-      ctx.fillStyle = '#64748b';
-      ctx.fillText('Click or tap to play again', W/2, H/2 + 40);
-    }
-
-    function loop() {
-      ctx.clearRect(0, 0, W, H);
-      if (state.over) {
-        drawCenter(); drawPaddle(40, state.computerY); drawPaddle(W-54, state.playerY);
-        drawScore(); showEnd(state.pScore >= 7 ? 'YOU WIN!' : 'GAME OVER', state.pScore >= 7 ? '#22c55e' : '#dc2626');
-        return;
+    function onKey(e) {
+      if (over) return;
+      if (e.key === 'Enter') { e.preventDefault(); submitGuess(); return; }
+      if (e.key === 'Backspace') { e.preventDefault(); setCurrent(function(c) { return c.slice(0, -1); }); setStatus({text:'', cls:''}); return; }
+      var k = e.key.toUpperCase();
+      if (/^[A-Z]$/.test(k)) {
+        e.preventDefault();
+        setCurrent(function(c) { return c.length < colCount ? c + k : c; });
+        setStatus({text:'', cls:''});
       }
-      if (state.keys['ArrowUp'] || state.keys['w'] || state.keys['W']) state.playerY -= 6;
-      if (state.keys['ArrowDown'] || state.keys['s'] || state.keys['S']) state.playerY += 6;
-      if (state.touchY !== null) {
-        var tgt = state.touchY * (H / canvas.clientHeight) - state.paddleH/2;
-        state.playerY += (tgt - state.playerY) * 0.25;
-      }
-      state.playerY = Math.max(0, Math.min(H - state.paddleH, state.playerY));
-      // CPU AI — dumber, occasional misreads
-      var cpuTarget = state.ballY - state.paddleH/2;
-      if (Math.random() < 0.03) cpuTarget += (Math.random() - 0.5) * 120; // random whiff
-      state.computerY += (cpuTarget - state.computerY) * 0.04;
-      state.computerY = Math.max(0, Math.min(H - state.paddleH, state.computerY));
-      state.ballX += state.bsx; state.ballY += state.bsy;
-      if (state.ballY < state.ballR || state.ballY > H - state.ballR) {
-        state.bsy = -state.bsy + (Math.random() - 0.5) * 1.5; // chaotic bounce
-      }
-      if (state.ballX - state.ballR < 54 && state.ballX > 40 && state.ballY > state.computerY && state.ballY < state.computerY + state.paddleH) {
-        state.bsx = Math.min(Math.abs(state.bsx) * 1.05, state.maxSpd);
-        state.bsy = ((state.ballY - state.computerY) / state.paddleH - 0.5) * 8;
-      }
-      if (state.ballX + state.ballR > W - 54 && state.ballX < W - 40 && state.ballY > state.playerY && state.ballY < state.playerY + state.paddleH) {
-        state.bsx = -Math.min(Math.abs(state.bsx) * 1.05, state.maxSpd);
-        state.bsy = ((state.ballY - state.playerY) / state.paddleH - 0.5) * 8;
-      }
-      if (state.ballX < 0) { state.pScore++; resetBall(); }
-      if (state.ballX > W) { state.cScore++; resetBall(); }
-      if (state.pScore >= 7 || state.cScore >= 7) state.over = true;
-      drawCenter(); drawPaddle(40, state.computerY); drawPaddle(W-54, state.playerY);
-      drawBaseball(state.ballX, state.ballY); drawScore();
-      state.animId = requestAnimationFrame(loop);
     }
+    document.addEventListener('keydown', onKey);
+    return function() { document.removeEventListener('keydown', onKey); };
+  }, [over, current, guesses]);
 
-    function onKD(e) { state.keys[e.key] = true; if (e.key === 'ArrowUp' || e.key === 'ArrowDown') e.preventDefault(); }
-    function onKU(e) { state.keys[e.key] = false; }
-    document.addEventListener('keydown', onKD);
-    document.addEventListener('keyup', onKU);
-    function onT(e) {
-      e.preventDefault();
-      var r = canvas.getBoundingClientRect();
-      var t = e.touches ? e.touches[0] : e;
-      state.touchY = t.clientY - r.top;
-    }
-    function onTE() { state.touchY = null; }
-    canvas.addEventListener('touchstart', onT, {passive:false});
-    canvas.addEventListener('touchmove', onT, {passive:false});
-    canvas.addEventListener('touchend', onTE);
-    function onClick() {
-      if (state.over) { state.over = false; state.pScore = 0; state.cScore = 0; resetBall(); loop(); }
-    }
-    canvas.addEventListener('click', onClick);
-    if (videoRef.current) videoRef.current.play().catch(function(){});
-    // "Play Ball!" — one time on first interaction
-    var pbPlayed = false;
-    function playBall() {
-      if (pbPlayed) return;
-      pbPlayed = true;
-      var pb = new Audio('playball.mp3');
-      pb.volume = 0.85;
-      pb.play().catch(function(){});
-      document.removeEventListener('click', playBall);
-      document.removeEventListener('keydown', playBall);
-      document.removeEventListener('touchstart', playBall);
-    }
-    document.addEventListener('click', playBall);
-    document.addEventListener('keydown', playBall);
-    document.addEventListener('touchstart', playBall);
-    resetBall(); loop();
+  function playAgain() {
+    setTarget(WORDLE_WORDS_CLEAN[Math.floor(Math.random() * WORDLE_WORDS_CLEAN.length)]);
+    setGuesses([]); setCurrent(''); setStatus({text:'', cls:''}); setOver(false); setWon(false);
+  }
 
-    return function() {
-      cancelAnimationFrame(state.animId);
-      document.removeEventListener('keydown', onKD);
-      document.removeEventListener('keyup', onKU);
-      canvas.removeEventListener('touchstart', onT);
-      canvas.removeEventListener('touchmove', onT);
-      canvas.removeEventListener('touchend', onTE);
-      canvas.removeEventListener('click', onClick);
-      document.removeEventListener('click', playBall);
-      document.removeEventListener('keydown', playBall);
-      document.removeEventListener('touchstart', playBall);
-    };
-  }, []);
+  // build board: rowCount rows, each row is either a past guess (evaluated), the current typing row, or empty
+  var rows = [];
+  for (var r = 0; r < rowCount; r++) {
+    var cells = [];
+    if (r < guesses.length) {
+      var g = guesses[r];
+      var evalR = evaluateGuess(g);
+      for (var c = 0; c < colCount; c++) {
+        cells.push(h('div', {key:c, className:'wordle-tile ' + evalR[c]}, g[c]));
+      }
+    } else if (r === guesses.length && !over) {
+      for (var c2 = 0; c2 < colCount; c2++) {
+        var letter = current[c2] || '';
+        cells.push(h('div', {key:c2, className:'wordle-tile' + (letter ? ' filled' : '')}, letter));
+      }
+    } else {
+      for (var c3 = 0; c3 < colCount; c3++) {
+        cells.push(h('div', {key:c3, className:'wordle-tile'}));
+      }
+    }
+    rows.push(h('div', {key:r, className:'wordle-row'}, cells));
+  }
 
-  return h('div', {className:'pong-hero'},
-    h('div', {className:'pong-container'},
-      h('video', {ref:videoRef, className:'pong-video', autoPlay:true, loop:true, muted:true, playsInline:true, src:'baseball-bg.mp4'}),
-      h('canvas', {ref:canvasRef, className:'pong-canvas'}),
-      h('div', {className:'pong-badge'}, '\u26BE ', h('strong', null, 'HOME RUN PONG'), ' \u00B7 First to 7 wins the inning')
-    ),
-    h('div', {className:'pong-info'},
-      h('kbd', null, '\u2191'), ' ', h('kbd', null, '\u2193'), ' or ',
-      h('kbd', null, 'W'), ' ', h('kbd', null, 'S'), ' to move \u00B7 Touch: drag on game area'
+  var kbRows = [
+    ['Q','W','E','R','T','Y','U','I','O','P'],
+    ['A','S','D','F','G','H','J','K','L'],
+    ['ENTER','Z','X','C','V','B','N','M','BACK']
+  ];
+
+  return h('div', {className:'wordle-hero'},
+    h('div', {className:'wordle-card'},
+      h('div', {className:'wordle-header'},
+        h('div', {className:'wordle-title'}, 'DIAMOND ', h('span', {className:'tred'}, 'WORDLE')),
+        h('div', {className:'wordle-sub'}, 'Baseball edition · 6 guesses · 5 letters')
+      ),
+      h('div', {className:'wordle-board'}, rows),
+      h('div', {className:'wordle-status ' + status.cls}, status.text || ' '),
+      h('div', {className:'wordle-keyboard'},
+        kbRows.map(function(row, ri) {
+          return h('div', {key:ri, className:'wordle-kbrow'},
+            row.map(function(key) {
+              var cls = 'wordle-key';
+              if (key === 'ENTER' || key === 'BACK') cls += ' wide';
+              if (keyStates[key]) cls += ' ' + keyStates[key];
+              var label = key === 'BACK' ? '⌫' : key;
+              return h('button', {key:key, className:cls, onClick: function(k){ return function(e){ e.preventDefault(); handleKey(k); };}(key)}, label);
+            })
+          );
+        })
+      ),
+      over && h('button', {className:'wordle-replay', onClick: playAgain}, 'Play Again')
     )
   );
 }
@@ -7446,7 +7478,7 @@ function ToolsRow(props) {
 
 function HomePage(props) {
   return h(Fragment, null,
-    h(PongGame),
+    h(WordleGame),
     h('div', {className:'ad-strip'},
       h('div', {className:'ad-strip-inner'},
         '\uD83D\uDCE2 ',
