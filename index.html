@@ -4385,6 +4385,39 @@ section + section { padding-top: 0; }
 .hero-side-badge { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #dc2626; margin-bottom: 4px; }
 .hero-side-title { font-size: 22px; font-weight: 900; color: #fff; margin-bottom: 6px; letter-spacing: 0.5px; }
 .hero-side-desc { font-size: 13px; color: #cbd5e1; line-height: 1.45; }
+
+/* Hit or Spit card visual — stacked baseball cards */
+.hos-visual { position: absolute; inset: 0; z-index: 2; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+.hos-stack { position: relative; width: 140px; height: 200px; }
+.hos-card-mock {
+  position: absolute; left: 0; top: 0; width: 140px; height: 200px;
+  background: linear-gradient(160deg, #1e3a5f 0%, #16213e 60%, #0f1c33 100%);
+  border: 2px solid rgba(255,255,255,0.18); border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+  display: flex; flex-direction: column; padding: 10px;
+}
+.hos-card-mock.c1 { transform: rotate(-7deg) translateX(-22px); opacity: 0.55; }
+.hos-card-mock.c2 { transform: rotate(4deg) translateX(14px); opacity: 0.85; }
+.hos-card-mock.c3 { transform: rotate(-1deg); }
+.hos-card-photo {
+  height: 110px; border-radius: 6px; margin-bottom: 8px;
+  background:
+    radial-gradient(ellipse at 50% 70%, rgba(220,38,38,0.25) 0%, transparent 60%),
+    linear-gradient(180deg, #2a3f5f 0%, #1a2640 100%);
+  position: relative; overflow: hidden;
+}
+.hos-card-photo::after {
+  content: ''; position: absolute; left: 50%; bottom: -8px; transform: translateX(-50%);
+  width: 50px; height: 60px; border-radius: 50% 50% 40% 40%;
+  background: rgba(255,255,255,0.12);
+}
+.hos-card-name { height: 8px; background: rgba(255,255,255,0.4); border-radius: 2px; margin-bottom: 6px; width: 70%; }
+.hos-card-stat { height: 5px; background: rgba(255,255,255,0.18); border-radius: 2px; margin-bottom: 4px; }
+.hos-card-stat:nth-child(4) { width: 90%; }
+.hos-card-stat:nth-child(5) { width: 60%; }
+.hos-tag { position: absolute; top: 50%; transform: translateY(-50%); font-size: 18px; font-weight: 900; letter-spacing: 1px; padding: 6px 10px; border-radius: 6px; z-index: 3; }
+.hos-tag.hit { left: 10px; color: #22c55e; border: 2px solid #22c55e; transform: translateY(-50%) rotate(-12deg); background: rgba(34,197,94,0.1); }
+.hos-tag.spit { right: 10px; color: #f87171; border: 2px solid #f87171; transform: translateY(-50%) rotate(12deg); background: rgba(248,113,113,0.1); }
 @media (max-width: 960px) {
   .hero-triple { grid-template-columns: 1fr; gap: 12px; }
   .hero-side-card { min-height: 160px; }
@@ -7511,11 +7544,35 @@ function HeroTriple(props) {
     ),
     h(WordleGame),
     h('a', {className:'hero-side-card', href:'javascript:void(0)', onClick: function(e) { e.preventDefault(); if (props.onPlayHoS) props.onPlayHoS(); }},
-      h('div', {className:'hero-side-bg', style:{backgroundImage:'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)'}}),
+      h('div', {className:'hero-side-bg', style:{backgroundImage:'linear-gradient(135deg, #1a2640 0%, #0f1c33 50%, #16213e 100%)'}}),
+      h('div', {className:'hos-visual'},
+        h('span', {className:'hos-tag hit'}, '\uD83D\uDD25 HIT'),
+        h('div', {className:'hos-stack'},
+          h('div', {className:'hos-card-mock c1'},
+            h('div', {className:'hos-card-photo'}),
+            h('div', {className:'hos-card-name'}),
+            h('div', {className:'hos-card-stat'}),
+            h('div', {className:'hos-card-stat'})
+          ),
+          h('div', {className:'hos-card-mock c2'},
+            h('div', {className:'hos-card-photo'}),
+            h('div', {className:'hos-card-name'}),
+            h('div', {className:'hos-card-stat'}),
+            h('div', {className:'hos-card-stat'})
+          ),
+          h('div', {className:'hos-card-mock c3'},
+            h('div', {className:'hos-card-photo'}),
+            h('div', {className:'hos-card-name'}),
+            h('div', {className:'hos-card-stat'}),
+            h('div', {className:'hos-card-stat'})
+          )
+        ),
+        h('span', {className:'hos-tag spit'}, '\uD83D\uDC80 SPIT')
+      ),
       h('div', {className:'hero-side-play'}, 'PLAY NOW'),
       h('div', {className:'hero-side-inner'},
         h('div', {className:'hero-side-badge'}, 'DAILY GAME'),
-        h('div', {className:'hero-side-title'}, '\uD83D\uDD25 Hit or Spit'),
+        h('div', {className:'hero-side-title'}, 'Hit or Spit'),
         h('div', {className:'hero-side-desc'}, "Swipe through today's lineup. Will they go yard or strike out?")
       )
     )
